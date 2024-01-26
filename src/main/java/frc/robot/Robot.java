@@ -4,7 +4,14 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
+import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.subsystems.LimelightSubsystem;
+import frc.robot.subsystems.PoseEstimatorSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -13,15 +20,32 @@ import edu.wpi.first.wpilibj.TimedRobot;
  * directory.
  */
 public class Robot extends TimedRobot {
+  public static final LimelightHelpers LIMELIGHT_HELPERS = new LimelightHelpers();
+  public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_ONE = new LimelightSubsystem("limelight");
+  public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_TWO = new LimelightSubsystem("limelight-two");
+  public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_THREE = new LimelightSubsystem("limelight-three");
+  public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_FOUR = new LimelightSubsystem("limelight-four");
+  public static final DrivetrainSubsystem DRIVETRAIN_SUBSYSTEM = new DrivetrainSubsystem();
+  public static final PoseEstimatorSubsystem POSE_ESTIMATOR_SUBSYSTEM = new PoseEstimatorSubsystem();
+  public static final XboxController XBOX_CONTROLLER = new XboxController(0);
+  public static DriverStation.Alliance allianceColor = Alliance.Blue;
+  public static final DrivetrainDefaultCommand DRIVETRAIN_DEFAULT_COMMAND = new DrivetrainDefaultCommand();
 
   public Robot() {}
+
+  @Override
+  public void robotPeriodic() {
+    allianceColor = DriverStation.getAlliance().get();
+  }
 
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
   @Override
-  public void robotInit() {}
+  public void robotInit() {
+    DRIVETRAIN_SUBSYSTEM.setDefaultCommand(DRIVETRAIN_DEFAULT_COMMAND);
+  }
 
   /** This function is run once each time the robot enters autonomous mode. */
   @Override
