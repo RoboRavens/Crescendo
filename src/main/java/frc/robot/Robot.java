@@ -35,23 +35,32 @@ public class Robot extends TimedRobot {
     boolean aButton = Xbox.getAButton();
 
     if (aButton) {
-      System.out.println("a button pressed");
+      System.out.println("a button pressed, green");
       ledsSusystem.setColor(0, 255, 0);
     }
 
     boolean bButton = Xbox.getBButton();
     if (bButton) {
+      System.out.println("b button pressed, red");
       ledsSusystem.setColor(255, 0, 0);
     }
 
     boolean xButton = Xbox.getXButton();
     if (xButton) {
+      System.out.println("x button pressed, blue");
       ledsSusystem.setColor(0, 0, 255);
     }
 
     boolean yButton = Xbox.getYButton();
     if (yButton) {
+      System.out.println("y button pressed, yellow");
       ledsSusystem.setColor(127, 127, 0);
+    }
+
+    boolean rightBumper = Xbox.getRightBumper();
+    if (rightBumper) {
+      System.out.println("rBumper pressed, no color");
+      ledsSusystem.setColor(0, 0, 0);
     }
   }
 
