@@ -5,6 +5,8 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.subsystems.LEDsSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -14,6 +16,9 @@ import edu.wpi.first.wpilibj.TimedRobot;
  */
 public class Robot extends TimedRobot {
 
+  public XboxController Xbox = new XboxController(0);
+
+  public LEDsSubsystem ledsSusystem = new LEDsSubsystem();
   public Robot() {}
 
   /**
@@ -21,7 +26,34 @@ public class Robot extends TimedRobot {
    * initialization code.
    */
   @Override
-  public void robotInit() {}
+  public void robotInit() {
+
+  }
+
+  @Override
+  public void robotPeriodic(){
+    boolean aButton = Xbox.getAButton();
+
+    if (aButton) {
+      System.out.println("a button pressed");
+      ledsSusystem.setColor(0, 255, 0);
+    }
+
+    boolean bButton = Xbox.getBButton();
+    if (bButton) {
+      ledsSusystem.setColor(255, 0, 0);
+    }
+
+    boolean xButton = Xbox.getXButton();
+    if (xButton) {
+      ledsSusystem.setColor(0, 0, 255);
+    }
+
+    boolean yButton = Xbox.getYButton();
+    if (yButton) {
+      ledsSusystem.setColor(127, 127, 0);
+    }
+  }
 
   /** This function is run once each time the robot enters autonomous mode. */
   @Override
