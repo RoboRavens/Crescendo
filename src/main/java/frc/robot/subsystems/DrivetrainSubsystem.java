@@ -57,7 +57,8 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
     L1(SdsModuleConfigurations.MK4_L1),
     L2(SdsModuleConfigurations.MK4_L2),
     L3(SdsModuleConfigurations.MK4_L3),
-    L4(SdsModuleConfigurations.MK4_L4);
+    L4(SdsModuleConfigurations.MK4_L4),
+    L2I(SdsModuleConfigurations.MK4I_L2);
 
     private final MechanicalConfiguration configuration;
 
@@ -136,7 +137,7 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
     // SmartDashboard.putNumber("GearRatio L1 drive reduction", GearRatio.L1.getConfiguration().getDriveReduction());
 
     m_frontLeftModule = new MkSwerveModuleBuilder(moduleConfig)
-      .withGearRatio(GearRatio.L1.getConfiguration())
+      .withGearRatio(GearRatio.L2I.getConfiguration())
       .withDriveMotor(MotorType.NEO, FRONT_LEFT_MODULE_DRIVE_MOTOR)
       .withSteerMotor(MotorType.NEO, FRONT_LEFT_MODULE_STEER_MOTOR)
       .withSteerEncoderPort(FRONT_LEFT_MODULE_STEER_ENCODER)
@@ -144,7 +145,7 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
       .build();
 
     m_frontRightModule = new MkSwerveModuleBuilder(moduleConfig)
-      .withGearRatio(GearRatio.L1.getConfiguration())
+      .withGearRatio(GearRatio.L2I.getConfiguration())
       .withDriveMotor(MotorType.NEO, FRONT_RIGHT_MODULE_DRIVE_MOTOR)
       .withSteerMotor(MotorType.NEO, FRONT_RIGHT_MODULE_STEER_MOTOR)
       .withSteerEncoderPort(FRONT_RIGHT_MODULE_STEER_ENCODER)
@@ -152,7 +153,7 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
       .build();
 
     m_backLeftModule = new MkSwerveModuleBuilder(moduleConfig)
-      .withGearRatio(GearRatio.L1.getConfiguration())
+      .withGearRatio(GearRatio.L2I.getConfiguration())
       .withDriveMotor(MotorType.NEO, BACK_LEFT_MODULE_DRIVE_MOTOR)
       .withSteerMotor(MotorType.NEO, BACK_LEFT_MODULE_STEER_MOTOR)
       .withSteerEncoderPort(BACK_LEFT_MODULE_STEER_ENCODER)
@@ -160,7 +161,7 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
       .build();
 
     m_backRightModule = new MkSwerveModuleBuilder(moduleConfig)
-      .withGearRatio(GearRatio.L1.getConfiguration())
+      .withGearRatio(GearRatio.L2I.getConfiguration())
       .withDriveMotor(MotorType.NEO, BACK_RIGHT_MODULE_DRIVE_MOTOR)
       .withSteerMotor(MotorType.NEO, BACK_RIGHT_MODULE_STEER_MOTOR)
       .withSteerEncoderPort(BACK_RIGHT_MODULE_STEER_ENCODER)
