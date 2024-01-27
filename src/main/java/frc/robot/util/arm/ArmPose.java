@@ -10,6 +10,8 @@ import frc.robot.Constants;
 public class ArmPose {
     private double armAngleDegrees;
     private double armAngleRadians;
+    private double wristAngleDegrees;
+    private double wristAngleRadians;
     private double armLengthToHitConstraintNativeUnits;
     private double armRotationMinimumBoundNativeUnits;
     private double armRotationMaximumBoundNativeUnits;
@@ -43,24 +45,24 @@ public class ArmPose {
     }
 
     public void calculateInstantaneousMaxArmRotation() {
-        AngularConstraintWindow window = getMaxRotationAngularConstraintWindow(wristNetExtensionInches, armAngleDegrees);
+       // AngularConstraintWindow window = getMaxRotationAngularConstraintWindow(wristNetExtensionInches, armAngleDegrees);
 
-        this.armRotationMinimumBoundDegrees = window.getLowerBound();
-        this.armRotationMinimumBoundNativeUnits = window.getLowerBound() * Constants.ARM_DEGREES_TO_ENCODER_UNITS;
-        this.armRotationMaximumBoundDegrees = window.getUpperBound();
-        this.armRotationMaximumBoundNativeUnits = window.getUpperBound() * Constants.ARM_DEGREES_TO_ENCODER_UNITS;
+       // this.armRotationMinimumBoundDegrees = window.getLowerBound();
+       // this.armRotationMinimumBoundNativeUnits = window.getLowerBound() * Constants.ARM_DEGREES_TO_ENCODER_UNITS;
+       // this.armRotationMaximumBoundDegrees = window.getUpperBound();
+       // this.armRotationMaximumBoundNativeUnits = window.getUpperBound() * Constants.ARM_DEGREES_TO_ENCODER_UNITS;
 
     }
 
 
     //alter to account for not extending but rotating or wrist
     public void calculateInstantaneousMaxWristRotation() {
-        ArmMaximumConstraint maxConstraintAtAngle = calculateMaxExtensionAtAngleDegrees(armAngleDegrees);
+       // ArmMaximumConstraint maxConstraintAtAngle = calculateMaxExtensionAtAngleDegrees(armAngleDegrees);
 
-        this.armLengthToHitConstraintInches = maxConstraintAtAngle.getArmLengthToHitConstraintInches();
-        this.armLengthToHitConstraintNativeUnits = maxConstraintAtAngle.getArmLengthToHitConstraintNativeUnits();
-        this.heightAtMaxExtensionInches = maxConstraintAtAngle.getHeightAtMaxExtensionInches();
-        this.widthAtMaxExtensionInches = maxConstraintAtAngle.getWidthAtMaxExtensionInches();
+       // this.armLengthToHitConstraintInches = maxConstraintAtAngle.getArmLengthToHitConstraintInches();
+       // this.armLengthToHitConstraintNativeUnits = maxConstraintAtAngle.getArmLengthToHitConstraintNativeUnits();
+       // this.heightAtMaxExtensionInches = maxConstraintAtAngle.getHeightAtMaxExtensionInches();
+       // this.widthAtMaxExtensionInches = maxConstraintAtAngle.getWidthAtMaxExtensionInches();
     }
     //^actual code for extension version in 2023, incomplete math for full limb movement
 
@@ -81,6 +83,11 @@ public class ArmPose {
     public void setArmAngleDegrees(double armAngleDegrees) {
         this.armAngleDegrees = armAngleDegrees;
         this.armAngleRadians = Math.toRadians(armAngleDegrees);
+    }
+
+    public void setWristAngleDegrees(double wristAngleDegrees) {
+        this.wristAngleDegrees = wristAngleDegrees;
+        this.wristAngleRadians = Math.toRadians(wristAngleDegrees);
     }
 
     public double getArmRotationMinimumBoundNativeUnits() {

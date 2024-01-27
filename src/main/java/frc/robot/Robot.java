@@ -4,6 +4,13 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 
 /**
@@ -21,7 +28,13 @@ public class Robot extends TimedRobot {
    * initialization code.
    */
   @Override
-  public void robotInit() {}
+  public void robotInit() {
+    //
+    TalonFXConfiguration talonFXConfigs = ;
+    MotionMagicConfigs motionMagicConfigs = ;
+    FeedbackConfigs feedbackConfigs = ;
+    Slot0Configs slot0Configs = ;
+  }
 
   /** This function is run once each time the robot enters autonomous mode. */
   @Override

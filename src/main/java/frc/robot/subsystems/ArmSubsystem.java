@@ -20,7 +20,6 @@ import frc.robot.util.arm.ArmPose;
 import frc.robot.util.arm.ArmSetpoint;
 
 public class ArmSubsystem extends SubsystemBase {
-  
 
   private TalonFX armRotationMotor= new TalonFX(RobotMap.ARM_ROTATION_MOTOR);
   private TalonFX wristRotationMotor = new TalonFX(RobotMap.WRIST_ROTATION_MOTOR);
@@ -47,17 +46,24 @@ public class ArmSubsystem extends SubsystemBase {
 
   public double rotationTestPower = 0;
 
+  
+  private FeedbackConfigs armMotorFeedbackConfigs = new FeedbackConfigs(RobotMap.ARM_ROTATION_MOTOR);
+  private FeedbackConfigs WristMotorFeedbackConfigs = new FeedbackConfigs(RobotMap.ARM_ROTATION_MOTOR);
+  private TalonFXConfigurator talonFXConfigurator = new TalonFXConfiguration();
+  private TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
 
   /** Creates a new ArmSubsystem. */
   public ArmSubsystem() {
 
+    armMotorFeedbackConfigs.getConfiguration().apply(new TalonFXConfiguration());
+    WristMotorFeedbackConfigs.getConfiguration().apply(new TalonFXConfiguration());
 
-   configFactoryDefault(armRotationMotor);
-   configFactoryDefault(wristRotationMotor);
+
+    armMotorFeedbackConfigs.getConfigurator().apply(Feedback);
+
 
     armRotationMotor.setInverted(true);
     wristRotationMotor.setInverted(true);
-
 
     armRotationMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
     armRotationMotor.selectProfileSlot(Constants.kSlotIdx, Constants.kPIDLoopIdx);
@@ -65,15 +71,14 @@ public class ArmSubsystem extends SubsystemBase {
     armRotationMotor.config_kP(Constants.kSlotIdx, Constants.armRotationGains.kP, Constants.kTimeoutMs);
     armRotationMotor.config_kI(Constants.kSlotIdx, Constants.armRotationGains.kI, Constants.kTimeoutMs);
     armRotationMotor.config_kD(Constants.kSlotIdx, Constants.armRotationGains.kD, Constants.kTimeoutMs);
-    wristRotationMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
+    armRotationMotor.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
 
+    wristRotationMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
     wristRotationMotor.selectProfileSlot(Constants.kSlotIdx, Constants.kPIDLoopIdx);
     wristRotationMotor.config_kF(Constants.kSlotIdx, Constants.wristRotationGains.kF, Constants.kTimeoutMs);
     wristRotationMotor.config_kP(Constants.kSlotIdx, Constants.wristRotationGains.kP, Constants.kTimeoutMs);
     wristRotationMotor.config_kI(Constants.kSlotIdx, Constants.wristRotationGains.kI, Constants.kTimeoutMs);
     wristRotationMotor.config_kD(Constants.kSlotIdx, Constants.wristRotationGains.kD, Constants.kTimeoutMs);
-    wristRotationMotor.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
-    armRotationMotor.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
     wristRotationMotor.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
 
     armRotationMotor.configForwardSoftLimitThreshold(Constants.ARM_ROTATION_MAXIMUM_ENCODER_UNITS, 0);
@@ -136,22 +141,22 @@ public class ArmSubsystem extends SubsystemBase {
     // First, figure out which way the arm is rotating by checking the difference between the target and the actual.
     // Then, find the constraint that is in the proper direction relative to the current position out of the two constraints.
     // Remember to use max instead of min when looking at bounds that are lower than the current value.
-    if (_armRotationPosition < armRotationFinalTargetNativeUnits) {
+    if (_armRotationPosition < wristRotationFinalTargetNativeUnits) {
         // The arm is moving forward.
-        armRotationFinalTargetNativeUnits = Math.min(armRotationFinalTargetNativeUnits, armPose.getWristRotationMaximumBoundNativeUnits());
+        wristRotationFinalTargetNativeUnits = Math.min(wristRotationFinalTargetNativeUnits, armPose.getWristRotationMaximumBoundNativeUnits());
     }
     else {
         // The arm is moving backward.
-        armRotationFinalTargetNativeUnits = Math.max(armRotationFinalTargetNativeUnits, armPose.getWristRotationMinimumBoundNativeUnits());
+        wristRotationFinalTargetNativeUnits = Math.max(wristRotationFinalTargetNativeUnits, armPose.getWristRotationMinimumBoundNativeUnits());
     }
 //change for wrist
     if (_armRotationPosition < armRotationFinalTargetNativeUnits) {
         // The wrist is moving forward.
-        armRotationFinalTargetNativeUnits = Math.min(armRotationFinalTargetNativeUnits, armPose.getWristRotationMaximumBoundNativeUnits());
+        wristRotationFinalTargetNativeUnits = Math.min(wristRotationFinalTargetNativeUnits, armPose.getWristRotationMaximumBoundNativeUnits());
     }
     else {
         // The wrist is moving backward.
-        armRotationFinalTargetNativeUnits = Math.max(armRotationFinalTargetNativeUnits, armPose.getWristRotationMinimumBoundNativeUnits());
+        wristRotationFinalTargetNativeUnits = Math.max(wristRotationFinalTargetNativeUnits, armPose.getWristRotationMinimumBoundNativeUnits());
     }
 }
 
@@ -250,23 +255,6 @@ public double getCommandTimeoutSeconds() {
     }
 
   }
-
-  //  
-  public void configFactoryDefault(TalonFX motor) {
-    TalonFXConfigurator configurator = motor.getConfigurator();
-
-    talonFxConfigs = new TalonFXConfiguration();
-    recordResponseCode("resetTalonFxConfigs", configurator.apply(talonFxConfigs));
-  }
-    
-  public void configsFeedback(TalonFX motor) {
-    TalonFXConfigurator configurator = motor.getConfigurator();
-
-    feedbackConfigs = new FeedbackConfigs();
-    recordResponseCode("resetFeedbackConfigs", configurator.apply(feedbackConfigs));
-  }
-  
-
 
 
   /*
