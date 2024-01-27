@@ -166,6 +166,11 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
       .withSteerEncoderPort(BACK_RIGHT_MODULE_STEER_ENCODER)
       .withSteerOffset(BACK_RIGHT_MODULE_STEER_OFFSET)
       .build();
+    
+    SmartDashboard.putNumber("FL encoder", m_frontLeftModule.getSteerEncoder().getAbsoluteAngle());
+    SmartDashboard.putNumber("FR encoder", m_frontRightModule.getSteerEncoder().getAbsoluteAngle());
+    SmartDashboard.putNumber("BL encoder", m_backLeftModule.getSteerEncoder().getAbsoluteAngle());
+    SmartDashboard.putNumber("BR encoder", m_backRightModule.getSteerEncoder().getAbsoluteAngle());
 
     double swerveDriveDelay = 0;
     double swerveRotateDelay = 0.25;

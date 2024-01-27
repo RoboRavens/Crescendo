@@ -16,9 +16,6 @@ import frc.util.Scale;
 import frc.util.Slew;
 
 public class DrivetrainDefaultCommand extends Command {
-    private PIDController _scoringRotationAlignPID = new PIDController(0.35, 0.0, 0);
-    private PIDController _yPID = new PIDController(.35, 0.0, 0);
-    private PIDController _xPID = new PIDController(.35, 0.0, 0);
 
     // Pose2d _targetPose = new Pose2d(Units.feetToMeters(2), Units.feetToMeters(2), Rotation2d.fromDegrees(-180));
 
@@ -31,7 +28,6 @@ public class DrivetrainDefaultCommand extends Command {
 
     public DrivetrainDefaultCommand() {
         addRequirements(Robot.DRIVETRAIN_SUBSYSTEM);
-        _scoringRotationAlignPID.enableContinuousInput(-Math.PI, Math.PI);
     }
 
     @Override
@@ -47,7 +43,7 @@ public class DrivetrainDefaultCommand extends Command {
         double y = Robot.XBOX_CONTROLLER.getLeftX() * controllerDirection;
         double r = Robot.XBOX_CONTROLLER.getRightX() * -1;
         Rotation2d a = Robot.DRIVETRAIN_SUBSYSTEM.getOdometryRotation(); // The angle of the robot as measured by a gyroscope. The robot's angle is considered to be zero when it is facing directly away from your alliance station wall.
-
+    
         x = Deadband.adjustValueToZero(x, Constants.JOYSTICK_DEADBAND);
         y = Deadband.adjustValueToZero(y, Constants.JOYSTICK_DEADBAND);
         r = Deadband.adjustValueToZero(r, Constants.JOYSTICK_DEADBAND);
