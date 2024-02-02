@@ -16,7 +16,7 @@ public class RobotMap {
     public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 11; // Updated
     public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 24; // Updated
  
-    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = Math.toRadians(86);
+    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = Math.toRadians(215);
 
     public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 10; // Updated
     public static final int BACK_LEFT_MODULE_STEER_MOTOR = 14; // Updated
