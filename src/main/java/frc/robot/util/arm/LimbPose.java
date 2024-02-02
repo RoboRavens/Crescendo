@@ -7,7 +7,7 @@ package frc.robot.util.arm;
 import frc.robot.Constants;
 
 /** Add your docs here. */
-public class ArmPose {
+public class LimbPose {
     private double armAngleDegrees;
     private double armAngleRadians;
     private double wristAngleDegrees;
@@ -32,7 +32,7 @@ public class ArmPose {
     private double widthAtMaxExtensionInches;
 
 
-    public ArmPose(double startingDegress) {
+    public LimbPose(double startingDegress) {
         this.setArmAngleDegrees(startingDegress);
         this.setWristAngleDegrees(startingDegress);
     }
@@ -72,9 +72,11 @@ public class ArmPose {
 
     public double getArmRotationNativeUnits() {
         return armAngleDegrees * Constants.ARM_DEGREES_TO_ENCODER_UNITS;
+    }
+    public double getWristRotationNativeUnits() {
+        return wristAngleDegrees * Constants.WRIST_DEGREES_TO_ENCODER_UNITS;
 
     }
-
     public void setArmAngleRadians(double armAngleRadians) {
         this.armAngleRadians = armAngleRadians;
         this.armAngleDegrees = Math.toDegrees(armAngleRadians);

@@ -12,6 +12,8 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import frc.robot.commands.arm.ArmDefaultCommand;
+import frc.robot.subsystems.LimbSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -20,6 +22,13 @@ import edu.wpi.first.wpilibj.TimedRobot;
  * directory.
  */
 public class Robot extends TimedRobot {
+
+  public static boolean ARM_ROTATION_MANUAL_OVERRIDE = false;
+  public static boolean WRIST_ROTATION_MANUAL_OVERRIDE = false;
+
+  public static final ArmDefaultCommand armDefaultCommand = new ArmDefaultCommand();
+
+  public static final LimbSubsystem LIMB_SUBSYSTEM = new LimbSubsystem();
 
   public Robot() {}
 
@@ -30,10 +39,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     //
-    TalonFXConfiguration talonFXConfigs = ;
-    MotionMagicConfigs motionMagicConfigs = ;
-    FeedbackConfigs feedbackConfigs = ;
-    Slot0Configs slot0Configs = ;
+    LIMB_SUBSYSTEM.setDefaultCommand(armDefaultCommand);
   }
 
   /** This function is run once each time the robot enters autonomous mode. */
