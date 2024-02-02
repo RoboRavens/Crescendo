@@ -8,19 +8,16 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class LEDsSubsystem extends SubsystemBase {
+public class LEDsSubsystem2 extends SubsystemBase {
   private AddressableLED m_led;
   private AddressableLEDBuffer m_ledBuffer;
-
+  private double inputAngle = 0;
   public void setInputAngle(double inputAngle) {
-    for (var i = 0; i < m_ledBuffer.getLength(); i++) {
-      m_ledBuffer.setHSV(i, (int)inputAngle/2, 255, 255);
-      
-    }
-    m_led.setData(m_ledBuffer);
+    this.inputAngle = inputAngle;
 }
-  /** Creates a new LEDsSubsystem. */
-  public LEDsSubsystem() {
+
+/** Creates a new LEDsSubsystem. */
+  public LEDsSubsystem2() {
     m_led = new AddressableLED(9);
     
     m_ledBuffer = new AddressableLEDBuffer(117);
@@ -31,26 +28,16 @@ public class LEDsSubsystem extends SubsystemBase {
 
     for (var i = 0; i < m_ledBuffer.getLength(); i++) {
 
-      m_ledBuffer.setRGB(i, 0, 0, 0);
+      
    }
    
    m_led.setData(m_ledBuffer);
    
   }
   
-  public void setColor(int r, int g, int b) {
-     
-    for (var i = 0; i < m_ledBuffer.getLength(); i++) {
-
-     m_ledBuffer.setRGB(i, r, g, b);
-   }
-    m_led.setData(m_ledBuffer);
-  }
-
   @Override
   public void periodic() {
-    System.out.println("hi");
-
-    // This method will be called once per scheduler run
+    m_ledBuffer.setHSV(0, (int)inputAngle/2, 100, 100);
+    m_led.setData(m_ledBuffer);
   }
 }
