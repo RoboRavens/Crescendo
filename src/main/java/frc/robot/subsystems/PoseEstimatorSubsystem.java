@@ -84,6 +84,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         _field.setRobotPose(pose);
         SmartDashboard.putNumber("PoseEstimator X", pose.getX());
         SmartDashboard.putNumber("PoseEstimator Y", pose.getY());
+        SmartDashboard.putNumber("PoseEstimator Rotation (Degrees)", pose.getRotation().getDegrees());
     }
 
     private static Matrix<N3, N1> GetVisionStdDevs(double ta) {

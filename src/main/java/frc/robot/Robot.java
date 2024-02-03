@@ -4,16 +4,26 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.PathPlannerTrajectory;
+
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
+import frc.robot.subsystems.AutoChooserSubsystemReact;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.PoseEstimatorSubsystem;
+import frc.robot.subsystems.ReactDashSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -32,13 +42,17 @@ public class Robot extends TimedRobot {
   public static final XboxController XBOX_CONTROLLER = new XboxController(0);
   public static DriverStation.Alliance allianceColor = Alliance.Blue;
   public static final DrivetrainDefaultCommand DRIVETRAIN_DEFAULT_COMMAND = new DrivetrainDefaultCommand();
+  public static final PathPlannerPath exampleChoreoTraj = PathPlannerPath.fromChoreoTrajectory("TestPath");
+  public static final ReactDashSubsystem REACT_DASH_SUBSYSTEM = new ReactDashSubsystem();
+  public static final AutoChooserSubsystemReact AUTO_CHOOSER = new AutoChooserSubsystemReact();
 
   public Robot() {}
 
   @Override
   public void robotPeriodic() {
-    allianceColor = DriverStation.getAlliance().get();
+    SmartDashboard.putString("Alliance Color", allianceColor.name());
     CommandScheduler.getInstance().run();
+    setDriverStationData();
   }
 
   /**
@@ -48,11 +62,28 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     DRIVETRAIN_SUBSYSTEM.setDefaultCommand(DRIVETRAIN_DEFAULT_COMMAND);
+    new Trigger(() -> XBOX_CONTROLLER.getLeftBumper()
+      && (XBOX_CONTROLLER.getRightBumper())
+      && (XBOX_CONTROLLER.getYButton()))
+      .onTrue(new InstantCommand(() -> DRIVETRAIN_SUBSYSTEM.zeroGyroscope()));
+    AUTO_CHOOSER.ShowTab();
   }
 
   /** This function is run once each time the robot enters autonomous mode. */
   @Override
-  public void autonomousInit() {}
+  public void autonomousInit() {
+    setDriverStationData();
+    PathPlannerTrajectory traj = exampleChoreoTraj.getTrajectory(new ChassisSpeeds(0, 0, 0), new Rotation2d(0, 0));
+    DRIVETRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(traj).andThen(AutoBuilder.followPath(exampleChoreoTraj)).schedule();
+    
+    // m_autonomousCommand = AUTO_CHOOSER.GetAutoCommand();
+    // // m_autonomousCommand = ScoreTwoLoadAndBalanceBlueCommand.getAutoMode().getAutoCommand();
+
+    // // schedule the autonomous command (example)
+    // if (m_autonomousCommand != null) {
+    //   m_autonomousCommand.schedule();
+    // }
+  }
 
   /** This function is called periodically during autonomous. */
   @Override
@@ -60,7 +91,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called once each time the robot enters teleoperated mode. */
   @Override
-  public void teleopInit() {}
+  public void teleopInit() {
+    setDriverStationData();
+  }
 
   /** This function is called periodically during teleoperated mode. */
   @Override
@@ -73,4 +106,12 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {}
+  
+  // Due to the manner in which the robot connects to the driver station,
+  // which differs between the shop and match play,
+  // this method needs to called both periodically AND in the auto/tele init methods.
+  private void setDriverStationData() {
+    allianceColor = DriverStation.getAlliance().get();
+    AUTO_CHOOSER.BuildAutoChooser(allianceColor);
+  }
 }

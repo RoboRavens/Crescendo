@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import com.pathplanner.lib.path.PathPlannerTrajectory;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -13,7 +15,7 @@ public abstract class DrivetrainSubsystemBase extends SubsystemBase {
     public abstract void holdPosition();
     public abstract void zeroGyroscope();
     // public abstract TrajectoryConfig GetTrajectoryConfig();
-    // public abstract Command CreateSetOdometryToTrajectoryInitialPositionCommand(Trajectory trajectory);
+    public abstract Command CreateSetOdometryToTrajectoryInitialPositionCommand(PathPlannerTrajectory trajectory);
     // public abstract Command CreateFollowTrajectoryCommand(Trajectory trajectory);
     // public abstract Command CreateFollowTrajectoryCommandSwerveOptimized(Trajectory trajectory);
     // public abstract Command getMarkPositionCommand();

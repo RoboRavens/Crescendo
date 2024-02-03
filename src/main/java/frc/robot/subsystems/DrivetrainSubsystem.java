@@ -5,6 +5,11 @@
 package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathPlannerTrajectory;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
 import com.swervedrivespecialties.swervelib.MechanicalConfiguration;
 import com.swervedrivespecialties.swervelib.MkModuleConfiguration;
 // import com.swervedrivespecialties.swervelib.Mk4SwerveModuleBuilder;
@@ -38,6 +43,7 @@ import frc.robot.Robot;
 // import frc.robot.shuffleboard.DrivetrainDiagnosticsShuffleboard;
 import frc.util.Deadband;
 import frc.util.SwerveModuleConverter;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -205,6 +211,37 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
     // _driveCharacteristics = new DriveCharacteristics();
 
     SmartDashboard.putData("HardwareOdometry Field", _field2d);
+
+    // Configure AutoBuilder last
+    AutoBuilder.configureHolonomic(
+      this::getPose, // Robot pose supplier
+      this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
+      this::getSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+      this::drive, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+      new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+              new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+              new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
+              0.4, // Max module speed, in m/s
+              0.4, // Drive base radius in meters. Distance from robot center to furthest module.
+              new ReplanningConfig() // Default path replanning config. See the API for the options here
+      ),
+      () -> {
+        // Boolean supplier that controls when the path will be mirrored for the red alliance
+        // This will flip the path being followed to the red side of the field.
+        // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+        var alliance = DriverStation.getAlliance();
+        if (alliance.isPresent()) {
+          return alliance.get() == DriverStation.Alliance.Red;
+        }
+        return false;
+      },
+      this // Reference to this subsystem to set requirements
+    );
+  }
+
+  public ChassisSpeeds getSpeeds() {
+    return m_kinematics.toChassisSpeeds(_moduleStates);
   }
 
   /**
@@ -286,6 +323,10 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
   public void periodic() {
     SwerveModuleState[] states = _moduleStates; // states and _modulestates still point to the same data
     SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
+
+    SmartDashboard.putNumber("Odometry Pose X", getPose().getX());
+    SmartDashboard.putNumber("Odometry Pose Y", getPose().getY());
+    SmartDashboard.putNumber("Odometry Pose Rotation (Degrees)", getPose().getRotation().getDegrees());
 
     /*_odometryFromKinematics.update(this.getGyroscopeRotation(), new SwerveModulePosition[] {
       m_frontLeftModule.getPosition(),
@@ -478,10 +519,16 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
   //   return config;
   // }
 
-  // @Override
-  // public Command CreateSetOdometryToTrajectoryInitialPositionCommand(Trajectory trajectory) {
-  //   return new InstantCommand(() -> this.resetOdometry(trajectory.getInitialPose()));
-  // }
+  @Override
+  public Command CreateSetOdometryToTrajectoryInitialPositionCommand(PathPlannerTrajectory trajectory) {
+    SmartDashboard.putNumber("Auto Start Holonomic Pose X", trajectory.getInitialState().getTargetHolonomicPose().getX());
+    SmartDashboard.putNumber("Auto Start Holonomic Pose Y", trajectory.getInitialState().getTargetHolonomicPose().getY());
+    SmartDashboard.putNumber("Auto Start Holonomic Pose Rotation (Degrees)", trajectory.getInitialState().getTargetHolonomicPose().getRotation().getDegrees());
+    SmartDashboard.putNumber("Auto End Holonomic Pose X", trajectory.getEndState().getTargetHolonomicPose().getX());
+    SmartDashboard.putNumber("Auto End Holonomic Pose Y", trajectory.getEndState().getTargetHolonomicPose().getY());
+    SmartDashboard.putNumber("Auto End Holonomic Pose Rotation (Degrees)", trajectory.getEndState().getTargetHolonomicPose().getRotation().getDegrees());
+    return new InstantCommand(() -> this.resetOdometry(trajectory.getInitialState().getTargetHolonomicPose()));    
+  }
 
   // @Override
   // public Command CreateFollowTrajectoryCommand(Trajectory trajectory) {
