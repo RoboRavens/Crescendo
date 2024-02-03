@@ -7,11 +7,13 @@ package frc.robot.commands.arm;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 
-public class ArmHumanIntakeCommand extends SequentialCommandGroup {
-  /** Creates a new ArmHumanIntakeCommand. */
-  public ArmHumanIntakeCommand() {
+public class LimbTrapScoringCommand extends SequentialCommandGroup {
+  /** Creates a new ArmTrapScoringCommand. */
+  public LimbTrapScoringCommand() {
             addCommands(
-      new ArmGoToSetpointCommand(Constants.ARM_HUMAN_INTAKE_COMMAND_SETPOINT).withTimeout(2));
+      new WristGoToSetpointCommand(Constants.WRIST_TRAP_SCORING_COMMAND_SETPOINT),
+      new ElbowGoToSetpointCommand(Constants.ELBOW_TRAP_SCORING_COMMAND_SETPOINT)
+    );
     // Use addRequirements() here to declare subsystem dependencies.
   }
 

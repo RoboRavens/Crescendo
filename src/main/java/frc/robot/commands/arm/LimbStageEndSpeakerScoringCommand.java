@@ -7,11 +7,13 @@ package frc.robot.commands.arm;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 
-public class ArmAmpScoringCommand extends SequentialCommandGroup {
-  /** Creates a new ArmAmpScoringCommand. */
-  public ArmAmpScoringCommand() {
+public class LimbStageEndSpeakerScoringCommand extends SequentialCommandGroup {
+  /** Creates a new LimbStageEndSpeakerScoringCommand. */
+  public LimbStageEndSpeakerScoringCommand() {
                 addCommands(
-      new ArmGoToSetpointCommand(Constants.ARM_AMP_SCORING_COMMAND_SETPOINT).withTimeout(2));
+      new WristGoToSetpointCommand(Constants.WRIST_STAGE_END_SPEAKER_SCORING_COMMAND_SETPOINT),
+      new ElbowGoToSetpointCommand(Constants.ELBOW_STAGE_END_SPEAKER_SCORING_COMMAND_SETPOINT)
+    );
     // Use addRequirements() here to declare subsystem dependencies.
   }
 }

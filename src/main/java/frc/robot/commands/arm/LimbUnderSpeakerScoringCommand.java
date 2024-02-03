@@ -7,11 +7,13 @@ package frc.robot.commands.arm;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 
-public class ArmSpeakerScoringCommand extends SequentialCommandGroup {
+public class LimbUnderSpeakerScoringCommand extends SequentialCommandGroup {
   /** Creates a new ArmSpeakerScoringCommand. */
-  public ArmSpeakerScoringCommand() {
+  public LimbUnderSpeakerScoringCommand() {
                 addCommands(
-      new ArmGoToSetpointCommand(Constants.ARM_SPEAKER_SCORING_COMMAND_SETPOINT).withTimeout(2));
+      new WristGoToSetpointCommand(Constants.WRIST_UNDER_SPEAKER_SCORING_COMMAND_SETPOINT),
+      new ElbowGoToSetpointCommand(Constants.ELBOW_UNDER_SPEAKER_SCORING_COMMAND_SETPOINT)
+    );
       //alter timeout accordingly
   }
 }

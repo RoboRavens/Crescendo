@@ -24,27 +24,18 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.util.arm.LimbPose;
-import frc.robot.util.arm.ArmSetpoint;
+import frc.robot.util.arm.LimbSetpoint;
 
-public class LimbSubsystem extends SubsystemBase {
+public class WristSubsystem extends SubsystemBase {
 
-  private TalonFX armRotationMotor= new TalonFX(RobotMap.ARM_ROTATION_MOTOR);
   private TalonFX wristRotationMotor = new TalonFX(RobotMap.WRIST_ROTATION_MOTOR);
 
   private PIDController pidController;
   CommandXboxController _controller;
 
-  private double _armRotationPosition;
-  //private double _armRotationVelocity;
-  //private double _armRotationAcceleration;
-
   private double _wristRotationPosition;
 
-  private LimbPose limbPose = new LimbPose(Constants.ARM_STARTING_DEGREES);
-
-  private double armRotationSubSetpointFinalTargetNativeUnits = 0;
-  private double armRotationFinalTargetNativeUnits = 0;
-  private double armRotationInstantaneousTargetNativeUnits = 0;
+  private LimbPose limbPose = new LimbPose(Constants.WRIST_STARTING_DEGREES);
 
   private double wristRotationSubSetpointFinalTargetNativeUnits = 0;
   private double wristRotationFinalTargetNativeUnits = 0;
@@ -65,25 +56,10 @@ public class LimbSubsystem extends SubsystemBase {
 
 
   /** Creates a new ArmSubsystem. */
-  public LimbSubsystem() {
-
-    armRotationMotor.getConfigurator().apply(talonFXConfiguration.MotionMagic);
-    armRotationMotor.setInverted(true);
-    //which feedback sensor
-    //?
-    armRotationMotor.getConfigurator().apply(feedback.withSensorToMechanismRatio(Constants.SENSOR_TO_MECHANISM_RATIO_ARM_MOTOR));
-    armRotationMotor.getConfigurator().apply(Slot0Configs
-          .withKD(Constants.armRotationGains.kD)
-          .withKI(Constants.armRotationGains.kI)
-          .withKP(Constants.armRotationGains.kP)
-          .withKG(Constants.armRotationGains.kF));
-    armRotationMotor.getConfigurator().setPosition(0);
+  public WristSubsystem() {
 
     wristRotationMotor.getConfigurator().apply(talonFXConfiguration.MotionMagic);
     wristRotationMotor.setInverted(true);
-    //which feedback sensor
-    //?
-    wristRotationMotor.getConfigurator().apply(feedback.withSensorToMechanismRatio(Constants.SENSOR_TO_MECHANISM_RATIO_WRIST_MOTOR));
     wristRotationMotor.getConfigurator().apply(Slot0Configs
           .withKD(Constants.wristRotationGains.kD)
           .withKI(Constants.wristRotationGains.kI)
@@ -93,63 +69,25 @@ public class LimbSubsystem extends SubsystemBase {
 
    // armRotationMotor.selectProfileSlot(Constants.kSlotIdx, Constants.kPIDLoopIdx);
    // wristRotationMotor.selectProfileSlot(Constants.kSlotIdx, Constants.kPIDLoopIdx);
-    armRotationMotor.getConfigurator().apply(softwareLimitSwitch.withForwardSoftLimitEnable(true));
-    armRotationMotor.getConfigurator().apply(softwareLimitSwitch.withReverseSoftLimitEnable(true));
-    armRotationMotor.getConfigurator().apply(softwareLimitSwitch.withReverseSoftLimitThreshold(Constants.ARM_ROTATION_MAXIMUM_ENCODER_UNITS));
-    armRotationMotor.getConfigurator().apply(softwareLimitSwitch.withForwardSoftLimitThreshold(Constants.ARM_ROTATION_MAXIMUM_ENCODER_UNITS));
 
     wristRotationMotor.getConfigurator().apply(softwareLimitSwitch.withForwardSoftLimitEnable(true));
     wristRotationMotor.getConfigurator().apply(softwareLimitSwitch.withReverseSoftLimitEnable(true));
-    wristRotationMotor.getConfigurator().apply(softwareLimitSwitch.withReverseSoftLimitThreshold(Constants.WRIST_ROTATION_MAXIMUM_ENCODER_UNITS));
+    wristRotationMotor.getConfigurator().apply(softwareLimitSwitch.withReverseSoftLimitThreshold(Constants.WRIST_ROTATION_MINIMUM_ENCODER_UNITS));
     wristRotationMotor.getConfigurator().apply(softwareLimitSwitch.withForwardSoftLimitThreshold(Constants.WRIST_ROTATION_MAXIMUM_ENCODER_UNITS));
   }
 
-  public void enableArmRotationLimit(boolean ignoreRotationLimit) {
-    armRotationMotor.getConfigurator().apply(softwareLimitSwitch.withForwardSoftLimitEnable(ignoreRotationLimit));
-    armRotationMotor.getConfigurator().apply(softwareLimitSwitch.withReverseSoftLimitEnable(ignoreRotationLimit));
-  }
   public void enableWristRotationLimit(boolean ignoreRotationLimit) {
     wristRotationMotor.getConfigurator().apply(softwareLimitSwitch.withForwardSoftLimitEnable(ignoreRotationLimit));
     wristRotationMotor.getConfigurator().apply(softwareLimitSwitch.withReverseSoftLimitEnable(ignoreRotationLimit));
   }
-
-  public void setFinalArmRotationSetpoint(double setpoint) {
-    armRotationFinalTargetNativeUnits = setpoint;
-  }
     public void setFinalWristRotationSetpoint(double setpoint) {
     wristRotationFinalTargetNativeUnits = setpoint;
   }
-
-  public void setFinalTargetPositions(ArmSetpoint finalSetpoint, ArmSetpoint currentSetpoint) {
-    armRotationFinalTargetNativeUnits = finalSetpoint.getArmRotationSetpoint();
-    wristRotationFinalTargetNativeUnits = finalSetpoint.getWristRotationSetpoint();
-    armRotationSubSetpointFinalTargetNativeUnits = currentSetpoint.getArmRotationSetpoint();
-    wristRotationSubSetpointFinalTargetNativeUnits = currentSetpoint.getWristRotationSetpoint();
+  
+  public void setFinalTargetPositions(LimbSetpoint finalSetpoint, LimbSetpoint currentSetpoint) {
+    wristRotationFinalTargetNativeUnits = finalSetpoint.getRotationSetpoint();
+    wristRotationSubSetpointFinalTargetNativeUnits = currentSetpoint.getRotationSetpoint();
   }
-
-  public void updateArmFinalTargetPositions() {
-    // Rotation is slightly trickier since it has constraints in either direction.
-    // First, figure out which way the arm is rotating by checking the difference between the target and the actual.
-    // Then, find the constraint that is in the proper direction relative to the current position out of the two constraints.
-    // Remember to use max instead of min when looking at bounds that are lower than the current value.
-    if (_armRotationPosition < armRotationFinalTargetNativeUnits) {
-        // The arm is moving forward.
-        armRotationFinalTargetNativeUnits = Math.min(armRotationFinalTargetNativeUnits, limbPose.getArmRotationMaximumBoundNativeUnits());
-    }
-    else {
-        // The arm is moving backward.
-        armRotationFinalTargetNativeUnits = Math.max(armRotationFinalTargetNativeUnits, limbPose.getArmRotationMinimumBoundNativeUnits());
-    }
-//change for wrist
-    if (_armRotationPosition < armRotationFinalTargetNativeUnits) {
-        // The wrist is moving forward.
-        armRotationFinalTargetNativeUnits = Math.min(armRotationFinalTargetNativeUnits, limbPose.getArmRotationMaximumBoundNativeUnits());
-    }
-    else {
-        // The wrist is moving backward.
-        armRotationFinalTargetNativeUnits = Math.max(armRotationFinalTargetNativeUnits, limbPose.getArmRotationMinimumBoundNativeUnits());
-    }
-}
 
   public void updateWristFinalTargetPositions() {
     // Rotation is slightly trickier since it has constraints in either direction.
@@ -174,13 +112,6 @@ public class LimbSubsystem extends SubsystemBase {
         wristRotationFinalTargetNativeUnits = Math.max(wristRotationFinalTargetNativeUnits, limbPose.getWristRotationMinimumBoundNativeUnits());
     }
 }
-
-public void setArmRotationPosition(double setpoint, double armRotationVelocity, double armRotationAcceleration) {
-  armRotationMotor.getConfigurator().apply(motionMagicConfigs
-        .withMotionMagicCruiseVelocity(armRotationVelocity)
-        .withMotionMagicAcceleration(armRotationAcceleration));
-  armRotationMotor.setControl(motionMagicVoltage.withPosition(setpoint));
-} 
 public void setWristRotationPosition(double setpoint, double wristRotationVelocity, double wristRotationAcceleration) {
   wristRotationMotor.getConfigurator().apply(motionMagicConfigs
         .withMotionMagicCruiseVelocity(wristRotationVelocity)
@@ -192,29 +123,10 @@ public void setWristRotationPosition(double setpoint, double wristRotationVeloci
 public void stopWristRotation() {
   wristRotationMotor.stopMotor();
 }
-public void stopArmRotation() {
-  armRotationMotor.stopMotor();
-}
-
 //
 public void armFullStop() {
-  stopArmRotation();
   stopWristRotation();
 }
-
-//?
-public void armMotionMagic() {
-  pidController = new PIDController(Constants.armRotationGains.kP, Constants.armRotationGains.kI, Constants.armRotationGains.kD);
-  pidController.setSetpoint(8);
-  pidController.setP(0.0);
-  pidController.getPositionError();
-  pidController.getPositionTolerance();
-  pidController.getSetpoint();
-  pidController.getP();
-  pidController.getI();
-  pidController.getD();
-}
-
 //?
 public void wristMotionMagic() {
   pidController = new PIDController(Constants.wristRotationGains.kP, Constants.wristRotationGains.kI, Constants.wristRotationGains.kD);
@@ -229,14 +141,9 @@ public void wristMotionMagic() {
 }
 
 public double getCommandTimeoutSeconds() {
-  double armRotationDifference = Math.abs(armRotationMotor.getPosition().getValueAsDouble() - armRotationFinalTargetNativeUnits);
   double wristRotationDifference = Math.abs(wristRotationMotor.getPosition().getValueAsDouble() - wristRotationFinalTargetNativeUnits);
-
-
   double wristRotationTime = wristRotationDifference / Constants.WRIST_ROTATION_TIMEOUT_ENCODER_TICKS_PER_SECOND;
-  double armRotationTime = armRotationDifference / Constants.ARM_ROTATION_TIMEOUT_ENCODER_TICKS_PER_SECOND;
-  
-  return Math.max(wristRotationTime, armRotationTime) + Constants.ARM_TIMEOUT_BASE_VALUE;
+  return wristRotationTime + Constants.WRIST_TIMEOUT_BASE_VALUE;
 }
 
 
@@ -257,16 +164,6 @@ public double getCommandTimeoutSeconds() {
   }
 
   private void updateInstantaneousMaximums() {
-
-    // Update based on which direction the arm is moving.
-    //arm
-    if (limbPose.getArmRotationNativeUnits() < this.armRotationFinalTargetNativeUnits) {
-        armRotationInstantaneousTargetNativeUnits = Math.min(limbPose.getArmRotationMaximumBoundNativeUnits(), armRotationFinalTargetNativeUnits);
-    }
-    else {
-        armRotationInstantaneousTargetNativeUnits = Math.max(limbPose.getArmRotationMinimumBoundNativeUnits(), armRotationFinalTargetNativeUnits);
-    }
-
     //wrist
     if (limbPose.getWristRotationNativeUnits() < this.wristRotationFinalTargetNativeUnits) {
         wristRotationFinalTargetNativeUnits = Math.min(limbPose.getWristRotationMaximumBoundNativeUnits(), wristRotationFinalTargetNativeUnits);
@@ -276,60 +173,26 @@ public double getCommandTimeoutSeconds() {
     }
 
   }
-
-  //add wrist??
-    public double getArmCurrentAngleDegrees() {
-    return armRotationMotor.getPosition().getValueAsDouble() / Constants.ARM_DEGREES_TO_ENCODER_UNITS;
-  }
-  public double getArmCurrentRotationNativeUnits() {
-    return armRotationMotor.getPosition().getValueAsDouble();
-  }
-
       public double getWristCurrentAngleDegrees() {
-    return wristRotationMotor.getPosition().getValueAsDouble() / Constants.ARM_DEGREES_TO_ENCODER_UNITS;
+    return wristRotationMotor.getPosition().getValueAsDouble() / Constants.ELBOW_DEGREES_TO_ENCODER_UNITS;
   }
   public double getWristCurrentRotationNativeUnits() {
     return wristRotationMotor.getPosition().getValueAsDouble();
   }
-
-  public void increaseArmRotationTargetManually() {
-        armRotationFinalTargetNativeUnits -= Constants.ARM_ROTATION_MANUAL_NATIVE_UNITS_PER_TICK;
-  }
-  public void decreaseArmRotationTargetManually() {
-        armRotationFinalTargetNativeUnits += Constants.ARM_ROTATION_MANUAL_NATIVE_UNITS_PER_TICK;
-  }
-  public void increaseWristRotationTargetManually() {
-        armRotationFinalTargetNativeUnits -= Constants.WRIST_ROTATION_MANUAL_NATIVE_UNITS_PER_TICK;
-  }
-  public void decreaseWristRotationTargetManually() {
-        armRotationFinalTargetNativeUnits += Constants.WRIST_ROTATION_MANUAL_NATIVE_UNITS_PER_TICK;
-  }
-
   public double getPositionFromAngle(double intendedAngle) {
     double position = (intendedAngle/360) * Constants.COUNTS_PER_REVOLUTION;
       return position;
   }
-
-  public double getArmRotationFinalTargetNativeUnits() {
-    return this.armRotationFinalTargetNativeUnits;
-  }
-  public double getArmRotationInstantaneousTargetNativeUnits() {
-    return armRotationInstantaneousTargetNativeUnits;
-  }
-  public void setArmRotationVoltage(double voltage) {
-    armRotationMotor.setVoltage(voltage);
-  }
-
   public double getWristRotationFinalTargetNativeUnits() {
-    return this.armRotationFinalTargetNativeUnits;
+    return this.wristRotationFinalTargetNativeUnits;
+  }
+  public void setWristRotationVoltage(double voltage) {
+    wristRotationMotor.setVoltage(voltage);
   }
 
-  public double getWristRotationInstantaneousTargetNativeUnits() {
-    return armRotationInstantaneousTargetNativeUnits;
-  }
-    public void setWristRotationVoltage(double voltage) {
-    armRotationMotor.setVoltage(voltage);
-  }
+public void setRotationVoltage(double voltage) {
+    wristRotationMotor.setVoltage(voltage);
+}
 
   /*
   public void updateAFFs() {

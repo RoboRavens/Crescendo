@@ -7,14 +7,14 @@ package frc.robot.commands.arm;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.Robot;
-import frc.robot.subsystems.LimbSubsystem;
+import frc.robot.subsystems.WristSubsystem;
 
 public class WristRotateManuallyCommand extends Command {
-  private LimbSubsystem arm = Robot.LIMB_SUBSYSTEM;
+  private WristSubsystem wrist = Robot.WRIST_SUBSYSTEM;
   private double voltage = Constants.WRIST_MANUAL_ROTATION_VOLTAGE;
   /** Creates a new WristRotateManuallyCommand. */
   public WristRotateManuallyCommand(boolean forward) {
-    addRequirements(arm);
+    addRequirements(wrist);
     if (forward == false) {
       voltage *= -1;
     }
@@ -23,11 +23,14 @@ public class WristRotateManuallyCommand extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    wrist.setRotationVoltage(voltage);
+  }
 
   // Called once the command ends or is interrupted.
   @Override

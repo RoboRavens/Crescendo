@@ -8,13 +8,13 @@ import frc.robot.Constants;
 
 /** Add your docs here. */
 public class LimbPose {
-    private double armAngleDegrees;
-    private double armAngleRadians;
+    private double elbowAngleDegrees;
+    private double elbowAngleRadians;
     private double wristAngleDegrees;
     private double wristAngleRadians;
     private double armLengthToHitConstraintNativeUnits;
-    private double armRotationMinimumBoundNativeUnits;
-    private double armRotationMaximumBoundNativeUnits;
+    private double elbowRotationMinimumBoundNativeUnits;
+    private double elbowRotationMaximumBoundNativeUnits;
     private double wristRotationMinimumBoundNativeUnits;
     private double wristRotationMaximumBoundNativeUnits;
 
@@ -33,18 +33,18 @@ public class LimbPose {
 
 
     public LimbPose(double startingDegress) {
-        this.setArmAngleDegrees(startingDegress);
+        this.setElbowAngleDegrees(startingDegress);
         this.setWristAngleDegrees(startingDegress);
     }
 
 
     //calculating arm position making sure to keep it within the robots legal bounds (code from extension arm in Charged up, change to account for wrist)
     public void calculateInstantaneousMaximums() {
-        calculateInstantaneousMaxArmRotation();
+        calculateInstantaneousMaxElbowRotation();
         calculateInstantaneousMaxWristRotation();
     }
 
-    public void calculateInstantaneousMaxArmRotation() {
+    public void calculateInstantaneousMaxElbowRotation() {
        // AngularConstraintWindow window = getMaxRotationAngularConstraintWindow(wristNetExtensionInches, armAngleDegrees);
 
        // this.armRotationMinimumBoundDegrees = window.getLowerBound();
@@ -66,25 +66,25 @@ public class LimbPose {
     }
     //^actual code for extension version in 2023, incomplete math for full limb movement
 
-    public double getArmAngleRadians() {
-        return armAngleRadians;
+    public double getElbowAngleRadians() {
+        return elbowAngleRadians;
     }
 
-    public double getArmRotationNativeUnits() {
-        return armAngleDegrees * Constants.ARM_DEGREES_TO_ENCODER_UNITS;
+    public double getElbowRotationNativeUnits() {
+        return elbowAngleDegrees * Constants.ELBOW_DEGREES_TO_ENCODER_UNITS;
     }
     public double getWristRotationNativeUnits() {
         return wristAngleDegrees * Constants.WRIST_DEGREES_TO_ENCODER_UNITS;
 
     }
-    public void setArmAngleRadians(double armAngleRadians) {
-        this.armAngleRadians = armAngleRadians;
-        this.armAngleDegrees = Math.toDegrees(armAngleRadians);
+    public void setElbowAngleRadians(double armAngleRadians) {
+        this.elbowAngleRadians = armAngleRadians;
+        this.elbowAngleDegrees = Math.toDegrees(armAngleRadians);
     }
 
-    public void setArmAngleDegrees(double armAngleDegrees) {
-        this.armAngleDegrees = armAngleDegrees;
-        this.armAngleRadians = Math.toRadians(armAngleDegrees);
+    public void setElbowAngleDegrees(double armAngleDegrees) {
+        this.elbowAngleDegrees = armAngleDegrees;
+        this.elbowAngleRadians = Math.toRadians(armAngleDegrees);
     }
 
     public void setWristAngleDegrees(double wristAngleDegrees) {
@@ -92,12 +92,12 @@ public class LimbPose {
         this.wristAngleRadians = Math.toRadians(wristAngleDegrees);
     }
 
-    public double getArmRotationMinimumBoundNativeUnits() {
-        return armRotationMinimumBoundNativeUnits;
+    public double getElbowRotationMinimumBoundNativeUnits() {
+        return elbowRotationMinimumBoundNativeUnits;
     }
 
-    public double getArmRotationMaximumBoundNativeUnits() {
-        return armRotationMaximumBoundNativeUnits;
+    public double getElbowRotationMaximumBoundNativeUnits() {
+        return elbowRotationMaximumBoundNativeUnits;
     }
 
     public double getWristRotationMaximumBoundNativeUnits() {

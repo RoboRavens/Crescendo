@@ -7,14 +7,14 @@ package frc.robot.commands.arm;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.Robot;
-import frc.robot.subsystems.LimbSubsystem;
+import frc.robot.subsystems.ElbowSubsystem;
 
-public class ArmDefaultCommand extends Command {
 
-    private LimbSubsystem arm = Robot.LIMB_SUBSYSTEM;
-  /** Creates a new ArmDefaultCommand. */
-  public ArmDefaultCommand() {
-    addRequirements(arm);
+public class ElbowRotateManuallyCommand extends Command {
+  private ElbowSubsystem elbow = Robot.ARM_SUBSYSTEM;
+  private double voltage = Constants.ELBOW_MANUAL_ROTATION_VOLTAGE;
+  /** Creates a new ArmRotateManuallyCommand. */
+  public ElbowRotateManuallyCommand() {
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -24,20 +24,7 @@ public class ArmDefaultCommand extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-        if (Robot.ARM_ROTATION_MANUAL_OVERRIDE == false) {
-      arm.setArmRotationPosition(arm.getArmRotationFinalTargetNativeUnits(), Constants.ARM_ROTATION_VELOCITY, Constants.ARM_ROTATION_ACCELERATION);
-    }
-    else {
-      arm.stopArmRotation();
-    }
-        if (Robot.WRIST_ROTATION_MANUAL_OVERRIDE == false) {
-      arm.setWristRotationPosition(arm.getWristRotationFinalTargetNativeUnits(), Constants.WRIST_ROTATION_VELOCITY, Constants.WRIST_ROTATION_ACCELERATION);
-    }
-    else {
-      arm.stopWristRotation();
-    }
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
