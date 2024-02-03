@@ -15,12 +15,19 @@ public class LEDsSubsystem extends SubsystemBase {
 
   public void setInputAngle(double inputAngle) {
     for (var i = 0; i < m_ledBuffer.getLength(); i++) {
-      m_ledBuffer.setHSV(0, (int)inputAngle/2, 255, 255);
-      m_led.setData(m_ledBuffer);
+      m_ledBuffer.setHSV(i, (int)inputAngle/2, 255, 255);
     }
+     m_led.setData(m_ledBuffer);
+  }
 
-    //m_led.setData(m_ledBuffer);
-}
+
+    public void setGlitterAngle(double inputAngle) {
+      for (var i = 0; i < m_ledBuffer.getLength(); i++) {
+        m_ledBuffer.setHSV(0, (int)inputAngle/2, 255, 255);
+        m_led.setData(m_ledBuffer);
+      }
+
+    }
 
   public void setRainbowMotorSpeed(double motorSpeed){
     for (var i = 0; i < m_ledBuffer.getLength(); i++) {

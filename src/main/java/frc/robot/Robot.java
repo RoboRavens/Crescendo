@@ -22,7 +22,7 @@ public class Robot extends TimedRobot {
 
   public XboxController Xbox = new XboxController(0);
 
-  //public LEDsSubsystem ledsSubsystem = new LEDsSubsystem();
+  public LEDsSubsystem ledsSubsystem = new LEDsSubsystem();
   public LEDsSubsystem2023 ledsSubsystem2023 = new LEDsSubsystem2023();
   //public LEDsSubsystem2 ledsSubsystem2 = new LEDsSubsystem2();
   public IntakeSubsystem intakeSubsystem= new IntakeSubsystem();
@@ -62,50 +62,70 @@ public class Robot extends TimedRobot {
       angle = 365 + angle;
     }
 
-    //ledsSubsystem.setInputAngle(angle);
-    intakeSubsystem.setMotorSpeed(Xbox.getRawAxis(2));
-    //ledsSubsystem.setRainbowMotorSpeed(intakeSubsystem.getMotorSpeed());
-    //ledsSubsystem2023.setColorMotorSpeed(intakeSubsystem.getMotorSpeed());
-    ledsSubsystem2023.ledsSection(255,0,0,0,255,0,0,0,255,255,255,0);
-
-    SmartDashboard.putNumber("angle", angle);
-
-
-/* 
-    boolean aButton = Xbox.getAButton();
-    if (aButton) {
-      System.out.println("a button pressed, green");
-      ledsSubsystem.setColor(0, 255, 0);
+    int modeNum = 0;
+    boolean lBumper = Xbox.getBButton();
+        if (lBumper){
+          modeNum++;
+        }
+    if(modeNum%Constants.LED_MODES_LBUMPER_PRESS==1){
+      ledsSubsystem.setInputAngle(angle);
+       SmartDashboard.putNumber("angle", angle);
     }
 
-    boolean bButton = Xbox.getBButton();
-    if (bButton) {
-      System.out.println("b button pressed, red");
-      ledsSubsystem.setColor(255, 0, 0);
+    if(modeNum%Constants.LED_MODES_LBUMPER_PRESS==2){
+      ledsSubsystem.setGlitterAngle(angle);
+       SmartDashboard.putNumber("angle", angle);
     }
 
-    boolean xButton = Xbox.getXButton();
-    if (xButton) {
-      System.out.println("x button pressed, blue");
-      ledsSubsystem.setColor(0, 0, 255);
+    if(modeNum%Constants.LED_MODES_LBUMPER_PRESS==3){
+      intakeSubsystem.setMotorSpeed(Xbox.getRawAxis(2));
+      ledsSubsystem.setRainbowMotorSpeed(intakeSubsystem.getMotorSpeed());
     }
 
-    boolean yButton = Xbox.getYButton();
-    if (yButton) {
-      System.out.println("y button pressed, yellow");
-      ledsSubsystem.setColor(127, 127, 0);
+    if(modeNum%Constants.LED_MODES_LBUMPER_PRESS==4){
+      intakeSubsystem.setMotorSpeed(Xbox.getRawAxis(2));
+      ledsSubsystem2023.setColorMotorSpeed(intakeSubsystem.getMotorSpeed());
     }
 
-    boolean rightBumper = Xbox.getRightBumper();
-    if (rightBumper) {
-      System.out.println("rBumper pressed, no color");
-      ledsSubsystem.setColor(0, 0, 0);
+    if(modeNum%Constants.LED_MODES_LBUMPER_PRESS==5){
+          boolean aButton = Xbox.getAButton();
+        if (aButton) {
+          System.out.println("a button pressed, green");
+          ledsSubsystem.setColor(0, 255, 0);
+        }
+
+        boolean bButton = Xbox.getBButton();
+        if (bButton) {
+          System.out.println("b button pressed, red");
+          ledsSubsystem.setColor(255, 0, 0);
+        }
+
+        boolean xButton = Xbox.getXButton();
+        if (xButton) {
+          System.out.println("x button pressed, blue");
+          ledsSubsystem.setColor(0, 0, 255);
+        }
+
+        boolean yButton = Xbox.getYButton();
+        if (yButton) {
+          System.out.println("y button pressed, yellow");
+          ledsSubsystem.setColor(127, 127, 0);
+        }
+
+        boolean rightBumper = Xbox.getRightBumper();
+        if (rightBumper) {
+          System.out.println("rBumper pressed, no color");
+          ledsSubsystem.setColor(0, 0, 0);
+        }
+        
+
+        intakeSubsystem.periodic();
+      }
     }
-    */
 
-    intakeSubsystem.periodic();
-  }
-
+ 
+    
+  
 
   /** This function is run once each time the robot enters autonomous mode. */
   @Override
