@@ -5,8 +5,13 @@
 package frc.robot.commands.arm;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
+import frc.robot.Robot;
+import frc.robot.subsystems.LimbSubsystem;
 
 public class ArmRotateManuallyCommand extends Command {
+  private LimbSubsystem arm = Robot.LIMB_SUBSYSTEM;
+  private double voltage = Constants.ARM_MANUAL_ROTATION_VOLTAGE;
   /** Creates a new ArmRotateManuallyCommand. */
   public ArmRotateManuallyCommand() {
     // Use addRequirements() here to declare subsystem dependencies.

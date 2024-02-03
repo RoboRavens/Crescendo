@@ -4,29 +4,14 @@
 
 package frc.robot.commands.arm;
 
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants;
 
-public class ArmAmpScoringCommand extends Command {
+public class ArmAmpScoringCommand extends SequentialCommandGroup {
   /** Creates a new ArmAmpScoringCommand. */
   public ArmAmpScoringCommand() {
+                addCommands(
+      new ArmGoToSetpointCommand(Constants.ARM_AMP_SCORING_COMMAND_SETPOINT).withTimeout(2));
     // Use addRequirements() here to declare subsystem dependencies.
-  }
-
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {}
-
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {}
-
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {}
-
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
   }
 }

@@ -11,6 +11,7 @@ import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 //import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix6.signals.ControlModeValue;
@@ -56,11 +57,11 @@ public class LimbSubsystem extends SubsystemBase {
   
   private TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
   private FeedbackConfigs feedback = new FeedbackConfigs();
-  private Slot0Configs armGainsSlots = new Slot0Configs();
-  private Slot1Configs wristGainsSlots = new Slot1Configs();
+  private Slot0Configs Slot0Configs = new Slot0Configs();
 
   private SoftwareLimitSwitchConfigs softwareLimitSwitch = new SoftwareLimitSwitchConfigs();
   private MotionMagicConfigs motionMagicConfigs = new MotionMagicConfigs();
+  private MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
 
 
   /** Creates a new ArmSubsystem. */
@@ -69,22 +70,25 @@ public class LimbSubsystem extends SubsystemBase {
     armRotationMotor.getConfigurator().apply(talonFXConfiguration.MotionMagic);
     armRotationMotor.setInverted(true);
     //which feedback sensor
+    //?
     armRotationMotor.getConfigurator().apply(feedback.withSensorToMechanismRatio(Constants.SENSOR_TO_MECHANISM_RATIO_ARM_MOTOR));
-    armRotationMotor.getConfigurator().apply(armGainsSlots.withKD(Constants.armRotationGains.kD));
-    armRotationMotor.getConfigurator().apply(armGainsSlots.withKG(Constants.armRotationGains.kF));
-    armRotationMotor.getConfigurator().apply(armGainsSlots.withKI(Constants.armRotationGains.kI));
-    armRotationMotor.getConfigurator().apply(armGainsSlots.withKP(Constants.armRotationGains.kP));
+    armRotationMotor.getConfigurator().apply(Slot0Configs
+          .withKD(Constants.armRotationGains.kD)
+          .withKI(Constants.armRotationGains.kI)
+          .withKP(Constants.armRotationGains.kP)
+          .withKG(Constants.armRotationGains.kF));
     armRotationMotor.getConfigurator().setPosition(0);
 
     wristRotationMotor.getConfigurator().apply(talonFXConfiguration.MotionMagic);
     wristRotationMotor.setInverted(true);
     //which feedback sensor
+    //?
     wristRotationMotor.getConfigurator().apply(feedback.withSensorToMechanismRatio(Constants.SENSOR_TO_MECHANISM_RATIO_WRIST_MOTOR));
-    wristRotationMotor.getConfigurator().apply(armGainsSlots.withKD(Constants.wristRotationGains.kD));
-    wristRotationMotor.getConfigurator().apply(armGainsSlots.withKG(Constants.wristRotationGains.kF));
-    wristRotationMotor.getConfigurator().apply(armGainsSlots.withKI(Constants.wristRotationGains.kI));
-    wristRotationMotor.getConfigurator().apply(armGainsSlots.withKP(Constants.wristRotationGains.kP));
-    wristRotationMotor.getConfigurator().apply(wristGainsSlots);
+    wristRotationMotor.getConfigurator().apply(Slot0Configs
+          .withKD(Constants.wristRotationGains.kD)
+          .withKI(Constants.wristRotationGains.kI)
+          .withKP(Constants.wristRotationGains.kP)
+          .withKG(Constants.wristRotationGains.kF));
     wristRotationMotor.getConfigurator().setPosition(0);
 
    // armRotationMotor.selectProfileSlot(Constants.kSlotIdx, Constants.kPIDLoopIdx);
@@ -172,14 +176,16 @@ public class LimbSubsystem extends SubsystemBase {
 }
 
 public void setArmRotationPosition(double setpoint, double armRotationVelocity, double armRotationAcceleration) {
-  armRotationMotor.getConfigurator().apply(motionMagicConfigs.withMotionMagicCruiseVelocity(armRotationVelocity));
-  armRotationMotor.getConfigurator().apply(motionMagicConfigs.withMotionMagicAcceleration(armRotationAcceleration));
-  armRotationMotor.set(ControlMode.MotionMagic, setpoint, DemandType.ArbitraryFeedForward, rotationAFF);
+  armRotationMotor.getConfigurator().apply(motionMagicConfigs
+        .withMotionMagicCruiseVelocity(armRotationVelocity)
+        .withMotionMagicAcceleration(armRotationAcceleration));
+  armRotationMotor.setControl(motionMagicVoltage.withPosition(setpoint));
 } 
 public void setWristRotationPosition(double setpoint, double wristRotationVelocity, double wristRotationAcceleration) {
-  wristRotationMotor.getConfigurator().apply(motionMagicConfigs.withMotionMagicCruiseVelocity(wristRotationVelocity));
-  wristRotationMotor.getConfigurator().apply(motionMagicConfigs.withMotionMagicAcceleration(wristRotationAcceleration));
-  wristRotationMotor.set(ControlMode.MotionMagic, setpoint, DemandType.ArbitraryFeedForward, rotationAFF);
+  wristRotationMotor.getConfigurator().apply(motionMagicConfigs
+        .withMotionMagicCruiseVelocity(wristRotationVelocity)
+        .withMotionMagicAcceleration(wristRotationAcceleration));
+  wristRotationMotor.setControl(motionMagicVoltage.withPosition(setpoint));
 }
 
 //
@@ -196,6 +202,7 @@ public void armFullStop() {
   stopWristRotation();
 }
 
+//?
 public void armMotionMagic() {
   pidController = new PIDController(Constants.armRotationGains.kP, Constants.armRotationGains.kI, Constants.armRotationGains.kD);
   pidController.setSetpoint(8);
@@ -208,7 +215,7 @@ public void armMotionMagic() {
   pidController.getD();
 }
 
-//
+//?
 public void wristMotionMagic() {
   pidController = new PIDController(Constants.wristRotationGains.kP, Constants.wristRotationGains.kI, Constants.wristRotationGains.kD);
   pidController.setSetpoint(8);

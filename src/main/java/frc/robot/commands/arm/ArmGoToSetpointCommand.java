@@ -14,18 +14,16 @@ import frc.robot.subsystems.LimbSubsystem;
 import frc.robot.util.arm.ArmSetpoint;
 
 public class ArmGoToSetpointCommand extends Command {
-  private ArrayList<ArmSetpoint> subSetpoints = new ArrayList<ArmSetpoint>();
+  //private ArrayList<ArmSetpoint> subSetpoints = new ArrayList<ArmSetpoint>();
   private LimbSubsystem arm = Robot.LIMB_SUBSYSTEM;
   private ArmSetpoint finalSetpoint;
-  private int setpointIterator = 0;
+  //private int setpointIterator = 0;
   private Timer timer = new Timer();
   private double timeoutSeconds = 0;
-  private ArmSetpoint currentSubSetpoint;
 
   /** Creates a new ArmGoToSetpointCommand. */
   public ArmGoToSetpointCommand(ArmSetpoint setpoint) {
     this.finalSetpoint = setpoint;
-    this.currentSubSetpoint = setpoint;
     addRequirements(arm);
     // Use addRequirements() here to declare subsystem dependencies.
   }
