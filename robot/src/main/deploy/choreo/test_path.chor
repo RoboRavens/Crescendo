@@ -32,15 +32,6 @@
                     "translationConstrained": true,
                     "headingConstrained": true,
                     "controlIntervalCount": 40
-                },
-                {
-                    "x": 0.5804628729820251,
-                    "y": 1.3297027349472046,
-                    "heading": -2.1112156629675214,
-                    "isInitialGuess": false,
-                    "translationConstrained": true,
-                    "headingConstrained": true,
-                    "controlIntervalCount": 40
                 }
             ],
             "trajectory": [
@@ -141,14 +132,14 @@
                         "first"
                     ],
                     "type": "StopPoint",
-                    "uuid": "7e52833b-4c4a-4379-b862-8c75154734ce"
+                    "uuid": "89df76ec-17b1-4270-ab1b-3db9cbed9c92"
                 },
                 {
                     "scope": [
                         "last"
                     ],
                     "type": "StopPoint",
-                    "uuid": "b5bfdfe6-afae-4727-b8e9-e12f14aa59a4"
+                    "uuid": "91be71e8-c3a5-45c1-8a92-71129aec6c5e"
                 },
                 {
                     "scope": [
@@ -156,7 +147,7 @@
                         "last"
                     ],
                     "type": "MaxVelocity",
-                    "uuid": "fcc4aed0-59c5-4ceb-8905-4bc83f1ad252",
+                    "uuid": "c59fe6d3-7316-4fb1-b167-3403e27e4ebd",
                     "velocity": 1.75
                 }
             ],

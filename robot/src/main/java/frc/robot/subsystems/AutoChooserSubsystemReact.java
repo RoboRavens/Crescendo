@@ -41,13 +41,24 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
     _alliancePub = autoTable.getStringTopic("rpub/alliance").publish();
     
     // BLUE SIDE
+    this.addBlueDefault(
+      new AutoMode("B1: Test Drive Straight",
+      () -> TestAutoCommand.getAutoMode())
+    );
     this.addOption(
       new AutoMode("B1: Test Drive Straight",
       () -> TestAutoCommand.getAutoMode())
     );
 
     // RED SIDE
-    
+    this.addRedDefault(
+      new AutoMode("R1: Test Drive Straight",
+      () -> TestAutoCommand.getAutoMode())
+    );
+    this.addOption(
+      new AutoMode("R1: Test Drive Straight",
+      () -> TestAutoCommand.getAutoMode())
+    );
   }
 
   private void addOption(AutoMode auto) {

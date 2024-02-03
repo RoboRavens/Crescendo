@@ -48,10 +48,10 @@ public class AutoChooserSubsystem extends SubsystemBase {
           .withSize(4, 1);
         break;
       case Red:
-        // this.addDefaultOption(
-        //   new AutoMode("R1: Preload + mobility + balance",
-        //   () -> PreloadMobilityAndBalanceAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Red))
-        // );
+        this.addDefaultOption(
+          new AutoMode("R1: Test Drive Straight",
+          () -> TestAutoCommand.getAutoMode())
+        );
         // this.addOption(
         //   new AutoMode("R2: LZ-side 2 cone + balance",
         //   () -> TwoConeAndBalanceAutoCommand.getAutoMode(AutoEnums.AutoAlliance.Red, AutoEnums.AutoSide.LZ))
