@@ -7,8 +7,9 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LEDsSubsystem;
-//import frc.robot.subsystems.LEDsSubsystem2;
+import frc.robot.subsystems.LEDsSubsystem2023;
 
 
 /**
@@ -21,8 +22,10 @@ public class Robot extends TimedRobot {
 
   public XboxController Xbox = new XboxController(0);
 
-  public LEDsSubsystem ledsSubsystem = new LEDsSubsystem();
+  //public LEDsSubsystem ledsSubsystem = new LEDsSubsystem();
+  public LEDsSubsystem2023 ledsSubsystem2023 = new LEDsSubsystem2023();
   //public LEDsSubsystem2 ledsSubsystem2 = new LEDsSubsystem2();
+  public IntakeSubsystem intakeSubsystem= new IntakeSubsystem();
 
   private double angle=0;
 
@@ -58,12 +61,17 @@ public class Robot extends TimedRobot {
     if(angle180 < 0){
       angle = 365 + angle;
     }
-    ledsSubsystem.setInputAngle(angle);
+
+    //ledsSubsystem.setInputAngle(angle);
+    intakeSubsystem.setMotorSpeed(Xbox.getRawAxis(2));
+    //ledsSubsystem.setRainbowMotorSpeed(intakeSubsystem.getMotorSpeed());
+    //ledsSubsystem2023.setColorMotorSpeed(intakeSubsystem.getMotorSpeed());
+    ledsSubsystem2023.ledsSection(255,0,0,0,255,0,0,0,255,255,255,0);
 
     SmartDashboard.putNumber("angle", angle);
 
 
-
+/* 
     boolean aButton = Xbox.getAButton();
     if (aButton) {
       System.out.println("a button pressed, green");
@@ -93,6 +101,9 @@ public class Robot extends TimedRobot {
       System.out.println("rBumper pressed, no color");
       ledsSubsystem.setColor(0, 0, 0);
     }
+    */
+
+    intakeSubsystem.periodic();
   }
 
 

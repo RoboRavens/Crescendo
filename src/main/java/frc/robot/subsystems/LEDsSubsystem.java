@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class LEDsSubsystem extends SubsystemBase {
   private AddressableLED m_led;
@@ -14,11 +15,23 @@ public class LEDsSubsystem extends SubsystemBase {
 
   public void setInputAngle(double inputAngle) {
     for (var i = 0; i < m_ledBuffer.getLength(); i++) {
-      m_ledBuffer.setHSV(i, (int)inputAngle/2, 255, 255);
-      
+      m_ledBuffer.setHSV(0, (int)inputAngle/2, 255, 255);
+      m_led.setData(m_ledBuffer);
+    }
+
+    //m_led.setData(m_ledBuffer);
+}
+
+  public void setRainbowMotorSpeed(double motorSpeed){
+    for (var i = 0; i < m_ledBuffer.getLength(); i++) {
+      m_ledBuffer.setHSV(i, (int)((180*motorSpeed)/12000), 255, 255);
     }
     m_led.setData(m_ledBuffer);
-}
+  }
+
+
+
+
   /** Creates a new LEDsSubsystem. */
   public LEDsSubsystem() {
     m_led = new AddressableLED(9);
@@ -49,7 +62,7 @@ public class LEDsSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    System.out.println("hi");
+ 
 
     // This method will be called once per scheduler run
   }
