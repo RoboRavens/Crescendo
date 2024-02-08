@@ -29,11 +29,32 @@ public class LEDsSubsystem extends SubsystemBase {
 
     }
 
-  public void setRainbowMotorSpeed(double motorSpeed){
+  public void setRainbowMotorSpeed(double motorSpeed) {
     for (var i = 0; i < m_ledBuffer.getLength(); i++) {
       m_ledBuffer.setHSV(i, (int)((180*motorSpeed)/12000), 255, 255);
     }
     m_led.setData(m_ledBuffer);
+  }
+
+  public void setColumnHSV(int n, int h, int s, int v) {
+    for(int i = 1; i <= m_ledBuffer.getLength(); i++) {
+        if(i%Constants.LEDS_IN_ROW==n) {
+          if(i/Constants.LEDS_IN_ROW%2==0){
+            m_ledBuffer.setHSV(i, h, s, v);
+          }
+          else{
+            m_ledBuffer.setHSV(((i/Constants.LEDS_IN_ROW+1) * Constants.LEDS_IN_ROW-(i % Constants.LEDS_IN_ROW))+1, h, s, v);
+          }
+        }
+    }
+    m_led.setData(m_ledBuffer);
+  }
+
+  public void setColumnRainbow(int h, int s, int v) {
+    for(int i=1; i<=28; i++){
+      setColumnHSV(i, h+(90*i/28),s,v);
+    }
+
   }
 
 
@@ -43,7 +64,7 @@ public class LEDsSubsystem extends SubsystemBase {
   public LEDsSubsystem() {
     m_led = new AddressableLED(9);
     
-    m_ledBuffer = new AddressableLEDBuffer(117);
+    m_ledBuffer = new AddressableLEDBuffer(112);
     m_led.setLength(m_ledBuffer.getLength());
 
     m_led.setData(m_ledBuffer);

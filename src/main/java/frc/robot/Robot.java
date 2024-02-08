@@ -23,18 +23,24 @@ public class Robot extends TimedRobot {
   public XboxController Xbox = new XboxController(0);
 
   public LEDsSubsystem ledsSubsystem = new LEDsSubsystem();
-  public LEDsSubsystem2023 ledsSubsystem2023 = new LEDsSubsystem2023();
+  //public LEDsSubsystem2023 ledsSubsystem2023 = new LEDsSubsystem2023();
   //public LEDsSubsystem2 ledsSubsystem2 = new LEDsSubsystem2();
   public IntakeSubsystem intakeSubsystem= new IntakeSubsystem();
 
   private double angle=0;
+  int modeNum = 0;
+  int firstColor = 1;
 
   public double getAngle() {
     return angle;
   }
 
 
-  public Robot() {}
+  public Robot() {
+  }
+  
+    
+  
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -42,7 +48,14 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-
+    ledsSubsystem.setColumnHSV(28,1,255,255);
+    //ledsSubsystem.setColumnRainbow(1,255,255);
+    /*for(int i=1;i<=28;i++)
+    {
+      if(i%2==0)
+      ledsSubsystem.setColumnHSV(i,1,255,255);
+    } */
+  
   }
 
 
@@ -62,22 +75,50 @@ public class Robot extends TimedRobot {
       angle = 365 + angle;
     }
 
-    int modeNum = 0;
+    /* 
+    if(firstColor%5==0){
+      ledsSubsystem.setColumnRainbow(firstColor%180,255,255);
+      
+    }
+    firstColor += 1;
+
+    /*for(int i=1;i<=28;i++)
+    {
+      if(i%2==0)
+      //ledsSubsystem.setColumnHSV(i,1,255,255);
+      //ledsSubsystem.setColumnHSV(i,0,0,0);
+      
+      
+    }
+
+    
+      
+
+  
     boolean lBumper = Xbox.getBButton();
         if (lBumper){
           modeNum++;
         }
+/* 
+    if(modeNum%Constants.LED_MODES_LBUMPER_PRESS==0){
+      ledsSubsystem.setColor(0, 0, 0);
+      ledsSubsystem.setColumnRainbow(firstColor%180,255,255);
+      firstColor++;
+    }
+
     if(modeNum%Constants.LED_MODES_LBUMPER_PRESS==1){
+      ledsSubsystem.setColor(0, 0, 0);
       ledsSubsystem.setInputAngle(angle);
        SmartDashboard.putNumber("angle", angle);
     }
 
     if(modeNum%Constants.LED_MODES_LBUMPER_PRESS==2){
+      ledsSubsystem.setColor(0, 0, 0);
       ledsSubsystem.setGlitterAngle(angle);
        SmartDashboard.putNumber("angle", angle);
     }
-
-    if(modeNum%Constants.LED_MODES_LBUMPER_PRESS==3){
+ 
+  /*   if(modeNum%Constants.LED_MODES_LBUMPER_PRESS==3){
       intakeSubsystem.setMotorSpeed(Xbox.getRawAxis(2));
       ledsSubsystem.setRainbowMotorSpeed(intakeSubsystem.getMotorSpeed());
     }
@@ -117,15 +158,12 @@ public class Robot extends TimedRobot {
           System.out.println("rBumper pressed, no color");
           ledsSubsystem.setColor(0, 0, 0);
         }
-        
+        */
 
         intakeSubsystem.periodic();
       }
-    }
 
- 
-    
-  
+    //}
 
   /** This function is run once each time the robot enters autonomous mode. */
   @Override

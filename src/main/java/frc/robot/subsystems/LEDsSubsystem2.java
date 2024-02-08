@@ -20,7 +20,7 @@ public class LEDsSubsystem2 extends SubsystemBase {
   public LEDsSubsystem2() {
     m_led = new AddressableLED(9);
     
-    m_ledBuffer = new AddressableLEDBuffer(117);
+    m_ledBuffer = new AddressableLEDBuffer(112);
     m_led.setLength(m_ledBuffer.getLength());
 
     m_led.setData(m_ledBuffer);
