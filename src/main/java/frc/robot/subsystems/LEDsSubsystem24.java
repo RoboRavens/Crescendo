@@ -12,24 +12,79 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 
-public class LEDsSubsystem2023 extends SubsystemBase {
+public class LEDsSubsystem24 extends SubsystemBase {
+  private AddressableLED m_led= new AddressableLED(9);
   boolean blinkOn = false;
   Timer timer = new Timer();
-  AddressableLED m_light = new AddressableLED(9);
+  //AddressableLED m_light = new AddressableLED(9);
   AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(Constants.TOTAL_LEDS_STRIP_LENGTH);
   double m_rainbowFirstPixelHue = 0;
   int m_value = 0;
 
-  public LEDsSubsystem2023() {
+
+  public void setInputAngle(double inputAngle) {
+    for (var i = 0; i < m_ledBuffer.getLength(); i++) {
+      m_ledBuffer.setHSV(i, (int)inputAngle/2, 255, 255);
+    }
+     m_led.setData(m_ledBuffer);
+  }
+
+
+    public void setGlitterAngle(double inputAngle) {
+      for (var i = 0; i < m_ledBuffer.getLength(); i++) {
+        m_ledBuffer.setHSV(0, (int)inputAngle/2, 255, 255);
+        m_led.setData(m_ledBuffer);
+      }
+
+    }
+
+  public void setRainbowMotorSpeed(double motorSpeed) {
+    for (var i = 0; i < m_ledBuffer.getLength(); i++) {
+      m_ledBuffer.setHSV(i, (int)((180*motorSpeed)/12000), 255, 255);
+    }
+    m_led.setData(m_ledBuffer);
+  }
+
+  public void setColumnHSV(int n, int h, int s, int v) {
+    for(int i = 1; i < m_ledBuffer.getLength(); i++) {
+        if(i%Constants.LEDS_IN_ROW==n) {
+          if(i/Constants.LEDS_IN_ROW%2==0){
+            m_ledBuffer.setHSV(i, h, s, v);
+          }
+          else{
+            m_ledBuffer.setHSV(((i/Constants.LEDS_IN_ROW+1) * Constants.LEDS_IN_ROW-(i % Constants.LEDS_IN_ROW))-1, h, s, v);
+          }
+        }
+    }
+    m_led.setData(m_ledBuffer);
+  }
+
+  public void setColumnRainbow(int h, int s, int v) {
+    for(int i=1; i<=28; i++){
+      setColumnHSV(i, h+(90*i/28),s,v);
+    }
+  }
+  
+  public LEDsSubsystem24() {
+    
     timer.reset();
     timer.start();
 
-    m_light.setLength(m_ledBuffer.getLength());
-    m_light.start();
+    m_led.setLength(m_ledBuffer.getLength());
+    m_led.start();
+  }
+
+  public void setColor(int r, int g, int b) {
+     
+    for (var i = 0; i < m_ledBuffer.getLength(); i++) {
+
+     m_ledBuffer.setRGB(i, r, g, b);
+   }
+    m_led.setData(m_ledBuffer);
   }
 
   public void setData(AddressableLEDBuffer ledBuffer) {
-    m_light.setData(ledBuffer);
+    m_led.setData(ledBuffer);
   }
 
   @Override
