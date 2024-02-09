@@ -14,4 +14,9 @@ public class Constants {
     public static final double SLEW_FRAMES_TO_MAX_X_VELOCITY = 10; // forward-back
     public static final double SLEW_FRAMES_TO_MAX_Y_VELOCITY = 10; // left-right
     public static final double SLEW_FRAMES_TO_MAX_ANGULAR_VELOCITY = 10; // turning
+    public static final double SHOOTER_MOTOR_SPEED = 0.5;
+    public static final double SPEAKER_HEIGHT = 6.6;
+    public static final double SHOOTER_HEIGHT = 1.5;
+    public static final double SHOOTER_ABSOLUTE_INITIAL_VELOCITY = 10; //not actual value
+    
 }

@@ -29,4 +29,6 @@ public class RobotMap {
     public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 23; // Updated
 
     public static final double BACK_RIGHT_MODULE_STEER_OFFSET = Math.toRadians(350); 
+    
+    public static final int PIECE_SENSOR = 8;
 }
