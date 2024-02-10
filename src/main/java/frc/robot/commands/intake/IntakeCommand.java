@@ -7,10 +7,10 @@ package frc.robot.commands.intake;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IntakeSubsystem;
 
-public class Intake extends Command {
+public class IntakeCommand extends Command {
   /** Creates a new Intake. */
   private IntakeSubsystem _intakeSubsystem;
-  public Intake(IntakeSubsystem intakeSubsystem) {
+  public IntakeCommand(IntakeSubsystem intakeSubsystem) {
     _intakeSubsystem = intakeSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -34,7 +34,6 @@ public class Intake extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    _intakeSubsystem.hasPiece();
-    return false;
+    return _intakeSubsystem.hasPiece();
   }
 }

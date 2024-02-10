@@ -10,8 +10,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
+import frc.robot.commands.intake.IntakeCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.PoseEstimatorSubsystem;
 
@@ -29,9 +32,10 @@ public class Robot extends TimedRobot {
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_FOUR = new LimelightSubsystem("limelight-four");
   public static final DrivetrainSubsystem DRIVETRAIN_SUBSYSTEM = new DrivetrainSubsystem();
   public static final PoseEstimatorSubsystem POSE_ESTIMATOR_SUBSYSTEM = new PoseEstimatorSubsystem();
-  public static final XboxController XBOX_CONTROLLER = new XboxController(0);
+  public static final CommandXboxController XBOX_CONTROLLER = new CommandXboxController(0);
   public static DriverStation.Alliance allianceColor = Alliance.Blue;
   public static final DrivetrainDefaultCommand DRIVETRAIN_DEFAULT_COMMAND = new DrivetrainDefaultCommand();
+  public static final IntakeSubsystem INTAKE_SUBSYSTEM = new IntakeSubsystem();
 
   public Robot() {}
 
@@ -48,6 +52,8 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     DRIVETRAIN_SUBSYSTEM.setDefaultCommand(DRIVETRAIN_DEFAULT_COMMAND);
+
+    XBOX_CONTROLLER.a().whileTrue(new IntakeCommand(INTAKE_SUBSYSTEM));
   }
 
   /** This function is run once each time the robot enters autonomous mode. */

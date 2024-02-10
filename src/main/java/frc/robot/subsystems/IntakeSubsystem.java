@@ -1,7 +1,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
-
+import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import frc.ravenhardware.BufferedDigitalInput;
