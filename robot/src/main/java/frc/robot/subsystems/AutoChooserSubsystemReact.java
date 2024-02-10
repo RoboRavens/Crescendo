@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.commands.auto.*;
 import frc.util.AutoMode;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
 public class AutoChooserSubsystemReact extends SubsystemBase {
   private final Map<String, AutoMode> _autos = new LinkedHashMap<>();
@@ -42,12 +43,12 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
     
     // BLUE SIDE
     this.addBlueDefault(
-      new AutoMode("B1: Test Drive Straight",
-      () -> TestAutoCommand.getAutoMode())
+      new AutoMode("B1: Six Note Auto",
+      () -> new PathPlannerAuto("SixNoteAuto"))
     );
     this.addOption(
-      new AutoMode("B1: Test Drive Straight",
-      () -> TestAutoCommand.getAutoMode())
+      new AutoMode("B1: Six Note Auto",
+      () -> new PathPlannerAuto("SixNoteAuto"))
     );
 
     // RED SIDE

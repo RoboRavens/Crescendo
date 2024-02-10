@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.PathPlannerTrajectory;
 
@@ -15,6 +16,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -42,11 +44,12 @@ public class Robot extends TimedRobot {
   public static final XboxController XBOX_CONTROLLER = new XboxController(0);
   public static DriverStation.Alliance allianceColor = Alliance.Blue;
   public static final DrivetrainDefaultCommand DRIVETRAIN_DEFAULT_COMMAND = new DrivetrainDefaultCommand();
-  public static final PathPlannerPath exampleChoreoTraj = PathPlannerPath.fromChoreoTrajectory("TestPath");
   public static final ReactDashSubsystem REACT_DASH_SUBSYSTEM = new ReactDashSubsystem();
   public static final AutoChooserSubsystemReact AUTO_CHOOSER = new AutoChooserSubsystemReact();
 
-  public Robot() {}
+  public Robot() {
+    
+  }
 
   @Override
   public void robotPeriodic() {
@@ -73,16 +76,17 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     setDriverStationData();
-    PathPlannerTrajectory traj = exampleChoreoTraj.getTrajectory(new ChassisSpeeds(0, 0, 0), new Rotation2d(0, 0));
-    DRIVETRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(traj).andThen(AutoBuilder.followPath(exampleChoreoTraj)).schedule();
+    // PathPlannerTrajectory traj = exampleChoreoTraj.getTrajectory(new ChassisSpeeds(0, 0, 0), new Rotation2d(0, 0));
+    // DRIVETRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(traj).andThen(AutoBuilder.followPath(exampleChoreoTraj)).schedule();
+    // PathPlannerTrajectory traj = sixNotePath.getTrajectory(new ChassisSpeeds(0, 0, 0), new Rotation2d(0, 0));
+    // DRIVETRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(traj).andThen(AutoBuilder.followPath(sixNotePath)).schedule();
     
-    // m_autonomousCommand = AUTO_CHOOSER.GetAutoCommand();
-    // // m_autonomousCommand = ScoreTwoLoadAndBalanceBlueCommand.getAutoMode().getAutoCommand();
+    Command m_autonomousCommand = AUTO_CHOOSER.GetAutoCommand();
 
     // // schedule the autonomous command (example)
-    // if (m_autonomousCommand != null) {
-    //   m_autonomousCommand.schedule();
-    // }
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.schedule();
+    }
   }
 
   /** This function is called periodically during autonomous. */
