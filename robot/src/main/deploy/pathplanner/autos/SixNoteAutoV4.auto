@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.5,
-      "y": 5.5
+      "x": 1.373390793800354,
+      "y": 5.564249038696289
     },
-    "rotation": 2.606046666497157e-29
+    "rotation": 0.0
   },
   "command": {
     "type": "sequential",
@@ -14,7 +14,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "SixNoteAuto.1"
+            "pathName": "SixNoteAutoV3.1"
           }
         },
         {
@@ -26,7 +26,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "SixNoteAuto.2"
+            "pathName": "SixNoteAutoV3.2"
           }
         },
         {
@@ -38,7 +38,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "SixNoteAuto.3"
+            "pathName": "SixNoteAutoV3.3"
           }
         },
         {
@@ -50,7 +50,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "SixNoteAuto.4"
+            "pathName": "SixNoteAutoV3.4"
           }
         },
         {
@@ -62,7 +62,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "SixNoteAuto.5"
+            "pathName": "SixNoteAutoV3.5"
           }
         },
         {
@@ -74,7 +74,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "SixNoteAuto.6"
+            "pathName": "SixNoteAutoV3.6"
           }
         },
         {
@@ -86,7 +86,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "SixNoteAuto.7"
+            "pathName": "SixNoteAutoV3.7"
           }
         },
         {
@@ -98,7 +98,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "SixNoteAuto.8"
+            "pathName": "SixNoteAutoV3.8"
           }
         }
       ]

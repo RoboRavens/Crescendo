@@ -29,6 +29,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
 import TextField from '@mui/material/TextField';
 import Stack from '@mui/material/Stack';
+import { Campaign } from '@mui/icons-material';
 
 const matchTimeFormatter = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
 
@@ -70,8 +71,8 @@ const topics: Topics = {
   selectedSourcePub: undefined
 };
 
-// const NT_CORE = NetworkTables.getInstanceByTeam(1188);
-const NT_CORE = NetworkTables.getInstanceByURI("localhost");
+const NT_CORE = NetworkTables.getInstanceByTeam(1188);
+// const NT_CORE = NetworkTables.getInstanceByURI("localhost");
 
 class App extends React.Component<{}, {
   connected: boolean,
@@ -357,14 +358,23 @@ class App extends React.Component<{}, {
               }
               {this.state.selectedTab == "Teleop" &&
                 <React.Fragment>
-                  <Stack>
-                    <Item onClick={() => this.handleScoreSelection("Speaker")}>Speaker</Item>
-                    <Item onClick={() => this.handleScoreSelection("Amp")}>Amp</Item>
-                  </Stack>
-                  <Stack direction="row" alignItems="stretch" justifyContent="space-evenly" spacing={2}>
-                    <Item onClick={() => this.handleSourceSelection("Left")}>Left Source</Item>
-                    <Item onClick={() => this.handleSourceSelection("Middle")}>Middle Source</Item>
-                    <Item onClick={() => this.handleSourceSelection("Right")}>Right Source</Item>
+                  <Stack height={'100'} direction={'row'} spacing={2} marginTop={2} marginLeft={2} width={"100%"}>
+                    <Stack width={'25%'}>
+                      <Item onClick={() => this.handleScoreSelection("Speaker")}>Speaker</Item>
+                      <img style={{marginTop: 20}} src='./speaker.png'/>
+                    </Stack>
+                    <Stack width={'25%'}>
+                      <Item onClick={() => this.handleScoreSelection("Amp")} >Amp</Item>
+                      <img src='./amp.png'/>
+                    </Stack>
+                    <Stack width={'100%'} direction="column" alignItems={"center"} spacing={2}>
+                      <Stack direction="row" spacing={2} justifyContent={"center"}>
+                        <Item onClick={() => this.handleSourceSelection("Left")}>Left Source</Item>
+                        <Item onClick={() => this.handleSourceSelection("Middle")}>Middle Source</Item>
+                        <Item onClick={() => this.handleSourceSelection("Right")}>Right Source</Item>
+                      </Stack>
+                      <img width="70%" src='./source.png'/>
+                    </Stack>
                   </Stack>
                 </React.Fragment>
               }
