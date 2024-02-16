@@ -25,7 +25,7 @@ public class IntakeSubsystem {
     }
 
     public boolean hasPiece() {
-       return pieceSensorIntake.get();
+        return pieceSensorIntake.get();
     }
 
 }
