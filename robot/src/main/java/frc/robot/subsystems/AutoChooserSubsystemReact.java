@@ -43,12 +43,16 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
     
     // BLUE SIDE
     this.addBlueDefault(
-      new AutoMode("B1: Six Note Auto V4",
-      () -> new PathPlannerAuto("SixNoteAutoV4"))
+      new AutoMode("B1: Six Note Auto",
+      () -> new PathPlannerAuto("SixNoteBlue"))
     );
     this.addOption(
-      new AutoMode("B3: Six Note Auto V4",
-      () -> new PathPlannerAuto("SixNoteAutoV4"))
+      new AutoMode("B2: North Midfield Auto",
+      () -> new PathPlannerAuto("NorthMidfieldBlue"))
+    );
+    this.addOption(
+      new AutoMode("B3: South Midfield Auto",
+      () -> new PathPlannerAuto("SouthMidfieldBlue"))
     );
 
     // RED SIDE
