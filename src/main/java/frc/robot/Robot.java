@@ -36,7 +36,7 @@ public class Robot extends TimedRobot {
   public static DriverStation.Alliance allianceColor = Alliance.Blue;
   public static final DrivetrainDefaultCommand DRIVETRAIN_DEFAULT_COMMAND = new DrivetrainDefaultCommand();
   public static final IntakeTrapSubsystem INTAKE_SUBSYSTEM = new IntakeTrapSubsystem();
-  ShooterSubsystem SHOOTER_SUBSYSTEM = new ShooterSubsystem();
+  public static final ShooterSubsystem SHOOTER_SUBSYSTEM = new ShooterSubsystem();
 
   public Robot() {
   }
