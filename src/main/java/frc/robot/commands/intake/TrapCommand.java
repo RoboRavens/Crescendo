@@ -7,30 +7,35 @@ package frc.robot.commands.intake;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IntakeTrapSubsystem;
 
-public class IntakeCommand extends Command {
-  /** Creates a new Intake. */
+public class TrapCommand extends Command {
+
   private IntakeTrapSubsystem _intakeTrapSubsystem;
 
-  public IntakeCommand(IntakeTrapSubsystem intakeTrapSubsystem) {
+  /** Creates a new IntakeTrapCommand. */
+  public TrapCommand(IntakeTrapSubsystem intakeTrapSubsystem) {
     _intakeTrapSubsystem = intakeTrapSubsystem;
     this.addRequirements(_intakeTrapSubsystem);
+    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
+
   public void initialize() {
-    _intakeTrapSubsystem.startIntake();
+    _intakeTrapSubsystem.startTrap();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
+
   public void execute() {
   }
 
   // Called once the command ends or is interrupted.
   @Override
+
   public void end(boolean interrupted) {
-    _intakeTrapSubsystem.stopIntake();
+    _intakeTrapSubsystem.stopTrap();
   }
 
   // Returns true when the command should end.
