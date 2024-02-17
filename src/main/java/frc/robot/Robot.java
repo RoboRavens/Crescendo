@@ -9,11 +9,13 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.IntakeTrapSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.PoseEstimatorSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -34,6 +36,7 @@ public class Robot extends TimedRobot {
   public static DriverStation.Alliance allianceColor = Alliance.Blue;
   public static final DrivetrainDefaultCommand DRIVETRAIN_DEFAULT_COMMAND = new DrivetrainDefaultCommand();
   public static final IntakeTrapSubsystem INTAKE_SUBSYSTEM = new IntakeTrapSubsystem();
+  public static final ShooterSubsystem SHOOTER_SUBSYSTEM = new ShooterSubsystem();
 
   public Robot() {
   }
@@ -52,6 +55,8 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     DRIVETRAIN_SUBSYSTEM.setDefaultCommand(DRIVETRAIN_DEFAULT_COMMAND);
+    var startShooterTrigger = new Trigger(() -> SHOOTER_SUBSYSTEM.hasPiece() && XBOX_CONTROLLER.getHID().getLeftBumper());
+    startShooterTrigger.onTrue(SHOOTER_SUBSYSTEM.createShootWithSensorCommand());
   }
 
   /** This function is run once each time the robot enters autonomous mode. */
