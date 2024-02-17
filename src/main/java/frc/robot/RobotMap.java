@@ -33,4 +33,11 @@ public class RobotMap {
     public static final int SHOOTER_RIGHT_MOTOR_CAN_ID = 7;
 
     public static final double BACK_RIGHT_MODULE_STEER_OFFSET = Math.toRadians(350); 
+
+    // Intake
+
+    public static final int INTAKE_MOTOR_CAN_ID = 0;
+    public static final int INTAKE_TRAP_SENSOR_DIO_PORT = 0;
+    public static final int INTAKE_INTAKE_SENSOR_DIO_PORT = 0;
+
 }
