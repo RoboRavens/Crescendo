@@ -29,4 +29,3 @@ public class IntakeFeedCommand extends Command {
     return false;
   }
 }
-
