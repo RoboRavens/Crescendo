@@ -1,20 +1,18 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkLowLevel.MotorType;
-
 import java.util.function.BooleanSupplier;
 
+import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.ravenhardware.BufferedDigitalInput;
+import frc.robot.RobotMap;
 import frc.robot.commands.intake.IntakeCommand;
 import frc.robot.commands.intake.IntakeFeedCommand;
 import frc.robot.commands.intake.TrapIntakeCommand;
