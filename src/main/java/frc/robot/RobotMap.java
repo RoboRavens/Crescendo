@@ -28,5 +28,9 @@ public class RobotMap {
     public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 12; // Updated
     public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 23; // Updated
 
+    public static final int SHOOTER_PIECE_SENSOR = 0;
+    public static final int SHOOTER_LEFT_MOTOR_CAN_ID = 6;
+    public static final int SHOOTER_RIGHT_MOTOR_CAN_ID = 7;
+
     public static final double BACK_RIGHT_MODULE_STEER_OFFSET = Math.toRadians(350); 
 }
