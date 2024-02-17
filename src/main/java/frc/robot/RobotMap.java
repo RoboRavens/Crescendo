@@ -33,7 +33,7 @@ public class RobotMap {
     // Intake
 
     public static final int INTAKE_MOTOR_CAN_ID = 0;
-    public static final int PIECE_SENSOR_TRAP = 0;
-    public static final int PIECE_SENSOR_INTAKE = 0;
+    public static final int INTAKE_TRAP_SENSOR_DIO_PORT = 0;
+    public static final int INTAKE_INTAKE_SENSOR_DIO_PORT = 0;
 
 }

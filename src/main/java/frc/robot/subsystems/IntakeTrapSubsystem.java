@@ -20,9 +20,9 @@ import frc.robot.commands.intake.TrapLaunchCommand;
 
 public class IntakeTrapSubsystem extends SubsystemBase {
 
-  private BufferedDigitalInput _pieceSensorIntake = new BufferedDigitalInput(RobotMap.PIECE_SENSOR_INTAKE, 3, false,
+  private BufferedDigitalInput _pieceSensorIntake = new BufferedDigitalInput(RobotMap.INTAKE_INTAKE_SENSOR_DIO_PORT, 3, false,
       false);
-  private BufferedDigitalInput _pieceSensorTrap = new BufferedDigitalInput(RobotMap.PIECE_SENSOR_TRAP, 3, false,
+  private BufferedDigitalInput _pieceSensorTrap = new BufferedDigitalInput(RobotMap.INTAKE_TRAP_SENSOR_DIO_PORT, 3, false,
       false);
   private CANSparkMax _sparkMax = new CANSparkMax(0, MotorType.kBrushless);
 
