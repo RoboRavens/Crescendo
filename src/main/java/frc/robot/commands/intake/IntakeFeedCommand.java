@@ -3,12 +3,11 @@ package frc.robot.commands.intake;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IntakeTrapSubsystem;
 
-public class IntakeCommand extends Command {
+public class IntakeFeedCommand extends Command {
   private IntakeTrapSubsystem _intakeTrapSubsystem;
 
-  public IntakeCommand(IntakeTrapSubsystem intakeTrapSubsystem) {
+  public IntakeFeedCommand(IntakeTrapSubsystem intakeTrapSubsystem) {
     _intakeTrapSubsystem = intakeTrapSubsystem;
-    this.addRequirements(_intakeTrapSubsystem);
   }
 
   @Override
@@ -30,3 +29,4 @@ public class IntakeCommand extends Command {
     return false;
   }
 }
+

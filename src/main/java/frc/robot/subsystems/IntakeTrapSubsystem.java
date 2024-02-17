@@ -3,11 +3,19 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.ravenhardware.BufferedDigitalInput;
-import frc.robot.Constants;
+import frc.robot.commands.intake.IntakeCommand;
+import frc.robot.commands.intake.IntakeFeedCommand;
+import frc.robot.commands.intake.TrapIntakeCommand;
+import frc.robot.commands.intake.TrapLaunchCommand;
 
-public class IntakeTrapSubsystem extends SubsystemBase{
+public class IntakeTrapSubsystem extends SubsystemBase {
 
     private BufferedDigitalInput pieceSensorIntake = new BufferedDigitalInput(RobotMap.PIECE_SENSOR_INTAKE, 3, false,
             false);
@@ -16,20 +24,19 @@ public class IntakeTrapSubsystem extends SubsystemBase{
     private CANSparkMax sparkMax = new CANSparkMax(0, MotorType.kBrushless);
 
     public void startIntake() {
-        sparkMax.set(Constants.INTAKE_SPARK_MAX_SPEED);
-
+        sparkMax.set(IntakeTrapConstants.INTAKE_SPARK_MAX_SPEED);
+    }
+    // Stops all
+    public void stop() {
+        sparkMax.set(IntakeTrapConstants.INTAKE_SPARK_MAX_STOP);
     }
 
-    public void stopIntake() {
-        sparkMax.set(Constants.INTAKE_SPARK_MAX_STOP);
+    public void startTrapIntake() {
+        sparkMax.set(IntakeTrapConstants.INTAKE_SPARK_MAX_SPEED * -1);
     }
 
-    public void startTrap() {
-        sparkMax.set(Constants.INTAKE_SPARK_MAX_STOP);
-    }
-
-    public void stopTrap() {
-        sparkMax.set(Constants.INTAKE_SPARK_MAX_STOP);
+    public void startTrapLaunch() {
+        sparkMax.set(IntakeTrapConstants.INTAKE_SPARK_MAX_SPEED);
     }
 
     public boolean intakeHasPiece() {
@@ -38,5 +45,29 @@ public class IntakeTrapSubsystem extends SubsystemBase{
 
     public boolean trapHasPiece() {
         return pieceSensorTrap.get();
+    }
+
+    public Command createIntakeWithSensorCommand() {
+        return new ParallelRaceGroup(
+                new IntakeCommand(this),
+                new SequentialCommandGroup(new WaitUntilCommand(() -> this.intakeHasPiece()), new WaitCommand(1)));
+    }
+
+    public Command createFeederWithSensorCommand() {
+        return new ParallelRaceGroup(
+                new IntakeFeedCommand(this),
+                new SequentialCommandGroup(new WaitUntilCommand(() -> !this.intakeHasPiece()), new WaitCommand(1)));
+    }
+
+        public Command createTrapIntakeWithSensorCommand() {
+        return new ParallelRaceGroup(
+                new TrapIntakeCommand(this),
+                new SequentialCommandGroup(new WaitUntilCommand(() -> this.trapHasPiece()), new WaitCommand(1)));
+    }
+
+        public Command createTrapLauncherWithSensorCommand() {
+        return new ParallelRaceGroup(
+                new TrapLaunchCommand(this),
+                new SequentialCommandGroup(new WaitUntilCommand(() -> !this.trapHasPiece()), new WaitCommand(1)));
     }
 }
