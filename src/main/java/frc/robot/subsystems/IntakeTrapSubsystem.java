@@ -1,9 +1,14 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
+
+import java.util.function.BooleanSupplier;
+
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -26,6 +31,7 @@ public class IntakeTrapSubsystem extends SubsystemBase {
     public void startIntake() {
         sparkMax.set(IntakeTrapConstants.INTAKE_SPARK_MAX_SPEED);
     }
+
     // Stops all
     public void stop() {
         sparkMax.set(IntakeTrapConstants.INTAKE_SPARK_MAX_STOP);
@@ -48,26 +54,27 @@ public class IntakeTrapSubsystem extends SubsystemBase {
     }
 
     public Command createIntakeWithSensorCommand() {
-        return new ParallelRaceGroup(
-                new IntakeCommand(this),
-                new SequentialCommandGroup(new WaitUntilCommand(() -> this.intakeHasPiece()), new WaitCommand(1)));
+        return createDelayedEndCommand(new IntakeCommand(this), () -> this.trapHasPiece(), 1);
     }
 
     public Command createFeederWithSensorCommand() {
-        return new ParallelRaceGroup(
-                new IntakeFeedCommand(this),
-                new SequentialCommandGroup(new WaitUntilCommand(() -> !this.intakeHasPiece()), new WaitCommand(1)));
+        return createDelayedEndCommand(new IntakeFeedCommand(this), () -> !this.trapHasPiece(), 1);
     }
 
-        public Command createTrapIntakeWithSensorCommand() {
-        return new ParallelRaceGroup(
-                new TrapIntakeCommand(this),
-                new SequentialCommandGroup(new WaitUntilCommand(() -> this.trapHasPiece()), new WaitCommand(1)));
+    public Command createTrapIntakeWithSensorCommand() {
+        return createDelayedEndCommand(new TrapIntakeCommand(this), () -> this.trapHasPiece(), 1);
     }
 
-        public Command createTrapLauncherWithSensorCommand() {
-        return new ParallelRaceGroup(
-                new TrapLaunchCommand(this),
-                new SequentialCommandGroup(new WaitUntilCommand(() -> !this.trapHasPiece()), new WaitCommand(1)));
+    public Command createTrapLauncherWithSensorCommand() {
+        return createDelayedEndCommand(new TrapLaunchCommand(this), () -> !this.trapHasPiece(), 1);
     }
+
+    public Command createDelayedEndCommand(Command command, BooleanSupplier endCondition, double seconds) {
+        var endConditionCommand = new WaitUntilCommand(endCondition);
+
+        return new ParallelRaceGroup(
+                command,
+                new SequentialCommandGroup(endConditionCommand, new WaitCommand(seconds)));
+    }
+
 }
