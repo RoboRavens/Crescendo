@@ -26,6 +26,7 @@ import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.PoseEstimatorSubsystem;
 import frc.robot.subsystems.ReactDashSubsystem;
+import frc.robot.subsystems.TeleopDashboardSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -46,6 +47,7 @@ public class Robot extends TimedRobot {
   public static final DrivetrainDefaultCommand DRIVETRAIN_DEFAULT_COMMAND = new DrivetrainDefaultCommand();
   public static final ReactDashSubsystem REACT_DASH_SUBSYSTEM = new ReactDashSubsystem();
   public static final AutoChooserSubsystemReact AUTO_CHOOSER = new AutoChooserSubsystemReact();
+  public static final TeleopDashboardSubsystem TELEOP_DASHBOARD_SUBSYSTEM = new TeleopDashboardSubsystem();
 
   public Robot() {
     
@@ -56,6 +58,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("Alliance Color", allianceColor.name());
     CommandScheduler.getInstance().run();
     setDriverStationData();
+    SmartDashboard.putString("Scoring State", TELEOP_DASHBOARD_SUBSYSTEM.getScoringSelection());
+    SmartDashboard.putString("Arm Height", TELEOP_DASHBOARD_SUBSYSTEM.getArmHeightSelection());
   }
 
   /**

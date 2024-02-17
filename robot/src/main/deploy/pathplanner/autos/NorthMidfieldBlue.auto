@@ -76,6 +76,18 @@
           "data": {
             "pathName": "NorthMidfieldAutoBlue.6"
           }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "NorthMidfieldAutoBlue.7"
+          }
         }
       ]
     }

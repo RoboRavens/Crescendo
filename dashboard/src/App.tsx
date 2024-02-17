@@ -29,7 +29,8 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
 import TextField from '@mui/material/TextField';
 import Stack from '@mui/material/Stack';
-import { Campaign } from '@mui/icons-material';
+import { VideoLabel, Link, VolumeUp, Highlight, Speaker } from '@mui/icons-material';
+import { Switch } from '@mui/material';
 
 const matchTimeFormatter = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
 
@@ -52,23 +53,20 @@ const COLOR_RED = '#b71c1c';
 
 const OTHER_HIGLIGHT = '#35afea';
 
-const renderSubstation = (substation: string, selectedSubstation: string, handleClick: (clickedSubstation: string) => void) => {
-  let sx = substation === selectedSubstation ? {backgroundColor:OTHER_HIGLIGHT} : {};
-  return <Item sx={sx} onClick={() => handleClick(substation)}>{substation}</Item>
-}
-
 interface Topics {
   tabPub?: NetworkTablesTopic<string>;
   selectedAutoPub?: NetworkTablesTopic<string>;
   selectedScoreTypePub?: NetworkTablesTopic<string>;
   selectedSourcePub?: NetworkTablesTopic<string>;
+  selectedArmHeightPub?: NetworkTablesTopic<string>;
 }
 
 const topics: Topics = {
   tabPub: undefined,
   selectedAutoPub: undefined,
   selectedScoreTypePub: undefined,
-  selectedSourcePub: undefined
+  selectedSourcePub: undefined,
+  selectedArmHeightPub: undefined
 };
 
 const NT_CORE = NetworkTables.getInstanceByTeam(1188);
@@ -86,6 +84,8 @@ class App extends React.Component<{}, {
   selectedAuto: string,
   selectedAutoFromRobot: string,
   autoOptions: Array<string>,
+  selectedScoreType: string,
+  armHeightSelection: string,
 }> {
   constructor(props: {}) {
     super(props);
@@ -101,6 +101,8 @@ class App extends React.Component<{}, {
       selectedAuto: "NONE",
       selectedAutoFromRobot: "NONE",
       autoOptions: [],
+      selectedScoreType: "NONE",
+      armHeightSelection: "High"
     };
   }
 
@@ -186,6 +188,15 @@ class App extends React.Component<{}, {
     topics.selectedAutoPub?.setValue(value);
   };
 
+  
+  handleShooterHeightSelection(event: React.ChangeEvent<HTMLInputElement>) {
+    const armHeight = event.target.checked ? "high" : "low"
+    this.setState({
+      armHeightSelection: armHeight
+    });
+    topics.selectedArmHeightPub?.setValue(armHeight);
+  }
+
   setSelectedAuto(selected: string | null) {
     this.setState({
       selectedAuto: selected ?? "NONE"
@@ -242,8 +253,8 @@ class App extends React.Component<{}, {
     topics.selectedAutoPub.publish({retained: true}); // make us the publisher for this topic and tell the server retain the value if we disconnect
     topics.selectedScoreTypePub = NT_CORE.createTopic<string>('/ReactDash/Teleop/dpub/selectedScoreType', NetworkTablesTypeInfos.kString, "None");
     topics.selectedScoreTypePub.publish({retained: true});
-    topics.selectedSourcePub = NT_CORE.createTopic<string>('/ReactDash/Teleop/dpub/selectedSource', NetworkTablesTypeInfos.kString, "None");
-    topics.selectedSourcePub.publish({retained: true});
+    topics.selectedArmHeightPub = NT_CORE.createTopic<string>('/ReactDash/Teleop/dpub/selectedArmHeight', NetworkTablesTypeInfos.kString, "None");
+    topics.selectedArmHeightPub.publish({retained: true});
 
     NT_CORE.createTopic<string>('/ReactDash/Autonomous/rpub/selectedAuto', NetworkTablesTypeInfos.kString, "No Auto")
       .subscribe((value: string | null) => { this.setSelectedAutoFromRobot(value); }, true);
@@ -254,12 +265,19 @@ class App extends React.Component<{}, {
     console.log("componentWillUnmount");
   }
 
-  handleScoreSelection(type: string) {
-    topics.selectedScoreTypePub?.setValue(type);
-  }
-
-  handleSourceSelection(type: string) {
-    
+  handleScoreSelection(e: React.MouseEvent, type: string) {
+    const elementID : string = e.currentTarget.id;
+    window.document.getElementById(elementID)!.style.backgroundColor = this.state.selectedScoreType == type ? "#262b32" : "#43a5ff";
+    const previouslySelectedButton = window.document.getElementById(this.state.selectedScoreType)
+    if (previouslySelectedButton != null) {
+      window.document.getElementById(this.state.selectedScoreType)!.style.backgroundColor = "#262b32";
+    }
+    const selectedScoreType = this.state.selectedScoreType == type ? "NONE" : type
+    topics.selectedScoreTypePub?.setValue(selectedScoreType);
+    console.log(topics.selectedScoreTypePub?.getValue())
+    this.setState({
+      selectedScoreType: selectedScoreType
+    });
   }
   
   render() {
@@ -358,22 +376,29 @@ class App extends React.Component<{}, {
               }
               {this.state.selectedTab == "Teleop" &&
                 <React.Fragment>
+                  <Stack marginTop={2} marginLeft={2}>
+                    <p style={{marginBottom: 0}}>Scoring Selection</p>    
+                  </Stack>              
                   <Stack height={'100'} direction={'row'} spacing={2} marginTop={2} marginLeft={2} width={"100%"}>
-                    <Stack width={'25%'}>
-                      <Item onClick={() => this.handleScoreSelection("Speaker")}>Speaker</Item>
-                      <img style={{marginTop: 20}} src='./speaker.png'/>
+                    <Stack>
+                      <Item id="speaker" onClick={(e) => this.handleScoreSelection(e, "speaker")}><p>Speaker</p><Speaker style={{fontSize: 100}}/></Item>
                     </Stack>
-                    <Stack width={'25%'}>
-                      <Item onClick={() => this.handleScoreSelection("Amp")} >Amp</Item>
-                      <img src='./amp.png'/>
+                    <Stack>
+                      <Item id="amp" onClick={(e) => this.handleScoreSelection(e, "amp")}><p>Amp</p><Highlight style={{fontSize: 100}}/></Item>
                     </Stack>
-                    <Stack width={'100%'} direction="column" alignItems={"center"} spacing={2}>
-                      <Stack direction="row" spacing={2} justifyContent={"center"}>
-                        <Item onClick={() => this.handleSourceSelection("Left")}>Left Source</Item>
-                        <Item onClick={() => this.handleSourceSelection("Middle")}>Middle Source</Item>
-                        <Item onClick={() => this.handleSourceSelection("Right")}>Right Source</Item>
-                      </Stack>
-                      <img width="70%" src='./source.png'/>
+                    <Stack >
+                      <Item id="trap" onClick={(e) => this.handleScoreSelection(e, "trap")}><p>Trap & Climb</p><VideoLabel style={{fontSize: 100}}/></Item>
+                    </Stack>
+                    <Stack>
+                      <Item id="climb" onClick={(e) => this.handleScoreSelection(e, "climb")}><p>Climb</p><Link style={{fontSize: 100}}/></Item>
+                    </Stack>
+                  </Stack>
+                  <Stack direction={'column'} marginTop={2} marginLeft={2}>
+                    <p style={{marginBottom: 0}}>Arm Height Selection</p>
+                    <Stack height={'100'} direction={'row'} alignItems={'center'}>
+                      <p>Low</p>
+                      <Switch defaultChecked onChange={(e) => this.handleShooterHeightSelection(e)}/>
+                      <p>High</p>
                     </Stack>
                   </Stack>
                 </React.Fragment>

@@ -12,18 +12,20 @@ import frc.util.FieldMeasurements;
 public class TeleopDashboardSubsystem extends SubsystemBase {
   
   private StringSubscriber _scoringSub;
-  private StringSubscriber _sourceSub;
+  private StringSubscriber _armSub;
 
   private StringEntry _scoringPub;
-  private StringEntry _sourcePub;
+  private StringEntry _armPub;
 
   private Timer _lockTimer = new Timer();
 
   public TeleopDashboardSubsystem(){
     var teleopTable = ReactDashSubsystem.ReactDash.getSubTable("Teleop");
     _scoringSub = teleopTable.getStringTopic("dpub/selectedScoreType").subscribe("None");
+    _armSub = teleopTable.getStringTopic("dpub/selectedArmHeight").subscribe("High");
     
     _scoringPub = teleopTable.getStringTopic("rpub/selectedScoreType").getEntry("None");
+    _armPub = teleopTable.getStringTopic("rpub/selectedArmHeight").getEntry("High");
 
     _lockTimer.start();
   }
@@ -31,7 +33,8 @@ public class TeleopDashboardSubsystem extends SubsystemBase {
   @Override
   public void periodic(){
     if (_lockTimer.get() > .5) {
-      _scoringPub.set(_scoringSub.get("-1"));
+      _scoringPub.set(_scoringSub.get("None"));
+      _armPub.set(_armSub.get("None"));
     }
   }
 
@@ -39,41 +42,12 @@ public class TeleopDashboardSubsystem extends SubsystemBase {
     Robot.REACT_DASH_SUBSYSTEM.SwitchTab(ReactDashSubsystem.TELEOP_TAB_NAME);
   }
 
-  public String getSourceSelection() {
-    return _sourcePub.get();
-  }
-
   public String getScoringSelection() {
     return _scoringSub.get();
   }
 
-  public Translation2d getSelectedSourceCoordinates() {
-    String selection = getSourceSelection();
-    if (Robot.allianceColor == Alliance.Blue) {
-        switch (selection) {
-            case "Left":
-                return FieldMeasurements.BLUE_SOURCES[0];
-            case "Middle":
-                return FieldMeasurements.BLUE_SOURCES[1];
-            case "Right":
-                return FieldMeasurements.BLUE_SOURCES[2];
-            default:
-                return null;
-        }
-    }
-    else if (Robot.allianceColor == Alliance.Red) {
-        switch (selection) {
-            case "Left":
-                return FieldMeasurements.RED_SOURCES[0];
-            case "Middle":
-                return FieldMeasurements.RED_SOURCES[1];
-            case "Right":
-                return FieldMeasurements.RED_SOURCES[2];
-            default:
-                return null;
-        }
-    }
-    return null;
+  public String getArmHeightSelection() {
+    return _armSub.get();
   }
 
   public Translation2d getSelectedAmpCoordinates() {
