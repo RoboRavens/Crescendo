@@ -24,7 +24,7 @@ public class IntakeTrapSubsystem extends SubsystemBase {
       false);
   private BufferedDigitalInput _pieceSensorTrap = new BufferedDigitalInput(RobotMap.INTAKE_TRAP_SENSOR_DIO_PORT, 3, false,
       false);
-  private CANSparkMax _sparkMax = new CANSparkMax(0, MotorType.kBrushless);
+  private CANSparkMax _sparkMax = new CANSparkMax(RobotMap.INTAKE_MOTOR_CAN_ID, MotorType.kBrushless);
 
   public void startIntake() {
     _sparkMax.set(IntakeTrapConstants.INTAKE_SPARK_MAX_SPEED);
