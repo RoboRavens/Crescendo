@@ -15,4 +15,7 @@ public class FieldMeasurements {
     };
     public static final Translation2d BLUE_AMP = new Translation2d(1.8, 7.75);
     public static final Translation2d RED_AMP = new Translation2d(14.7, 7.75);
+    public static final Translation2d[] BLUE_CLIMBING_POSITIONS = {
+         
+    };
 }

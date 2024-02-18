@@ -29,8 +29,8 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
 import TextField from '@mui/material/TextField';
 import Stack from '@mui/material/Stack';
-import { VideoLabel, Link, VolumeUp, Highlight, Speaker } from '@mui/icons-material';
-import { Switch } from '@mui/material';
+import { VideoLabel, Link, VolumeUp, Highlight, Speaker, ToggleOn, Translate } from '@mui/icons-material';
+import { SvgIcon, Switch } from '@mui/material';
 
 const matchTimeFormatter = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
 
@@ -59,6 +59,8 @@ interface Topics {
   selectedScoreTypePub?: NetworkTablesTopic<string>;
   selectedSourcePub?: NetworkTablesTopic<string>;
   selectedArmHeightPub?: NetworkTablesTopic<string>;
+  selectedIntakePub?: NetworkTablesTopic<string>;
+  selectedClimbPositionPub?: NetworkTablesTopic<string>;
 }
 
 const topics: Topics = {
@@ -66,7 +68,9 @@ const topics: Topics = {
   selectedAutoPub: undefined,
   selectedScoreTypePub: undefined,
   selectedSourcePub: undefined,
-  selectedArmHeightPub: undefined
+  selectedArmHeightPub: undefined,
+  selectedIntakePub: undefined,
+  selectedClimbPositionPub: undefined
 };
 
 const NT_CORE = NetworkTables.getInstanceByTeam(1188);
@@ -86,6 +90,8 @@ class App extends React.Component<{}, {
   autoOptions: Array<string>,
   selectedScoreType: string,
   armHeightSelection: string,
+  selectedIntakeType: string,
+  selectedClimbPosition: string
 }> {
   constructor(props: {}) {
     super(props);
@@ -102,7 +108,9 @@ class App extends React.Component<{}, {
       selectedAutoFromRobot: "NONE",
       autoOptions: [],
       selectedScoreType: "NONE",
-      armHeightSelection: "High"
+      armHeightSelection: "high",
+      selectedIntakeType: "ground",
+      selectedClimbPosition: "center-drivestation"
     };
   }
 
@@ -255,6 +263,10 @@ class App extends React.Component<{}, {
     topics.selectedScoreTypePub.publish({retained: true});
     topics.selectedArmHeightPub = NT_CORE.createTopic<string>('/ReactDash/Teleop/dpub/selectedArmHeight', NetworkTablesTypeInfos.kString, "None");
     topics.selectedArmHeightPub.publish({retained: true});
+    topics.selectedIntakePub = NT_CORE.createTopic<string>('/ReactDash/Teleop/dpub/selectedIntakeType', NetworkTablesTypeInfos.kString, "None");
+    topics.selectedIntakePub.publish({retained: true});
+    topics.selectedClimbPositionPub = NT_CORE.createTopic<string>('/ReactDash/Teleop/dpub/selectedClimbPosition', NetworkTablesTypeInfos.kString, "None");
+    topics.selectedClimbPositionPub.publish({retained: true});
 
     NT_CORE.createTopic<string>('/ReactDash/Autonomous/rpub/selectedAuto', NetworkTablesTypeInfos.kString, "No Auto")
       .subscribe((value: string | null) => { this.setSelectedAutoFromRobot(value); }, true);
@@ -274,10 +286,44 @@ class App extends React.Component<{}, {
     }
     const selectedScoreType = this.state.selectedScoreType == type ? "NONE" : type
     topics.selectedScoreTypePub?.setValue(selectedScoreType);
-    console.log(topics.selectedScoreTypePub?.getValue())
     this.setState({
       selectedScoreType: selectedScoreType
     });
+  }
+
+  handleIntakeSelection(e: React.MouseEvent, type: string) {
+    const elementID : string = e.currentTarget.id;
+    window.document.getElementById(elementID)!.style.backgroundColor = this.state.selectedIntakeType == type ? "#262b32" : "#43a5ff";
+    const previouslySelectedButton = window.document.getElementById(this.state.selectedIntakeType)
+    if (previouslySelectedButton != null) {
+      window.document.getElementById(this.state.selectedIntakeType)!.style.backgroundColor = "#262b32";
+    }
+    const selectedIntakeType = this.state.selectedIntakeType == type ? "NONE" : type
+    topics.selectedIntakePub?.setValue(selectedIntakeType);
+    this.setState({
+      selectedIntakeType: selectedIntakeType
+    });
+  }
+
+  generateClimbSelections() {
+    const elements = [];
+    const positions = ["left-far", "left-center", "left-close", "right-close", "right-center", "right-far", "opposite-right", "opposite-center", "opposite-left"]
+    const xOffsets = [112, 148, 190, 283, 326, 362, 321, 238, 155]
+    const yOffsets = [113, 177, 250, 250, 177, 113, 30, 30, 30]
+    for (let i = 0; i < 9; i++) {
+      elements.push(<Radio 
+        id={positions[i]} 
+        checked={this.state.selectedClimbPosition == positions[i]} 
+        onChange={
+          (element) => {
+            const elementID = element.target.id
+            topics.selectedClimbPositionPub?.setValue(elementID);
+            this.setState({selectedClimbPosition: elementID})
+          }
+        } 
+        style={{position: "absolute", left: xOffsets[i], top: yOffsets[i]}}/>);
+    }
+    return elements.map((element) => element)
   }
   
   render() {
@@ -308,6 +354,13 @@ class App extends React.Component<{}, {
                 <SportsEsportsOutlinedIcon />
               </ListItemIcon>
               <ListItemText primary="Teleop" />
+            </ListItemButton>
+            <Divider sx={{ my: 1 }} />
+            <ListItemButton selected={this.state.selectedTab == "Overrides"} onClick={() => this.handleTabClick("Overrides")}>
+              <ListItemIcon>
+                <ToggleOn />
+              </ListItemIcon>
+              <ListItemText primary="Overrides" />
             </ListItemButton>
             <Divider sx={{ my: 1 }} />
             <ListItemButton onClick={() => this.resetDashboard()}>
@@ -376,31 +429,84 @@ class App extends React.Component<{}, {
               }
               {this.state.selectedTab == "Teleop" &&
                 <React.Fragment>
-                  <Stack marginTop={2} marginLeft={2}>
-                    <p style={{marginBottom: 0}}>Scoring Selection</p>    
-                  </Stack>              
-                  <Stack height={'100'} direction={'row'} spacing={2} marginTop={2} marginLeft={2} width={"100%"}>
-                    <Stack>
-                      <Item id="speaker" onClick={(e) => this.handleScoreSelection(e, "speaker")}><p>Speaker</p><Speaker style={{fontSize: 100}}/></Item>
-                    </Stack>
-                    <Stack>
-                      <Item id="amp" onClick={(e) => this.handleScoreSelection(e, "amp")}><p>Amp</p><Highlight style={{fontSize: 100}}/></Item>
-                    </Stack>
-                    <Stack >
-                      <Item id="trap" onClick={(e) => this.handleScoreSelection(e, "trap")}><p>Trap & Climb</p><VideoLabel style={{fontSize: 100}}/></Item>
-                    </Stack>
-                    <Stack>
-                      <Item id="climb" onClick={(e) => this.handleScoreSelection(e, "climb")}><p>Climb</p><Link style={{fontSize: 100}}/></Item>
-                    </Stack>
-                  </Stack>
-                  <Stack direction={'column'} marginTop={2} marginLeft={2}>
-                    <p style={{marginBottom: 0}}>Arm Height Selection</p>
-                    <Stack height={'100'} direction={'row'} alignItems={'center'}>
-                      <p>Low</p>
-                      <Switch defaultChecked onChange={(e) => this.handleShooterHeightSelection(e)}/>
-                      <p>High</p>
-                    </Stack>
-                  </Stack>
+                  <Grid container spacing={2} columns={2}>
+                    <Grid item >
+                      <Stack marginTop={2} marginLeft={2}>
+                        <p style={{marginBottom: 0}}>Scoring Selection</p>    
+                      </Stack>              
+                      <Stack height={'100'} direction={'row'} spacing={2} marginTop={2} marginLeft={2} width={"100%"}>
+                        <Stack>
+                          <Item id="speaker" onClick={(e) => this.handleScoreSelection(e, "speaker")}><p>Speaker</p><Speaker style={{fontSize: 80}}/></Item>
+                        </Stack>
+                        <Stack>
+                          <Item id="amp" onClick={(e) => this.handleScoreSelection(e, "amp")}><p>Amp</p><Highlight style={{fontSize: 80}}/></Item>
+                        </Stack>
+                        <Stack >
+                          <Item id="trap" onClick={(e) => this.handleScoreSelection(e, "trap")}><p>Trap & Climb</p><VideoLabel style={{fontSize: 80}}/></Item>
+                        </Stack>
+                        <Stack>
+                          <Item id="climb" onClick={(e) => this.handleScoreSelection(e, "climb")}><p>Climb</p><Link style={{fontSize: 80}}/></Item>
+                        </Stack>
+                      </Stack>
+                      <Stack position="relative">
+                        <Stack marginTop={4} alignItems={"center"}>
+                          {this.generateClimbSelections()}
+                          <img width={350} src="./stage.png"></img>
+                        </Stack>
+                        <Stack position="absolute" bottom={90} direction={'column'} marginTop={2} marginLeft={2}>
+                          <p style={{marginBottom: 0}}>Shooter Start</p>
+                          <Stack height={'100'} direction={'row'} alignItems={'center'}>
+                            <p>Off</p>
+                            {/* TODO: Fix function call */}
+                            <Switch defaultChecked onChange={(e) => this.handleShooterHeightSelection(e)}/> 
+                            <p>On</p>
+                          </Stack>
+                        </Stack>
+                        <Stack style={{position: 'absolute', bottom: 0}} direction={'column'} marginLeft={2}>
+                          <p style={{marginBottom: 0}}>Arm Height Selection</p>
+                          <Stack height={'100'} direction={'row'} alignItems={'center'}>
+                            <p>Low</p>
+                            <Switch defaultChecked onChange={(e) => this.handleShooterHeightSelection(e)}/>
+                            <p>High</p>
+                          </Stack>
+                        </Stack>
+                      </Stack>
+                    </Grid>
+                    <Grid item>
+                      <Stack marginTop={2} marginLeft={2}>
+                        <p style={{marginBottom: 0}}>Intake Selection</p>    
+                      </Stack>              
+                      <Stack height={'100'} direction={'row'} spacing={2} marginTop={2} marginLeft={2} width={"100%"}>
+                        <Stack>
+                          <Item id="ground" onClick={(e) => this.handleIntakeSelection(e, "ground")}><p>Ground</p><Speaker style={{fontSize: 80}}/></Item>
+                        </Stack>
+                        <Stack>
+                          <Item id="source" onClick={(e) => this.handleIntakeSelection(e, "source")}><p>Source</p><Highlight style={{fontSize: 80}}/></Item>
+                        </Stack>
+                        <Stack>
+                          <Item id="trap-source" onClick={(e) => this.handleIntakeSelection(e, "trap-source")}><p>Trap Source</p><VideoLabel style={{fontSize: 80}}/></Item>
+                        </Stack>
+                      </Stack>
+                      <Stack marginTop={2} marginLeft={2}>
+                        <p style={{marginBottom: 0}}>Robot Signaling</p>    
+                      </Stack>
+                      <Stack direction={'row'} spacing={3} marginTop={2} marginLeft={2}>
+                        <Stack>                          
+                          <p style={{position: "relative", top: "50%", textAlign: "center", lineHeight: 0, margin: 0, width: "100%"}}>Co-Op</p>
+                          <img width="160" height="160" src="./co-op-signal.svg"/>
+                        </Stack>
+                        <Stack>
+                          <p style={{position: "relative", top: "50%", textAlign: "center", lineHeight: 0, margin: 0, width: "100%"}}>Amp</p>
+                          <img width="160" height="160" src="./amp-signal.svg"/>
+                        </Stack>
+                      </Stack>
+                    </Grid>
+                  </Grid>
+                </React.Fragment>
+              }
+              {this.state.selectedTab == "Overrides" &&
+                <React.Fragment>
+
                 </React.Fragment>
               }
             </Grid>

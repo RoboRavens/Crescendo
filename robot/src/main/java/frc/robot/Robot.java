@@ -60,6 +60,7 @@ public class Robot extends TimedRobot {
     setDriverStationData();
     SmartDashboard.putString("Scoring State", TELEOP_DASHBOARD_SUBSYSTEM.getScoringSelection());
     SmartDashboard.putString("Arm Height", TELEOP_DASHBOARD_SUBSYSTEM.getArmHeightSelection());
+    SmartDashboard.putString("Climb Position", TELEOP_DASHBOARD_SUBSYSTEM.getClimbPositionSelection());
   }
 
   /**

@@ -13,9 +13,13 @@ public class TeleopDashboardSubsystem extends SubsystemBase {
   
   private StringSubscriber _scoringSub;
   private StringSubscriber _armSub;
+  private StringSubscriber _climbPositionSub;
+  private StringSubscriber _intakeSub;
 
   private StringEntry _scoringPub;
   private StringEntry _armPub;
+  private StringEntry _climbPositionPub;
+  private StringEntry _intakePub;
 
   private Timer _lockTimer = new Timer();
 
@@ -23,9 +27,13 @@ public class TeleopDashboardSubsystem extends SubsystemBase {
     var teleopTable = ReactDashSubsystem.ReactDash.getSubTable("Teleop");
     _scoringSub = teleopTable.getStringTopic("dpub/selectedScoreType").subscribe("None");
     _armSub = teleopTable.getStringTopic("dpub/selectedArmHeight").subscribe("High");
-    
+    _climbPositionSub = teleopTable.getStringTopic("dpub/selectedClimbPosition").subscribe("left-center");
+    _intakeSub = teleopTable.getStringTopic("dpub/selectedIntakeType").subscribe("ground");
+
     _scoringPub = teleopTable.getStringTopic("rpub/selectedScoreType").getEntry("None");
     _armPub = teleopTable.getStringTopic("rpub/selectedArmHeight").getEntry("High");
+    _climbPositionPub = teleopTable.getStringTopic("rpub/selectedClimbPosition").getEntry("left-center");
+    _intakePub = teleopTable.getStringTopic("rpub/selectedIntakeType").getEntry("ground");
 
     _lockTimer.start();
   }
@@ -35,6 +43,8 @@ public class TeleopDashboardSubsystem extends SubsystemBase {
     if (_lockTimer.get() > .5) {
       _scoringPub.set(_scoringSub.get("None"));
       _armPub.set(_armSub.get("None"));
+      _climbPositionPub.set(_climbPositionSub.get("None"));
+      _intakePub.set(_intakeSub.get("None"));
     }
   }
 
@@ -48,6 +58,15 @@ public class TeleopDashboardSubsystem extends SubsystemBase {
 
   public String getArmHeightSelection() {
     return _armSub.get();
+  }
+
+  public String getClimbPositionSelection() {
+    return _climbPositionSub.get();
+  }
+
+  public Translation2d getSelectedClimbPositionCoordinates() {
+    // TODO: Implement this method
+    return null;
   }
 
   public Translation2d getSelectedAmpCoordinates() {
