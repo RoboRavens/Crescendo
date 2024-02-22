@@ -18,7 +18,7 @@ import frc.robot.commands.intake.IntakeFeedCommand;
 import frc.robot.commands.intake.TrapIntakeCommand;
 import frc.robot.commands.intake.TrapLaunchCommand;
 
-public class IntakeTrapSubsystem extends SubsystemBase {
+public class IntakeSubsystem extends SubsystemBase {
 
   private BufferedDigitalInput _pieceSensorIntake = new BufferedDigitalInput(RobotMap.INTAKE_INTAKE_SENSOR_DIO_PORT, 3, false,
       false);
@@ -27,20 +27,20 @@ public class IntakeTrapSubsystem extends SubsystemBase {
   private CANSparkMax _sparkMax = new CANSparkMax(RobotMap.INTAKE_MOTOR_CAN_ID, MotorType.kBrushless);
 
   public void startIntake() {
-    _sparkMax.set(IntakeTrapConstants.INTAKE_SPARK_MAX_SPEED);
+    _sparkMax.set(IntakeConstants.INTAKE_SPARK_MAX_SPEED);
   }
 
   // Stops all
   public void stop() {
-    _sparkMax.set(IntakeTrapConstants.INTAKE_SPARK_MAX_STOP);
+    _sparkMax.set(IntakeConstants.INTAKE_SPARK_MAX_STOP);
   }
 
   public void startTrapIntake() {
-    _sparkMax.set(IntakeTrapConstants.INTAKE_SPARK_MAX_SPEED * -1);
+    _sparkMax.set(IntakeConstants.INTAKE_SPARK_MAX_SPEED * -1);
   }
 
   public void startTrapLaunch() {
-    _sparkMax.set(IntakeTrapConstants.INTAKE_SPARK_MAX_SPEED);
+    _sparkMax.set(IntakeConstants.INTAKE_SPARK_MAX_SPEED);
   }
 
   public boolean intakeHasPiece() {

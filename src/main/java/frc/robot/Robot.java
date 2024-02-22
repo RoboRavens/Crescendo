@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
-import frc.robot.subsystems.IntakeTrapSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.PoseEstimatorSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -35,7 +35,7 @@ public class Robot extends TimedRobot {
   public static final CommandXboxController XBOX_CONTROLLER = new CommandXboxController(0);
   public static DriverStation.Alliance allianceColor = Alliance.Blue;
   public static final DrivetrainDefaultCommand DRIVETRAIN_DEFAULT_COMMAND = new DrivetrainDefaultCommand();
-  public static final IntakeTrapSubsystem INTAKE_SUBSYSTEM = new IntakeTrapSubsystem();
+  public static final IntakeSubsystem INTAKE_SUBSYSTEM = new IntakeSubsystem();
   public static final ShooterSubsystem SHOOTER_SUBSYSTEM = new ShooterSubsystem();
 
   public Robot() {

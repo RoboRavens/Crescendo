@@ -1,19 +1,19 @@
 package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.IntakeTrapSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 
 public class TrapLaunchCommand extends Command {
-  private IntakeTrapSubsystem _intakeTrapSubsystem;
+  private IntakeSubsystem _intakeSubsystem;
 
-  public TrapLaunchCommand(IntakeTrapSubsystem intakeTrapSubsystem) {
-    _intakeTrapSubsystem = intakeTrapSubsystem;
-    this.addRequirements(_intakeTrapSubsystem);
+  public TrapLaunchCommand(IntakeSubsystem intakeSubsystem) {
+    _intakeSubsystem = intakeSubsystem;
+    this.addRequirements(_intakeSubsystem);
   }
 
   @Override
   public void initialize() {
-    _intakeTrapSubsystem.startTrapLaunch();
+    _intakeSubsystem.startTrapLaunch();
   }
 
   @Override
@@ -22,7 +22,7 @@ public class TrapLaunchCommand extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    _intakeTrapSubsystem.stop();
+    _intakeSubsystem.stop();
   }
 
   @Override
