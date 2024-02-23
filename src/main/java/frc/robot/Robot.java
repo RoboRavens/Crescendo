@@ -4,14 +4,15 @@
 
 package frc.robot;
 
+import java.awt.Button;
+
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
@@ -29,7 +30,8 @@ public class Robot extends TimedRobot {
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_ONE = new LimelightSubsystem("limelight");
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_TWO = new LimelightSubsystem("limelight-two");
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_THREE = new LimelightSubsystem("limelight-three");
-  public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_FOUR = new LimelightSubsystem("limelight-four");
+  public static final XboxController XBOX_CONTROLLER2 = new XboxController(0); // 0 is the USB Port to be used as indicated on the Driver Station
+
   public static final TrajectoryGenerationSubsystem TRAJECTORY_GENERATION_SUBSYSTEM = new TrajectoryGenerationSubsystem();
   public static final DrivetrainSubsystem DRIVETRAIN_SUBSYSTEM = new DrivetrainSubsystem();
   public static final PoseEstimatorSubsystem POSE_ESTIMATOR_SUBSYSTEM = new PoseEstimatorSubsystem();
@@ -43,6 +45,7 @@ public class Robot extends TimedRobot {
       new TrapezoidProfile.Constraints(
           TRAJECTORY_CONFIG_MAX_ANGULAR_SPEED_RADIANS_PER_SECOND, TRAJECTORY_CONFIG_MAX_ANGULAR_ACCELERATION_RADIANS_PER_SECOND);
 
+          
   public Robot() {}
 
   @Override
@@ -75,7 +78,11 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during teleoperated mode. */
   @Override
   public void teleopPeriodic() {
-    
+   
+    if (XBOX_CONTROLLER.getAButton()) {
+       Robot.DRIVETRAIN_SUBSYSTEM.CreateFollowTrajectoryCommandSwerveOptimized(Robot.TRAJECTORY_GENERATION_SUBSYSTEM.generateTrajectory());
+    } 
+   
   }
 
   /** This function is called once each time the robot enters test mode. */
