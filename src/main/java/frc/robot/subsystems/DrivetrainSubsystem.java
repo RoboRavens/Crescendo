@@ -466,137 +466,139 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
     return m_navx.getPitch();
   }
 
-  // @Override
-  // public TrajectoryConfig GetTrajectoryConfig() {
-  //   // Create config for trajectory
-  //   TrajectoryConfig config =
-  //   new TrajectoryConfig(
-  //     Constants.TRAJECTORY_CONFIG_MAX_VELOCITY_METERS_PER_SECOND,
-  //     Constants.TRAJECTORY_CONFIG_MAX_ACCELERATION_METERS_PER_SECOND)
-  //       // Add kinematics to ensure max speed is actually obeyed
-  //       .setKinematics(m_kinematics);
+  @Override
+  public TrajectoryConfig GetTrajectoryConfig() {
+    // Create config for trajectory
+    TrajectoryConfig config =
+    new TrajectoryConfig(
+      Constants.TRAJECTORY_CONFIG_MAX_VELOCITY_METERS_PER_SECOND,
+      Constants.TRAJECTORY_CONFIG_MAX_ACCELERATION_METERS_PER_SECOND)
+        // Add kinematics to ensure max speed is actually obeyed
+        .setKinematics(m_kinematics);
 
-  //   return config;
-  // }
+    return config;
+  }
 
-  // @Override
-  // public Command CreateSetOdometryToTrajectoryInitialPositionCommand(Trajectory trajectory) {
-  //   return new InstantCommand(() -> this.resetOdometry(trajectory.getInitialPose()));
-  // }
+  @Override
+  public Command CreateSetOdometryToTrajectoryInitialPositionCommand(Trajectory trajectory) {
+    return new InstantCommand(() -> this.resetOdometry(trajectory.getInitialPose()));
+  }
 
-  // @Override
-  // public Command CreateFollowTrajectoryCommand(Trajectory trajectory) {
-  //   return CreateFollowTrajectoryCommand(trajectory, false);
-  // }
+  @Override
+  public Command CreateFollowTrajectoryCommand(Trajectory trajectory) {
+    return CreateFollowTrajectoryCommand(trajectory, false);
+  }
 
-  // @Override
-  // public Command CreateFollowTrajectoryCommandSwerveOptimized(Trajectory trajectory) {
-  //   return CreateFollowTrajectoryCommand(trajectory, true);
-  // }
   
-  // private Command CreateFollowTrajectoryCommand(Trajectory trajectory, boolean swerveOptimized) {
-  //   var robotAngleController =
-  //       new ProfiledPIDController(
-  //         Constants.SWERVE_CONTROLLER_ANGLE_KP, 0, 0, Constants.SWERVE_CONTROLLER_ANGULAR_CONSTRAINTS);
-  //   robotAngleController.enableContinuousInput(-Math.PI, Math.PI);
-
-  //   Command followTrajectory;
-  //   if (swerveOptimized) {
-  //     followTrajectory = CreateSwerveCommandWhichImmediatelyRotatesToRotationOfLastPointInTrajectory(trajectory, robotAngleController);
-  //   } else {
-  //     followTrajectory = CreateSwerveCommandWhichRespectsTheRotationOfEachPoint(trajectory, robotAngleController);
-  //   }
-
-  //   return followTrajectory
-  //     .andThen(this::stop);
-  // }
-
-  // private RavenSwerveControllerCommand CreateSwerveCommandWhichRespectsTheRotationOfEachPoint(Trajectory trajectory, ProfiledPIDController robotAngleController) {
-  //   return new RavenSwerveControllerCommand(
-  //     trajectory,
-  //     this::getPose, // Functional interface to feed supplier
-  //     m_kinematics,
-
-  //     // Position controllers
-  //     new PIDController(Constants.SWERVE_CONTROLLER_X_KP, 0, 0),
-  //     new PIDController(Constants.SWERVE_CONTROLLER_Y_KP, 0, 0),
-  //     robotAngleController,
-  //     this::setModuleStates,
-  //     this);
-  // }
-
-  // private SwerveControllerCommand CreateSwerveCommandWhichImmediatelyRotatesToRotationOfLastPointInTrajectory(Trajectory trajectory, ProfiledPIDController robotAngleController) {
-  //   return new SwerveControllerCommand(
-  //     trajectory,
-  //     this::getPose, // Functional interface to feed supplier
-  //     m_kinematics,
-
-  //     // Position controllers
-  //     new PIDController(Constants.SWERVE_CONTROLLER_X_KP, 0, 0),
-  //     new PIDController(Constants.SWERVE_CONTROLLER_Y_KP, 0, 0),
-  //     robotAngleController,
-  //     this::setModuleStates,
-  //     this);
-  // }
-
-  // @Override
-  // public Command getMarkPositionCommand() {
-  //   return new InstantCommand(() -> {
-  //     var pos = this.getPose();
-  //     _markedPosition = new Pose2d(pos.getTranslation(), pos.getRotation());
-  //   });
-  // }
-
-  // @Override
-  // public Command getReturnToMarkedPositionCommand() {
-  //   return new InstantCommand(() -> {
-  //     var trajectoryConfig = this.GetTrajectoryConfig();
-  //     var trajectory = TrajectoryGenerator.generateTrajectory(
-  //       this.getPose(),
-  //       List.of(),
-  //       _markedPosition,
-  //       trajectoryConfig);
+  @Override
+  public Command CreateFollowTrajectoryCommandSwerveOptimized(Trajectory trajectory) {
+    return CreateFollowTrajectoryCommand(trajectory, true);
+  }
   
-  //     var cmd = this.CreateFollowTrajectoryCommandSwerveOptimized(trajectory);
-  //     cmd.schedule();
-  //   });
-  // }
+  private Command CreateFollowTrajectoryCommand(Trajectory trajectory, boolean swerveOptimized) {
+    var robotAngleController =
+        new ProfiledPIDController(
+          Constants.SWERVE_CONTROLLER_ANGLE_KP, 0, 0, Constants.SWERVE_CONTROLLER_ANGULAR_CONSTRAINTS);
+    robotAngleController.enableContinuousInput(-Math.PI, Math.PI);
 
-  // public boolean robotIsAtTargetCoordinates() {
-  //   return robotIsAtTargetXCoordinate() && robotIsAtTargetYCoordinate();
-  // }
+    Command followTrajectory;
+    if (swerveOptimized) {
+      followTrajectory = CreateSwerveCommandWhichImmediatelyRotatesToRotationOfLastPointInTrajectory(trajectory, robotAngleController);
+    } else {
+      followTrajectory = CreateSwerveCommandWhichRespectsTheRotationOfEachPoint(trajectory, robotAngleController);
+    }
 
-  // public boolean robotIsAtTargetXCoordinate() {
-  //   boolean isWithinErrorMargin = false;
+    return followTrajectory
+      .andThen(this::stop);
+  }
 
-  //   var target = Robot.TABLET_SCORING_SUBSYSTEM.GetScoringCoordinates();
-  //   if (target == null) {
-  //       return false;
-  //   }
+  private RavenSwerveControllerCommand CreateSwerveCommandWhichRespectsTheRotationOfEachPoint(Trajectory trajectory, ProfiledPIDController robotAngleController) {
+    return new RavenSwerveControllerCommand(
+      trajectory,
+      this::getPose, // Functional interface to feed supplier
+      m_kinematics,
 
-  //   double robotX = Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose().getX();
+      // Position controllers
+      new PIDController(Constants.SWERVE_CONTROLLER_X_KP, 0, 0),
+      new PIDController(Constants.SWERVE_CONTROLLER_Y_KP, 0, 0),
+      robotAngleController,
+      this::setModuleStates,
+      this);
+  }
 
-  //   if (Math.abs(robotX - target.getX()) < Constants.ROBOT_IS_ALIGNED_ERROR_MARGIN_METERS) {
-  //     isWithinErrorMargin = true;
-  //   }
+  private SwerveControllerCommand CreateSwerveCommandWhichImmediatelyRotatesToRotationOfLastPointInTrajectory(Trajectory trajectory, ProfiledPIDController robotAngleController) {
+    return new SwerveControllerCommand(
+      trajectory,
+      this::getPose, // Functional interface to feed supplier
+      m_kinematics,
 
-  //   return isWithinErrorMargin;
-  // }
+      // Position controllers
+      new PIDController(Constants.SWERVE_CONTROLLER_X_KP, 0, 0),
+      new PIDController(Constants.SWERVE_CONTROLLER_Y_KP, 0, 0),
+      robotAngleController,
+      this::setModuleStates,
+      this);
+  }
 
-  // public boolean robotIsAtTargetYCoordinate() {
-  //   boolean isWithinErrorMargin = false;
+  @Override
+  public Command getMarkPositionCommand() {
+    return new InstantCommand(() -> {
+      var pos = this.getPose();
+      _markedPosition = new Pose2d(pos.getTranslation(), pos.getRotation());
+    });
+  }
 
-  //   var target = Robot.TABLET_SCORING_SUBSYSTEM.GetScoringCoordinates();
-  //   if (target == null) {
-  //       return false;
-  //   }
+  @Override
+  public Command getReturnToMarkedPositionCommand() {
+    return new InstantCommand(() -> {
+      var trajectoryConfig = this.GetTrajectoryConfig();
+      var trajectory = TrajectoryGenerator.generateTrajectory(
+        this.getPose(),
+        List.of(),
+        _markedPosition,
+        trajectoryConfig);
+  
+      var cmd = this.CreateFollowTrajectoryCommandSwerveOptimized(trajectory);
+      cmd.schedule();
+    });
+  }
+ /* 
+  public boolean robotIsAtTargetCoordinates() {
+    return robotIsAtTargetXCoordinate() && robotIsAtTargetYCoordinate();
+  }
 
-  //   double robotX = Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose().getY();
+  public boolean robotIsAtTargetXCoordinate() {
+    boolean isWithinErrorMargin = false;
 
-  //   if (Math.abs(robotX - target.getY()) < Constants.ROBOT_IS_ALIGNED_ERROR_MARGIN_METERS) {
-  //     isWithinErrorMargin = true;
-  //   }
+    var target = Robot.TABLET_SCORING_SUBSYSTEM.GetScoringCoordinates();
+    if (target == null) {
+        return false;
+    }
 
-  //   return isWithinErrorMargin;
-  // }
+    double robotX = Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose().getX();
+
+    if (Math.abs(robotX - target.getX()) < Constants.ROBOT_IS_ALIGNED_ERROR_MARGIN_METERS) {
+      isWithinErrorMargin = true;
+    }
+
+    return isWithinErrorMargin;
+  }
+
+  public boolean robotIsAtTargetYCoordinate() {
+    boolean isWithinErrorMargin = false;
+
+    var target = Robot.TABLET_SCORING_SUBSYSTEM.GetScoringCoordinates();
+    if (target == null) {
+        return false;
+    }
+
+    double robotX = Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose().getY();
+
+    if (Math.abs(robotX - target.getY()) < Constants.ROBOT_IS_ALIGNED_ERROR_MARGIN_METERS) {
+      isWithinErrorMargin = true;
+    }
+
+    return isWithinErrorMargin;
+  }
+  */
 }

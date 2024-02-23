@@ -12,12 +12,12 @@ public abstract class DrivetrainSubsystemBase extends SubsystemBase {
     public abstract Rotation2d getOdometryRotation();
     public abstract void holdPosition();
     public abstract void zeroGyroscope();
-    // public abstract TrajectoryConfig GetTrajectoryConfig();
-    // public abstract Command CreateSetOdometryToTrajectoryInitialPositionCommand(Trajectory trajectory);
-    // public abstract Command CreateFollowTrajectoryCommand(Trajectory trajectory);
-    // public abstract Command CreateFollowTrajectoryCommandSwerveOptimized(Trajectory trajectory);
-    // public abstract Command getMarkPositionCommand();
-    // public abstract Command getReturnToMarkedPositionCommand();
+    public abstract TrajectoryConfig GetTrajectoryConfig();
+    public abstract Command CreateSetOdometryToTrajectoryInitialPositionCommand(Trajectory trajectory);
+    public abstract Command CreateFollowTrajectoryCommand(Trajectory trajectory);
+    public abstract Command CreateFollowTrajectoryCommandSwerveOptimized(Trajectory trajectory);
+    public abstract Command getMarkPositionCommand();
+    public abstract Command getReturnToMarkedPositionCommand();
     public abstract Rotation2d getGyroscopeRotation2dTest();
     public abstract double getRoll();
     public abstract boolean isRobotSquareWithField();
