@@ -1,18 +1,18 @@
 package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.IntakeTrapSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 
 public class IntakeFeedCommand extends Command {
-  private IntakeTrapSubsystem _intakeTrapSubsystem;
+  private IntakeSubsystem _intakeSubsystem;
 
-  public IntakeFeedCommand(IntakeTrapSubsystem intakeTrapSubsystem) {
-    _intakeTrapSubsystem = intakeTrapSubsystem;
+  public IntakeFeedCommand(IntakeSubsystem intakeSubsystem) {
+    _intakeSubsystem = intakeSubsystem;
   }
 
   @Override
   public void initialize() {
-    _intakeTrapSubsystem.startIntake();
+    _intakeSubsystem.startIntake();
   }
 
   @Override
@@ -21,7 +21,7 @@ public class IntakeFeedCommand extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    _intakeTrapSubsystem.stop();
+    _intakeSubsystem.stop();
   }
 
   @Override
