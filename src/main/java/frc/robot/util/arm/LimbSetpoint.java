@@ -9,12 +9,12 @@ public class LimbSetpoint {
     public static LimbSetpoint GROUND_PICKUP = new LimbSetpoint("", 0, 0);
 
     private String _name;
-    private int _armRotationPosition;
+    private int _elbowRotationPosition;
     private int _wristRotationPosition;
 
-    private LimbSetpoint(String name, int armRotationSetpoint, int wristRotationPosition) {
+    private LimbSetpoint(String name, int elbowRotationSetpoint, int wristRotationPosition) {
         _name = name;
-        _armRotationPosition = armRotationSetpoint;
+        _elbowRotationPosition = elbowRotationSetpoint;
         _wristRotationPosition = wristRotationPosition;
     }
 
@@ -22,8 +22,8 @@ public class LimbSetpoint {
         return _name;
     }
     
-    public double getArmRotationPosition() {
-        return _armRotationPosition;
+    public double getElbowRotationPosition() {
+        return _elbowRotationPosition;
     }
 
     public double getWristRotationPosition() {
