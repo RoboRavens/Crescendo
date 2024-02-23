@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -20,6 +21,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private CANSparkMax _rightSparkMax = new CANSparkMax(RobotMap.SHOOTER_RIGHT_MOTOR_CAN_ID, MotorType.kBrushless);
     private SparkPIDController _lSparkPIDController = _leftSparkMax.getPIDController();
     private SparkPIDController _rSparkPIDController = _rightSparkMax.getPIDController();
+    private InterpolatingDoubleTreeMap shooterAngleMap = new InterpolatingDoubleTreeMap();
 
     public ShooterSubsystem() {
         _lSparkPIDController.setP(ShooterConstants.lkP);
@@ -35,6 +37,8 @@ public class ShooterSubsystem extends SubsystemBase {
         _rSparkPIDController.setIZone(ShooterConstants.rkIz);
         _rSparkPIDController.setFF(ShooterConstants.rkFF);
         _rSparkPIDController.setOutputRange(ShooterConstants.rkMinOutput, ShooterConstants.rkMaxOutput);
+
+        populateShooterAngleMap();
     }
 
     public void startShooter() {
@@ -60,7 +64,18 @@ public class ShooterSubsystem extends SubsystemBase {
         return parallelShootWithSensor;
     }
 
-    public double getShootingAngle(double distance, double shooterHeightMeters) {
+    private void populateShooterAngleMap(){
+        for(int i=0; i<ShooterConstants.SHOOTER_ANGLE_PAIRS.length; i++){
+            shooterAngleMap.put(ShooterConstants.SHOOTER_ANGLE_PAIRS[i][0], ShooterConstants.SHOOTER_ANGLE_PAIRS[i][1]);
+        }
+    }
+
+    public double getShooterAngleMap(double distance){
+        double angle = shooterAngleMap.get(distance);
+        return angle;
+    }
+
+    public double getShootingAngleFormula(double distance, double shooterHeightMeters) {
         double denumerator = 2 * ShooterConstants.GRAVITY_ACCELERATION * Math.pow(distance, 2);
         double numerator1 = 2 * Math.pow(ShooterConstants.INITIAL_NOTE_SPEED, 2) * distance;
         double numerator2 = Math.pow((2 * Math.pow(ShooterConstants.INITIAL_NOTE_SPEED, 2) * distance), 2);
