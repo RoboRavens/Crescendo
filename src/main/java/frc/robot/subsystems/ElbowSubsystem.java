@@ -80,4 +80,8 @@ public class ElbowSubsystem extends SubsystemBase {
   public void resetPosition() {
     _elbowRotationMotor.setPosition(0);
   }
+
+  public double getPosition() {
+      return _elbowRotationFollower.getPosition().getValueAsDouble();
+  }
 }
