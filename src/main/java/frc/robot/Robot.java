@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -52,6 +54,7 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     allianceColor = DriverStation.getAlliance().get();
     CommandScheduler.getInstance().run();
+    Robot.TRAJECTORY_GENERATION_SUBSYSTEM.generateTrajectory();
   }
 
   /**
@@ -61,6 +64,10 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     DRIVETRAIN_SUBSYSTEM.setDefaultCommand(DRIVETRAIN_DEFAULT_COMMAND);
+    Field2d m_field = new Field2d();
+    SmartDashboard.putData("Field", m_field);
+    m_field.setRobotPose(Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose());
+    m_field.getObject("traj").setTrajectory(Robot.TRAJECTORY_GENERATION_SUBSYSTEM.generateTrajectory());
   }
 
   /** This function is run once each time the robot enters autonomous mode. */
