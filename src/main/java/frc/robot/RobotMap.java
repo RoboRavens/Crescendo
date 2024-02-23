@@ -40,4 +40,9 @@ public class RobotMap {
     public static final int INTAKE_TRAP_SENSOR_DIO_PORT = 0;
     public static final int INTAKE_INTAKE_SENSOR_DIO_PORT = 0;
 
+    
+    //needs can IDs these are placeholders
+    public static final int ELBOW_ROTATION_MOTOR = 1;
+    public static final int ELBOW_ROTATION_FOLLOWER_MOTOR = 2;
+    public static final int WRIST_ROTATION_MOTOR = 3;
 }
