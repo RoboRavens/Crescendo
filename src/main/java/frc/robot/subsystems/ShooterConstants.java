@@ -1,5 +1,8 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+
+
 public class ShooterConstants {
     
     public static final double lkP = 6e-5;
@@ -27,4 +30,12 @@ public class ShooterConstants {
     public static final double SPEAKER_HEIGHT_METERS = 2.047801077;
 
     public static final double MAX_SHOOTER_SPEED = 5;
+
+    public static final double[][] SHOOTER_ANGLE_PAIRS ={
+        {0,90},
+        {5,75},
+        {10,60},
+        {15,45}
+    };
+
 }
