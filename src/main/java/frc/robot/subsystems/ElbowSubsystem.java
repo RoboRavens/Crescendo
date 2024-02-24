@@ -22,7 +22,7 @@ import frc.robot.RobotMap;
 public class ElbowSubsystem extends SubsystemBase {
   private TalonFX _elbowRotationMotor = new TalonFX(RobotMap.ELBOW_ROTATION_MOTOR);
   private TalonFX _elbowRotationFollower = new TalonFX(RobotMap.ELBOW_ROTATION_FOLLOWER_MOTOR);
-  private DigitalInput _forwardLimitSwitch = new DigitalInput(0);
+  private DigitalInput _forwardLimitSwitch = new DigitalInput(RobotMap.ELBOW_FORWARD_LIMIT_DIO);
 
   public ElbowSubsystem() {
     var talonFXConfiguration = new TalonFXConfiguration();
