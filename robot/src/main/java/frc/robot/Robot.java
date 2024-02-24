@@ -95,6 +95,8 @@ public class Robot extends TimedRobot {
     new Trigger(() -> XBOX_CONTROLLER.getAButton()).toggleOnTrue(
       new InstantCommand(() -> {SCORING_TARGET_STATE = ScoringTargetState.TRAP; System.out.println("Clicked A");})
     );
+
+    
   }
 
   /** This function is run once each time the robot enters autonomous mode. */
