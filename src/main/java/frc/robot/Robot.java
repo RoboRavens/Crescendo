@@ -37,6 +37,7 @@ public class Robot extends TimedRobot {
   public static final PoseEstimatorSubsystem POSE_ESTIMATOR_SUBSYSTEM = new PoseEstimatorSubsystem();
   public static final CommandXboxController XBOX_CONTROLLER = new CommandXboxController(0);
   public static DriverStation.Alliance allianceColor = Alliance.Blue;
+public static boolean ODOMETRY_OVERRIDE;
   public static final DrivetrainDefaultCommand DRIVETRAIN_DEFAULT_COMMAND = new DrivetrainDefaultCommand();
   public static final IntakeSubsystem INTAKE_SUBSYSTEM = new IntakeSubsystem();
   public static final ShooterSubsystem SHOOTER_SUBSYSTEM = new ShooterSubsystem();
