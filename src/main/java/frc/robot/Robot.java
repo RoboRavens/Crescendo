@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
+import frc.robot.commands.shooter.ShootCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.ElbowSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -60,7 +61,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     DRIVETRAIN_SUBSYSTEM.setDefaultCommand(DRIVETRAIN_DEFAULT_COMMAND);
     var startShooterTrigger = new Trigger(() -> SHOOTER_SUBSYSTEM.hasPiece() && XBOX_CONTROLLER.getHID().getLeftBumper());
-    startShooterTrigger.onTrue(SHOOTER_SUBSYSTEM.createShootWithSensorCommand());
+    startShooterTrigger.onTrue(new ShootCommand());
   }
 
   /** This function is run once each time the robot enters autonomous mode. */
