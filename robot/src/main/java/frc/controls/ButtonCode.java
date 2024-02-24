@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 public class ButtonCode {
 
 	private Joystick OP_PAD_BUTTONS = new Joystick(0);
-	private Joystick OP_PAD_SWITCHES = new Joystick(0);
+	private Joystick OP_PAD_TOGGLE = new Joystick(0);
 
 	public enum Buttons {
 		SCORE_SPEAKER(1),
@@ -34,22 +34,26 @@ public class ButtonCode {
 		}
 	}
 
-	public enum Switches {
+	// "toggle" is in place for switch
+	public enum Toggle {
 		ARM_UP(1);
 	
+	    private final int toggle;
 
-	    private final int switch;
+	    Toggle(int toggle) {
+		this.toggle = toggle;
+	    }
 
-	    Switches(int switch) {
-		this.switch = switch;
+		public int getToggle() {
+			return toggle;
+		}
 	}
+
+	public JoystickButton getButton(Buttons button) {
+		return new JoystickButton(OP_PAD_BUTTONS, button.getButton());
 	}
 
-	public void getButton(Buttons button) {
-		return new JoystickButton(_joystick, getButtonNumber(button))
-	}
-
-	public void getSwitch() {
-
+	public JoystickButton getSwitch(Toggle toggle) {
+        return new JoystickButton(OP_PAD_TOGGLE, toggle.getToggle());
 	}
 }
