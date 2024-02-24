@@ -162,10 +162,10 @@ class App extends React.Component<{}, {
     });
   }
 
-  handleStartShooterToggle() {
-    topics.startShooterPub?.setValue(!this.state.startShooter);
+  handleStartShooterToggle(startShooter: boolean) {
+    topics.startShooterPub?.setValue(startShooter);
     this.setState({
-      startShooter: !this.state.startShooter
+      startShooter: startShooter
     })
   }
 
@@ -297,11 +297,21 @@ class App extends React.Component<{}, {
     topics.startShooterPub = NT_CORE.createTopic<boolean>('/ReactDash/Teleop/dpub/startShooter', NetworkTablesTypeInfos.kBoolean, false);
     topics.startShooterPub.publish({retained: true});
 
-    NT_CORE.createTopic<string>('/ReactDash/Autonomous/rpub/selectedScoreType', NetworkTablesTypeInfos.kString)
-    .subscribe((value: string | null) => { 
-      this.handleScoreSelection(value ?? this.state.selectedScoreType);
-      topics.selectedScoreTypePub?.setValue(value ?? this.state.selectedScoreType);
-    }, true);
+    NT_CORE.createTopic<string>('/ReactDash/Teleop/rpub/selectedScoreType', NetworkTablesTypeInfos.kString)
+    .subscribe((value: string | null) => this.handleScoreSelection(value ?? this.state.selectedScoreType), true);
+    NT_CORE.createTopic<boolean>('/ReactDash/Teleop/rpub/armUp', NetworkTablesTypeInfos.kString)
+    .subscribe((value: boolean | null) => this.handleDefenseModeSelection(value ?? this.state.defenseModeEnabled), true);
+    NT_CORE.createTopic<string>('/ReactDash/Teleop/rpub/selectedIntakeType', NetworkTablesTypeInfos.kString)
+    .subscribe((value: string | null) => this.handleIntakeSelection(value ?? this.state.selectedIntakeType), true);
+    NT_CORE.createTopic<string>('/ReactDash/Teleop/rpub/selectedClimbPosition', NetworkTablesTypeInfos.kString)
+    .subscribe((value: string | null) => this.handleClimbSelection(value ?? this.state.selectedClimbPosition), true);
+    NT_CORE.createTopic<string>('/ReactDash/Teleop/rpub/selectedSourceLane', NetworkTablesTypeInfos.kString)
+    .subscribe((value: string | null) => this.handleSourceSelection(value ?? this.state.selectedSourceLane), true);
+    NT_CORE.createTopic<string>('/ReactDash/Teleop/rpub/signalSelection', NetworkTablesTypeInfos.kString)
+    .subscribe((value: string | null) => this.handleSignalSelection(value ?? this.state.signalSelection), true);
+    NT_CORE.createTopic<boolean>('/ReactDash/Teleop/rpub/startShooter', NetworkTablesTypeInfos.kString)
+    .subscribe((value: boolean | null) => this.handleStartShooterToggle(value ?? this.state.startShooter), true);
+
     
     NT_CORE.createTopic<string>('/ReactDash/Autonomous/rpub/selectedAuto', NetworkTablesTypeInfos.kString, "No Auto")
       .subscribe((value: string | null) => { this.setSelectedAutoFromRobot(value); }, true);
@@ -313,7 +323,6 @@ class App extends React.Component<{}, {
   }
 
   handleScoreSelection(type: string) {
-    console.log("test")
     const currentSelectedButton = window.document.getElementById(type)
     if (currentSelectedButton != null) currentSelectedButton.style.backgroundColor = "#43a5ff"
     const previouslySelectedButton = window.document.getElementById(this.state.selectedScoreType)
@@ -326,11 +335,11 @@ class App extends React.Component<{}, {
     });
   }
 
-  handleSourceSelection(e: React.MouseEvent, type: string) {
-    const elementID : string = e.currentTarget.id;
-    window.document.getElementById(elementID)!.style.backgroundColor = "#43a5ff";
+  handleSourceSelection(type: string) {
+    const currentSelectedButton = window.document.getElementById(type);
+    if (currentSelectedButton != null) currentSelectedButton.style.backgroundColor = "#43a5ff";
     const previouslySelectedButton = window.document.getElementById(this.state.selectedSourceLane)
-    if (previouslySelectedButton != null && previouslySelectedButton.id != elementID) {
+    if (previouslySelectedButton != null && previouslySelectedButton.id != type) {
       window.document.getElementById(this.state.selectedSourceLane)!.style.backgroundColor = "#262b32";
     }
     topics.selectedSourceLanePub?.setValue(type);
@@ -339,11 +348,11 @@ class App extends React.Component<{}, {
     });
   }
 
-  handleIntakeSelection(e: React.MouseEvent, type: string) {
-    const elementID : string = e.currentTarget.id;
-    window.document.getElementById(elementID)!.style.backgroundColor = "#43a5ff";
+  handleIntakeSelection(type: string) {
+    const currentSelectedButton = window.document.getElementById(type);
+    if (currentSelectedButton != null) currentSelectedButton.style.backgroundColor = "#43a5ff";
     const previouslySelectedButton = window.document.getElementById(this.state.selectedIntakeType)
-    if (previouslySelectedButton != null && previouslySelectedButton.id != elementID) {
+    if (previouslySelectedButton != null && previouslySelectedButton.id != type) {
       window.document.getElementById(this.state.selectedIntakeType)!.style.backgroundColor = "#262b32";
     }
     topics.selectedIntakePub?.setValue(type);
@@ -368,28 +377,28 @@ class App extends React.Component<{}, {
         id={positions[i]} 
         checked={this.state.selectedClimbPosition == positions[i]} 
         onChange={
-          (element) => {
-            const elementID = element.target.id
-            topics.selectedClimbPositionPub?.setValue(elementID);
-            this.setState({selectedClimbPosition: elementID})
-          }
+          (e) => this.handleClimbSelection(e.currentTarget.id)
         } 
         style={{position: "absolute", left: xOffsets[i], top: yOffsets[i]}}/>);
     }
     return elements.map((element) => element)
   }
 
-  handleSignalSelection(e: React.MouseEvent, type: string) {
-    const elementID : string = e.currentTarget.id;
-    window.document.getElementById(elementID)!.style.backgroundColor = this.state.signalSelection == type ? "#262b32" : "#43a5ff";
+  handleClimbSelection(selection: string) {
+    topics.selectedClimbPositionPub?.setValue(selection);
+    this.setState({selectedClimbPosition: selection})
+  }
+
+  handleSignalSelection(type: string) {
+    const currentSelectedButton = window.document.getElementById(type);
+    if (currentSelectedButton != null) currentSelectedButton.style.backgroundColor = "#43a5ff";
     const previouslySelectedButton = window.document.getElementById(this.state.signalSelection)
     if (previouslySelectedButton != null) {
       window.document.getElementById(this.state.signalSelection)!.style.backgroundColor = "#262b32";
     }
-    const signalSelection = this.state.signalSelection == type ? "NONE" : type
-    topics.signalSelectionPub?.setValue(signalSelection);
+    topics.signalSelectionPub?.setValue(type);
     this.setState({
-      signalSelection: signalSelection
+      signalSelection: type
     });
   }
   
@@ -528,13 +537,13 @@ class App extends React.Component<{}, {
                       </Stack>              
                       <Stack height={'100'} direction={'row'} spacing={2} marginTop={2} marginLeft={2} width={"100%"}>
                         <Stack>
-                          <Item id="GROUND" style={{backgroundColor: "#43a5ff"}} onClick={(e) => this.handleIntakeSelection(e, "GROUND")}><p>Ground</p><TripOrigin style={{fontSize: 80}}/></Item>
+                          <Item id="GROUND" style={{backgroundColor: "#43a5ff"}} onClick={() => this.handleIntakeSelection("GROUND")}><p>Ground</p><TripOrigin style={{fontSize: 80}}/></Item>
                         </Stack>
                         <Stack>
-                          <Item id="SOURCE" onClick={(e) => this.handleIntakeSelection(e, "SOURCE")}><p>Source</p><ShowChart style={{fontSize: 80}}/></Item>
+                          <Item id="SOURCE" onClick={() => this.handleIntakeSelection("SOURCE")}><p>Source</p><ShowChart style={{fontSize: 80}}/></Item>
                         </Stack>
                         <Stack>
-                          <Item id="TRAP_SOURCE" onClick={(e) => this.handleIntakeSelection(e, "TRAP_SOURCE")}><p>Trap Source</p><VideoLabel style={{fontSize: 80}}/></Item>
+                          <Item id="TRAP_SOURCE" onClick={() => this.handleIntakeSelection("TRAP_SOURCE")}><p>Trap Source</p><VideoLabel style={{fontSize: 80}}/></Item>
                         </Stack>
                       </Stack>
                       <Stack marginTop={2} marginLeft={2}>
@@ -542,14 +551,14 @@ class App extends React.Component<{}, {
                       </Stack>
                       <Stack width={'100%'} direction="column" spacing={2} marginTop={2} marginLeft={2}>
                         <Stack direction="row" spacing={2}>
-                          <Item id="LEFT" onClick={(e) => this.handleSourceSelection(e, "LEFT")}>Left Source</Item>
-                          <Item id="CENTER" style={{backgroundColor: "#43a5ff"}} onClick={(e) => this.handleSourceSelection(e, "CENTER")}>Center Source</Item>
-                          <Item id="RIGHT" onClick={(e) => this.handleSourceSelection(e, "RIGHT")}>Right Source</Item>
+                          <Item id="LEFT" onClick={() => this.handleSourceSelection("LEFT")}>Left Source</Item>
+                          <Item id="CENTER" style={{backgroundColor: "#43a5ff"}} onClick={() => this.handleSourceSelection("CENTER")}>Center Source</Item>
+                          <Item id="RIGHT" onClick={() => this.handleSourceSelection("RIGHT")}>Right Source</Item>
                         </Stack>
                         <Stack direction={'column'} marginTop={2} marginLeft={2} >
                           <p style={{marginBottom: 0}}>Shooter Rev</p>
                           <Stack direction={'row'} marginTop={2}>
-                            <Item style={{backgroundColor: this.state.startShooter ? "#43a5ff" : "#262b32"}} id="shooter-rev" onClick={(e) => this.handleStartShooterToggle()}><p>Shooter Rev</p>{this.state.startShooter ? <MusicNote style={{fontSize: 80}}/> : <MusicOff style={{fontSize: 80}}/>}</Item>
+                            <Item style={{backgroundColor: this.state.startShooter ? "#43a5ff" : "#262b32"}} id="shooter-rev" onClick={(e) => this.handleStartShooterToggle(!this.state.startShooter)}><p>Shooter Rev</p>{this.state.startShooter ? <MusicNote style={{fontSize: 80}}/> : <MusicOff style={{fontSize: 80}}/>}</Item>
                           </Stack>
                         </Stack>
                       </Stack>
@@ -560,11 +569,11 @@ class App extends React.Component<{}, {
                           <p style={{marginBottom: 0}}>Robot Signaling</p>    
                         </Stack>             
                         <Stack height={'100'} direction={'row'} spacing={2} marginTop={2} marginLeft={2} width={"100%"}>
-                          <Item id="CO_OP_SIGNAL" onClick={(e) => this.handleSignalSelection(e, "CO_OP_SIGNAL")}>
+                          <Item id="CO_OP_SIGNAL" onClick={(e) => this.handleSignalSelection("CO_OP_SIGNAL")}>
                             <p>Co-Op</p>                        
                             <img width="80" height="80" src="./handshake.svg"/>
                           </Item>
-                          <Item id="AMP_SIGNAL" onClick={(e) => this.handleSignalSelection(e, "AMP_SIGNAL")}>
+                          <Item id="AMP_SIGNAL" onClick={(e) => this.handleSignalSelection("AMP_SIGNAL")}>
                             <p>Amp</p>
                             <Timer style={{fontSize: 80}}/>
                           </Item>

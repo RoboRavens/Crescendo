@@ -93,10 +93,9 @@ public class Robot extends TimedRobot {
 
     // Test button that changes the score target to trap
     new Trigger(() -> XBOX_CONTROLLER.getAButton()).toggleOnTrue(
-      new InstantCommand(() -> {SCORING_TARGET_STATE = ScoringTargetState.TRAP; System.out.println("Clicked A");})
+      new InstantCommand(() -> {LED_SIGNAL_TARGET_STATE = LEDSignalTargetState.AMP_SIGNAL; System.out.println("Clicked A");})
     );
 
-    
   }
 
   /** This function is run once each time the robot enters autonomous mode. */
