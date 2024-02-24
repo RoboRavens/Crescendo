@@ -29,8 +29,9 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
 import TextField from '@mui/material/TextField';
 import Stack from '@mui/material/Stack';
-import { VideoLabel, Link, VolumeUp, Highlight, Speaker, ToggleOn, Translate } from '@mui/icons-material';
+import { VideoLabel, Link, VolumeUp, Highlight, Speaker, ToggleOn, Translate, ShowChart, TripOrigin, Timer, Handshake, KeyboardDoubleArrowUp, MusicNote, MusicOff } from '@mui/icons-material';
 import { SvgIcon, Switch } from '@mui/material';
+import { Audio, Puff } from 'react-loader-spinner';
 
 const matchTimeFormatter = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
 
@@ -57,24 +58,28 @@ interface Topics {
   tabPub?: NetworkTablesTopic<string>;
   selectedAutoPub?: NetworkTablesTopic<string>;
   selectedScoreTypePub?: NetworkTablesTopic<string>;
-  selectedSourcePub?: NetworkTablesTopic<string>;
-  selectedArmHeightPub?: NetworkTablesTopic<string>;
+  armUpPub?: NetworkTablesTopic<boolean>;
   selectedIntakePub?: NetworkTablesTopic<string>;
   selectedClimbPositionPub?: NetworkTablesTopic<string>;
+  selectedSourceLanePub?: NetworkTablesTopic<string>;
+  signalSelectionPub?: NetworkTablesTopic<string>;
+  startShooterPub?: NetworkTablesTopic<boolean>;
 }
 
 const topics: Topics = {
   tabPub: undefined,
   selectedAutoPub: undefined,
   selectedScoreTypePub: undefined,
-  selectedSourcePub: undefined,
-  selectedArmHeightPub: undefined,
+  armUpPub: undefined,
   selectedIntakePub: undefined,
-  selectedClimbPositionPub: undefined
+  selectedClimbPositionPub: undefined,
+  selectedSourceLanePub: undefined,
+  signalSelectionPub: undefined,
+  startShooterPub: undefined
 };
 
-const NT_CORE = NetworkTables.getInstanceByTeam(1188);
-// const NT_CORE = NetworkTables.getInstanceByURI("localhost");
+// const NT_CORE = NetworkTables.getInstanceByTeam(1188);
+const NT_CORE = NetworkTables.getInstanceByURI("localhost");
 
 class App extends React.Component<{}, {
   connected: boolean,
@@ -89,9 +94,13 @@ class App extends React.Component<{}, {
   selectedAutoFromRobot: string,
   autoOptions: Array<string>,
   selectedScoreType: string,
-  armHeightSelection: string,
+  defenseModeEnabled: boolean,
   selectedIntakeType: string,
-  selectedClimbPosition: string
+  selectedClimbPosition: string,
+  activeDefenseToggled: boolean,
+  selectedSourceLane: string,
+  signalSelection: string,
+  startShooter: boolean
 }> {
   constructor(props: {}) {
     super(props);
@@ -107,10 +116,14 @@ class App extends React.Component<{}, {
       selectedAuto: "NONE",
       selectedAutoFromRobot: "NONE",
       autoOptions: [],
-      selectedScoreType: "NONE",
-      armHeightSelection: "high",
-      selectedIntakeType: "ground",
-      selectedClimbPosition: "center-drivestation"
+      selectedScoreType: "SPEAKER",
+      defenseModeEnabled: false,
+      selectedIntakeType: "GROUND",
+      selectedClimbPosition: "LEFT_CLOSE",
+      activeDefenseToggled: false,
+      selectedSourceLane: "CENTER",
+      signalSelection: "NONE",
+      startShooter: false
     };
   }
 
@@ -147,6 +160,13 @@ class App extends React.Component<{}, {
     this.setState({
       driverStation: location ?? 0
     });
+  }
+
+  handleStartShooterToggle() {
+    topics.startShooterPub?.setValue(!this.state.startShooter);
+    this.setState({
+      startShooter: !this.state.startShooter
+    })
   }
 
   handleJoystickStatusUpdateFromRobot(connected: boolean | null, index: number) {
@@ -196,19 +216,12 @@ class App extends React.Component<{}, {
     topics.selectedAutoPub?.setValue(value);
   };
 
-  
-  handleShooterHeightSelection(event: React.ChangeEvent<HTMLInputElement>) {
-    const armHeight = event.target.checked ? "high" : "low"
+  handleDefenseModeSelection(enabled: boolean) {
+    enabled ? this.enableDefenseAnimation() : this.disableDefenseAnimation();
     this.setState({
-      armHeightSelection: armHeight
+      defenseModeEnabled: enabled
     });
-    topics.selectedArmHeightPub?.setValue(armHeight);
-  }
-
-  setSelectedAuto(selected: string | null) {
-    this.setState({
-      selectedAuto: selected ?? "NONE"
-    });
+    topics.armUpPub?.setValue(enabled);
   }
 
   setSelectedAutoFromRobot(selected: string | null) {
@@ -221,6 +234,20 @@ class App extends React.Component<{}, {
     this.setState({
       selectedAuto: auto
     });
+  }
+
+  disableDefenseAnimation() {
+    const animatedElements : HTMLCollectionOf<SVGAnimateElement> = window.document.getElementsByTagName("animate");
+    for (const index in animatedElements) {
+      animatedElements.item(Number(index))?.endElement();
+    }
+  }
+
+  enableDefenseAnimation() {
+    const animatedElements : HTMLCollectionOf<SVGAnimateElement> = window.document.getElementsByTagName("animate");
+    for (const index in animatedElements) {
+      animatedElements.item(Number(index))?.beginElement();
+    }
   }
 
   resetDashboard() {
@@ -237,19 +264,14 @@ class App extends React.Component<{}, {
 
     NT_CORE.createTopic<string>('/ReactDash/Main/rpub/goTotab', NetworkTablesTypeInfos.kString)
     .subscribe((value: string | null) => { this.robotSendTab(value); }, true);
-
     NT_CORE.createTopic<number>('/ReactDash/Main/rpub/driverStation', NetworkTablesTypeInfos.kInteger)
     .subscribe((value: number | null) => { this.handleDriveStationChangeFromRobot(value); }, true);
-
     NT_CORE.createTopic<boolean>('/ReactDash/Main/rpub/joystick0', NetworkTablesTypeInfos.kBoolean)
     .subscribe((value: boolean | null) => { this.handleJoystickStatusUpdateFromRobot(value, 0); }, true);
-
     NT_CORE.createTopic<boolean>('/ReactDash/Main/rpub/joystick2', NetworkTablesTypeInfos.kBoolean)
     .subscribe((value: boolean | null) => { this.handleJoystickStatusUpdateFromRobot(value, 2); }, true);
-
     NT_CORE.createTopic<boolean>('/ReactDash/Main/rpub/joystick3', NetworkTablesTypeInfos.kBoolean)
     .subscribe((value: boolean | null) => { this.handleJoystickStatusUpdateFromRobot(value, 3); }, true);
-
     NT_CORE.createTopic<number>('/ReactDash/Autonomous/rpub/matchTime', NetworkTablesTypeInfos.kDouble)
     .subscribe((value: number | null) => { this.setMatchTime(value); }, true);
     NT_CORE.createTopic<string>('/ReactDash/Autonomous/rpub/alliance', NetworkTablesTypeInfos.kString)
@@ -257,17 +279,30 @@ class App extends React.Component<{}, {
 
     const optionsTopic = NT_CORE.createTopic<string[]>('/ReactDash/Autonomous/rpub/options', NetworkTablesTypeInfos.kString);
     optionsTopic.subscribe((value: string[] | null) => { this.onOptionsChange(value); }, true);
+
     topics.selectedAutoPub = NT_CORE.createTopic<string>('/ReactDash/Autonomous/dpub/selectedAuto', NetworkTablesTypeInfos.kString, "No Auto");
     topics.selectedAutoPub.publish({retained: true}); // make us the publisher for this topic and tell the server retain the value if we disconnect
     topics.selectedScoreTypePub = NT_CORE.createTopic<string>('/ReactDash/Teleop/dpub/selectedScoreType', NetworkTablesTypeInfos.kString, "None");
     topics.selectedScoreTypePub.publish({retained: true});
-    topics.selectedArmHeightPub = NT_CORE.createTopic<string>('/ReactDash/Teleop/dpub/selectedArmHeight', NetworkTablesTypeInfos.kString, "None");
-    topics.selectedArmHeightPub.publish({retained: true});
+    topics.armUpPub = NT_CORE.createTopic<boolean>('/ReactDash/Teleop/dpub/armUp', NetworkTablesTypeInfos.kBoolean, false);
+    topics.armUpPub.publish({retained: true});
     topics.selectedIntakePub = NT_CORE.createTopic<string>('/ReactDash/Teleop/dpub/selectedIntakeType', NetworkTablesTypeInfos.kString, "None");
     topics.selectedIntakePub.publish({retained: true});
     topics.selectedClimbPositionPub = NT_CORE.createTopic<string>('/ReactDash/Teleop/dpub/selectedClimbPosition', NetworkTablesTypeInfos.kString, "None");
     topics.selectedClimbPositionPub.publish({retained: true});
+    topics.selectedSourceLanePub = NT_CORE.createTopic<string>('/ReactDash/Teleop/dpub/selectedSourceLane', NetworkTablesTypeInfos.kString, "None");
+    topics.selectedSourceLanePub.publish({retained: true});
+    topics.signalSelectionPub = NT_CORE.createTopic<string>('/ReactDash/Teleop/dpub/signalSelection', NetworkTablesTypeInfos.kString, "NONE");
+    topics.signalSelectionPub.publish({retained: true});
+    topics.startShooterPub = NT_CORE.createTopic<boolean>('/ReactDash/Teleop/dpub/startShooter', NetworkTablesTypeInfos.kBoolean, false);
+    topics.startShooterPub.publish({retained: true});
 
+    NT_CORE.createTopic<string>('/ReactDash/Autonomous/rpub/selectedScoreType', NetworkTablesTypeInfos.kString)
+    .subscribe((value: string | null) => { 
+      this.handleScoreSelection(value ?? this.state.selectedScoreType);
+      topics.selectedScoreTypePub?.setValue(value ?? this.state.selectedScoreType);
+    }, true);
+    
     NT_CORE.createTopic<string>('/ReactDash/Autonomous/rpub/selectedAuto', NetworkTablesTypeInfos.kString, "No Auto")
       .subscribe((value: string | null) => { this.setSelectedAutoFromRobot(value); }, true);
   }
@@ -277,41 +312,59 @@ class App extends React.Component<{}, {
     console.log("componentWillUnmount");
   }
 
-  handleScoreSelection(e: React.MouseEvent, type: string) {
-    const elementID : string = e.currentTarget.id;
-    window.document.getElementById(elementID)!.style.backgroundColor = this.state.selectedScoreType == type ? "#262b32" : "#43a5ff";
+  handleScoreSelection(type: string) {
+    console.log("test")
+    const currentSelectedButton = window.document.getElementById(type)
+    if (currentSelectedButton != null) currentSelectedButton.style.backgroundColor = "#43a5ff"
     const previouslySelectedButton = window.document.getElementById(this.state.selectedScoreType)
-    if (previouslySelectedButton != null) {
+    if (previouslySelectedButton != null && previouslySelectedButton.id != type) {
       window.document.getElementById(this.state.selectedScoreType)!.style.backgroundColor = "#262b32";
     }
-    const selectedScoreType = this.state.selectedScoreType == type ? "NONE" : type
-    topics.selectedScoreTypePub?.setValue(selectedScoreType);
+    topics.selectedScoreTypePub?.setValue(type);
     this.setState({
-      selectedScoreType: selectedScoreType
+      selectedScoreType: type
+    });
+  }
+
+  handleSourceSelection(e: React.MouseEvent, type: string) {
+    const elementID : string = e.currentTarget.id;
+    window.document.getElementById(elementID)!.style.backgroundColor = "#43a5ff";
+    const previouslySelectedButton = window.document.getElementById(this.state.selectedSourceLane)
+    if (previouslySelectedButton != null && previouslySelectedButton.id != elementID) {
+      window.document.getElementById(this.state.selectedSourceLane)!.style.backgroundColor = "#262b32";
+    }
+    topics.selectedSourceLanePub?.setValue(type);
+    this.setState({
+      selectedSourceLane: type
     });
   }
 
   handleIntakeSelection(e: React.MouseEvent, type: string) {
     const elementID : string = e.currentTarget.id;
-    window.document.getElementById(elementID)!.style.backgroundColor = this.state.selectedIntakeType == type ? "#262b32" : "#43a5ff";
+    window.document.getElementById(elementID)!.style.backgroundColor = "#43a5ff";
     const previouslySelectedButton = window.document.getElementById(this.state.selectedIntakeType)
-    if (previouslySelectedButton != null) {
+    if (previouslySelectedButton != null && previouslySelectedButton.id != elementID) {
       window.document.getElementById(this.state.selectedIntakeType)!.style.backgroundColor = "#262b32";
     }
-    const selectedIntakeType = this.state.selectedIntakeType == type ? "NONE" : type
-    topics.selectedIntakePub?.setValue(selectedIntakeType);
+    topics.selectedIntakePub?.setValue(type);
     this.setState({
-      selectedIntakeType: selectedIntakeType
+      selectedIntakeType: type
     });
   }
 
   generateClimbSelections() {
     const elements = [];
-    const positions = ["left-far", "left-center", "left-close", "right-close", "right-center", "right-far", "opposite-right", "opposite-center", "opposite-left"]
+    const positions = ["LEFT_FAR", "LEFT_CENTER", "LEFT_CLOSE", "RIGHT_CLOSE", "RIGHT_CENTER", "RIGHT_FAR", "OPPOSITE_RIGHT", "OPPOSITE_CENTER", "OPPOSITE_LEFT"]
     const xOffsets = [112, 148, 190, 283, 326, 362, 321, 238, 155]
     const yOffsets = [113, 177, 250, 250, 177, 113, 30, 30, 30]
     for (let i = 0; i < 9; i++) {
       elements.push(<Radio 
+        sx={{
+          '& .MuiSvgIcon-root': {
+            fontSize: this.state.selectedClimbPosition == positions[i] ? 60 : null,
+            transform: this.state.selectedClimbPosition == positions[i] ? 'translate(-15px, -15px)' : null
+          },
+        }}
         id={positions[i]} 
         checked={this.state.selectedClimbPosition == positions[i]} 
         onChange={
@@ -324,6 +377,20 @@ class App extends React.Component<{}, {
         style={{position: "absolute", left: xOffsets[i], top: yOffsets[i]}}/>);
     }
     return elements.map((element) => element)
+  }
+
+  handleSignalSelection(e: React.MouseEvent, type: string) {
+    const elementID : string = e.currentTarget.id;
+    window.document.getElementById(elementID)!.style.backgroundColor = this.state.signalSelection == type ? "#262b32" : "#43a5ff";
+    const previouslySelectedButton = window.document.getElementById(this.state.signalSelection)
+    if (previouslySelectedButton != null) {
+      window.document.getElementById(this.state.signalSelection)!.style.backgroundColor = "#262b32";
+    }
+    const signalSelection = this.state.signalSelection == type ? "NONE" : type
+    topics.signalSelectionPub?.setValue(signalSelection);
+    this.setState({
+      signalSelection: signalSelection
+    });
   }
   
   render() {
@@ -429,76 +496,112 @@ class App extends React.Component<{}, {
               }
               {this.state.selectedTab == "Teleop" &&
                 <React.Fragment>
-                  <Grid container spacing={2} columns={2}>
-                    <Grid item >
+                  <Grid container spacing={2} columns={3}>
+                    <Grid item>
                       <Stack marginTop={2} marginLeft={2}>
                         <p style={{marginBottom: 0}}>Scoring Selection</p>    
                       </Stack>              
                       <Stack height={'100'} direction={'row'} spacing={2} marginTop={2} marginLeft={2} width={"100%"}>
                         <Stack>
-                          <Item id="speaker" onClick={(e) => this.handleScoreSelection(e, "speaker")}><p>Speaker</p><Speaker style={{fontSize: 80}}/></Item>
+                          <Item id="SPEAKER" style={{backgroundColor: "#43a5ff"}} onClick={(e) => this.handleScoreSelection("SPEAKER")}><p>Speaker</p><img width="90" src="./speaker.png"/></Item>
                         </Stack>
                         <Stack>
-                          <Item id="amp" onClick={(e) => this.handleScoreSelection(e, "amp")}><p>Amp</p><Highlight style={{fontSize: 80}}/></Item>
+                          <Item id="AMP" onClick={(e) => this.handleScoreSelection("AMP")}><p>Amp</p><KeyboardDoubleArrowUp style={{fontSize: 80}}/></Item>
                         </Stack>
                         <Stack >
-                          <Item id="trap" onClick={(e) => this.handleScoreSelection(e, "trap")}><p>Trap & Climb</p><VideoLabel style={{fontSize: 80}}/></Item>
+                          <Item id="TRAP" onClick={(e) => this.handleScoreSelection("TRAP")}><p>Trap</p><VideoLabel style={{fontSize: 80}}/></Item>
                         </Stack>
                         <Stack>
-                          <Item id="climb" onClick={(e) => this.handleScoreSelection(e, "climb")}><p>Climb</p><Link style={{fontSize: 80}}/></Item>
+                          <Item id="CLIMB" onClick={(e) => this.handleScoreSelection("CLIMB")}><p>Climb</p><Link style={{fontSize: 80}}/></Item>
                         </Stack>
                       </Stack>
                       <Stack position="relative">
                         <Stack marginTop={4} alignItems={"center"}>
                           {this.generateClimbSelections()}
-                          <img width={350} src="./stage.png"></img>
-                        </Stack>
-                        <Stack position="absolute" bottom={90} direction={'column'} marginTop={2} marginLeft={2}>
-                          <p style={{marginBottom: 0}}>Shooter Start</p>
-                          <Stack height={'100'} direction={'row'} alignItems={'center'}>
-                            <p>Off</p>
-                            {/* TODO: Fix function call */}
-                            <Switch defaultChecked onChange={(e) => this.handleShooterHeightSelection(e)}/> 
-                            <p>On</p>
-                          </Stack>
-                        </Stack>
-                        <Stack style={{position: 'absolute', bottom: 0}} direction={'column'} marginLeft={2}>
-                          <p style={{marginBottom: 0}}>Arm Height Selection</p>
-                          <Stack height={'100'} direction={'row'} alignItems={'center'}>
-                            <p>Low</p>
-                            <Switch defaultChecked onChange={(e) => this.handleShooterHeightSelection(e)}/>
-                            <p>High</p>
-                          </Stack>
+                          <img width={350} src={this.state.alliance == "Red" ? "./stage_red.png" : "./stage_blue.png"}></img>
                         </Stack>
                       </Stack>
                     </Grid>
-                    <Grid item>
+                    <Grid item width={400}>
                       <Stack marginTop={2} marginLeft={2}>
                         <p style={{marginBottom: 0}}>Intake Selection</p>    
                       </Stack>              
                       <Stack height={'100'} direction={'row'} spacing={2} marginTop={2} marginLeft={2} width={"100%"}>
                         <Stack>
-                          <Item id="ground" onClick={(e) => this.handleIntakeSelection(e, "ground")}><p>Ground</p><Speaker style={{fontSize: 80}}/></Item>
+                          <Item id="GROUND" style={{backgroundColor: "#43a5ff"}} onClick={(e) => this.handleIntakeSelection(e, "GROUND")}><p>Ground</p><TripOrigin style={{fontSize: 80}}/></Item>
                         </Stack>
                         <Stack>
-                          <Item id="source" onClick={(e) => this.handleIntakeSelection(e, "source")}><p>Source</p><Highlight style={{fontSize: 80}}/></Item>
+                          <Item id="SOURCE" onClick={(e) => this.handleIntakeSelection(e, "SOURCE")}><p>Source</p><ShowChart style={{fontSize: 80}}/></Item>
                         </Stack>
                         <Stack>
-                          <Item id="trap-source" onClick={(e) => this.handleIntakeSelection(e, "trap-source")}><p>Trap Source</p><VideoLabel style={{fontSize: 80}}/></Item>
+                          <Item id="TRAP_SOURCE" onClick={(e) => this.handleIntakeSelection(e, "TRAP_SOURCE")}><p>Trap Source</p><VideoLabel style={{fontSize: 80}}/></Item>
                         </Stack>
                       </Stack>
                       <Stack marginTop={2} marginLeft={2}>
-                        <p style={{marginBottom: 0}}>Robot Signaling</p>    
+                        <p style={{marginBottom: 0}}>Trap Source Lane Selection</p>    
                       </Stack>
-                      <Stack direction={'row'} spacing={3} marginTop={2} marginLeft={2}>
-                        <Stack>                          
-                          <p style={{position: "relative", top: "50%", textAlign: "center", lineHeight: 0, margin: 0, width: "100%"}}>Co-Op</p>
-                          <img width="160" height="160" src="./co-op-signal.svg"/>
+                      <Stack width={'100%'} direction="column" spacing={2} marginTop={2} marginLeft={2}>
+                        <Stack direction="row" spacing={2}>
+                          <Item id="LEFT" onClick={(e) => this.handleSourceSelection(e, "LEFT")}>Left Source</Item>
+                          <Item id="CENTER" style={{backgroundColor: "#43a5ff"}} onClick={(e) => this.handleSourceSelection(e, "CENTER")}>Center Source</Item>
+                          <Item id="RIGHT" onClick={(e) => this.handleSourceSelection(e, "RIGHT")}>Right Source</Item>
                         </Stack>
+                        <Stack direction={'column'} marginTop={2} marginLeft={2} >
+                          <p style={{marginBottom: 0}}>Shooter Rev</p>
+                          <Stack direction={'row'} marginTop={2}>
+                            <Item style={{backgroundColor: this.state.startShooter ? "#43a5ff" : "#262b32"}} id="shooter-rev" onClick={(e) => this.handleStartShooterToggle()}><p>Shooter Rev</p>{this.state.startShooter ? <MusicNote style={{fontSize: 80}}/> : <MusicOff style={{fontSize: 80}}/>}</Item>
+                          </Stack>
+                        </Stack>
+                      </Stack>
+                    </Grid>
+                    <Grid item>
+                      <Stack>
+                        <Stack marginTop={2} marginLeft={2}>
+                          <p style={{marginBottom: 0}}>Robot Signaling</p>    
+                        </Stack>             
+                        <Stack height={'100'} direction={'row'} spacing={2} marginTop={2} marginLeft={2} width={"100%"}>
+                          <Item id="CO_OP_SIGNAL" onClick={(e) => this.handleSignalSelection(e, "CO_OP_SIGNAL")}>
+                            <p>Co-Op</p>                        
+                            <img width="80" height="80" src="./handshake.svg"/>
+                          </Item>
+                          <Item id="AMP_SIGNAL" onClick={(e) => this.handleSignalSelection(e, "AMP_SIGNAL")}>
+                            <p>Amp</p>
+                            <Timer style={{fontSize: 80}}/>
+                          </Item>
+                        </Stack>
+                      </Stack>
+                      <Stack position={"relative"} marginLeft={2} marginTop={2} spacing={2}>
                         <Stack>
-                          <p style={{position: "relative", top: "50%", textAlign: "center", lineHeight: 0, margin: 0, width: "100%"}}>Amp</p>
-                          <img width="160" height="160" src="./amp-signal.svg"/>
+                          <p style={{marginBottom: 0}}>Arm Up</p>  
                         </Stack>
+                        <Stack style={{transform: 'translate(-50%, -50%)'}} position="absolute" top="50%" left="50%" height={'100'} direction={'column'} alignItems={'center'} marginTop={2} spacing={4}>
+                            <Switch onChange={(e) => {
+                              this.handleDefenseModeSelection(e.target.checked);
+                              this.setState({
+                                activeDefenseToggled: e.target.checked
+                              });
+                            }}/>
+                            <Item 
+                              style={{backgroundColor: this.state.defenseModeEnabled ? "#43a5ff" : "#262b32"}} 
+                              // Touch screen
+                              onTouchStart={() => !this.state.activeDefenseToggled ? this.handleDefenseModeSelection(true): null} 
+                              onTouchEnd={() => !this.state.activeDefenseToggled ? this.handleDefenseModeSelection(false) : null} 
+                              // Laptop
+                              onMouseDown={() => !this.state.activeDefenseToggled ? this.handleDefenseModeSelection(true): null} 
+                              onMouseUp={() => !this.state.activeDefenseToggled ? this.handleDefenseModeSelection(false) : null} 
+                            >
+                              <p style={{margin: 0}}>Temporary Enable</p>
+                            </Item>
+                        </Stack>
+                        {this.state.defenseModeEnabled ? <Puff
+                          height="300"
+                          width="300"
+                          color={COLOR_RED}
+                          ariaLabel="audio-loading"
+                          wrapperStyle={{}}
+                          wrapperClass="wrapper-class"
+                          visible={true}
+                          /> : <div style={{border: "12px solid #bec0c2", height: 300, width: 300, borderRadius: 150}}></div>}
                       </Stack>
                     </Grid>
                   </Grid>

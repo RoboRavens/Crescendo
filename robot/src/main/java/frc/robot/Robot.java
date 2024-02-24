@@ -27,6 +27,13 @@ import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.PoseEstimatorSubsystem;
 import frc.robot.subsystems.ReactDashSubsystem;
 import frc.robot.subsystems.TeleopDashboardSubsystem;
+import frc.util.StateManagement.ArmUpTargetState;
+import frc.util.StateManagement.ClimbPositionTargetState;
+import frc.util.StateManagement.IntakeTargetState;
+import frc.util.StateManagement.LEDSignalTargetState;
+import frc.util.StateManagement.ScoringTargetState;
+import frc.util.StateManagement.ShooterRevTargetState;
+import frc.util.StateManagement.TrapSourceLaneTargetState;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -48,19 +55,27 @@ public class Robot extends TimedRobot {
   public static final ReactDashSubsystem REACT_DASH_SUBSYSTEM = new ReactDashSubsystem();
   public static final AutoChooserSubsystemReact AUTO_CHOOSER = new AutoChooserSubsystemReact();
   public static final TeleopDashboardSubsystem TELEOP_DASHBOARD_SUBSYSTEM = new TeleopDashboardSubsystem();
-
-  public Robot() {
-    
-  }
+  // States
+  public static ScoringTargetState SCORING_TARGET_STATE = ScoringTargetState.SPEAKER;
+  public static IntakeTargetState INTAKE_TARGET_STATE = IntakeTargetState.GROUND;
+  public static LEDSignalTargetState LED_SIGNAL_TARGET_STATE = LEDSignalTargetState.NONE;
+  public static TrapSourceLaneTargetState TRAP_SOURCE_LANE_TARGET_STATE = TrapSourceLaneTargetState.CENTER;
+  public static ArmUpTargetState ARM_UP_TARGET_STATE = ArmUpTargetState.FREE;
+  public static ShooterRevTargetState SHOOTER_REV_TARGET_STATE = ShooterRevTargetState.OFF;
+  public static ClimbPositionTargetState CLIMB_POSITION_TARGET_STATE = ClimbPositionTargetState.LEFT_CLOSE;
 
   @Override
   public void robotPeriodic() {
     SmartDashboard.putString("Alliance Color", allianceColor.name());
     CommandScheduler.getInstance().run();
     setDriverStationData();
-    SmartDashboard.putString("Scoring State", TELEOP_DASHBOARD_SUBSYSTEM.getScoringSelection());
-    SmartDashboard.putString("Arm Height", TELEOP_DASHBOARD_SUBSYSTEM.getArmHeightSelection());
-    SmartDashboard.putString("Climb Position", TELEOP_DASHBOARD_SUBSYSTEM.getClimbPositionSelection());
+    SmartDashboard.putString("Scoring Target State", SCORING_TARGET_STATE.toString());
+    SmartDashboard.putString("Intake Target State", INTAKE_TARGET_STATE.toString());
+    SmartDashboard.putString("LED Signal Target State", LED_SIGNAL_TARGET_STATE.toString());
+    SmartDashboard.putString("Trap Source Lane Target State", TRAP_SOURCE_LANE_TARGET_STATE.toString());
+    SmartDashboard.putString("Arm Up Target State", ARM_UP_TARGET_STATE.toString());
+    SmartDashboard.putString("Shooter Rev Target State", SHOOTER_REV_TARGET_STATE.toString());
+    SmartDashboard.putString("Climb Position Target State", CLIMB_POSITION_TARGET_STATE.toString());
   }
 
   /**
@@ -75,6 +90,11 @@ public class Robot extends TimedRobot {
       && (XBOX_CONTROLLER.getYButton()))
       .onTrue(new InstantCommand(() -> DRIVETRAIN_SUBSYSTEM.zeroGyroscope()));
     AUTO_CHOOSER.ShowTab();
+
+    // Test button that changes the score target to trap
+    new Trigger(() -> XBOX_CONTROLLER.getAButton()).toggleOnTrue(
+      new InstantCommand(() -> {SCORING_TARGET_STATE = ScoringTargetState.TRAP; System.out.println("Clicked A");})
+    );
   }
 
   /** This function is run once each time the robot enters autonomous mode. */
@@ -120,7 +140,7 @@ public class Robot extends TimedRobot {
   // which differs between the shop and match play,
   // this method needs to called both periodically AND in the auto/tele init methods.
   private void setDriverStationData() {
-    allianceColor = DriverStation.getAlliance().get();
-    AUTO_CHOOSER.BuildAutoChooser(allianceColor);
+    // allianceColor = DriverStation.getAlliance().get();
+    // AUTO_CHOOSER.BuildAutoChooser(allianceColor);
   }
 }
