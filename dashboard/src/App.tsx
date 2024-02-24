@@ -394,7 +394,7 @@ class App extends React.Component<{}, {
     if (currentSelectedButton != null) currentSelectedButton.style.backgroundColor = "#43a5ff";
     const previouslySelectedButton = window.document.getElementById(this.state.signalSelection)
     if (previouslySelectedButton != null) {
-      window.document.getElementById(this.state.signalSelection)!.style.backgroundColor = "#262b32";
+      previouslySelectedButton.style.backgroundColor = "#262b32";
     }
     topics.signalSelectionPub?.setValue(type);
     this.setState({

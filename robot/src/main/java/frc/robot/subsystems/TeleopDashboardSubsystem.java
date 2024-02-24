@@ -82,8 +82,6 @@ public class TeleopDashboardSubsystem extends SubsystemBase {
       _startShooterPub.set(Robot.SHOOTER_REV_TARGET_STATE.toString() == "ON");
     }
 
-    // Can we find out when the last change was from the dashboard and only update the value if there was a recent change?
-    // May prevent states from being immediately set back to the sub value after they are set by the button panel
     // Update the robot target states
     updateStateOnDashboardChange(_scoringSub, "SCORING_TARGET_STATE", _scoringSubLastChange);
     updateStateOnDashboardChange(_intakeSub, "INTAKE_TARGET_STATE", _intakeSubLastChange);
@@ -92,11 +90,15 @@ public class TeleopDashboardSubsystem extends SubsystemBase {
     updateStateOnDashboardChange(_climbPositionSub, "CLIMB_POSITION_TARGET_STATE", _climbPositionSubLastChange);
     updateStateOnDashboardChange(_armUpSub, "ARM_UP_TARGET_STATE", _armSubLastChange);
     updateStateOnDashboardChange(_startShooterSub, "SHOOTER_REV_TARGET_STATE", _startShooterSubLastChange);
-
-    SmartDashboard.putNumber("Last Scoring Sub Change Timestamp", _scoringSub.getLastChange());
-    SmartDashboard.putString("Subscriber name", _armUpSub.toString());
   }
 
+  /**
+   * Updates the robot state when a recent dashboard change is detected
+   * We cannot alternatively update the robot state in periodic with calls to subscriber.get() because that will override states set by physical button presses
+   * @param subscriber
+   * @param state
+   * @param storedLastChange
+   */
   private void updateStateOnDashboardChange(StringSubscriber subscriber, String state, double storedLastChange) {
     double lastChange = subscriber.getLastChange();
     if (lastChange > storedLastChange) {
@@ -127,6 +129,12 @@ public class TeleopDashboardSubsystem extends SubsystemBase {
     }
   }
 
+  /**
+   * Implementation of updateStateOnDashboardChange() for Boolean Subscribers
+   * @param subscriber
+   * @param state
+   * @param storedLastChange
+   */
   private void updateStateOnDashboardChange(BooleanSubscriber subscriber, String state, double storedLastChange) {
     double lastChange = subscriber.getLastChange();
     if (lastChange > storedLastChange) {
