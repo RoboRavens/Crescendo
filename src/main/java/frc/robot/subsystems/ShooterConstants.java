@@ -1,8 +1,5 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
-
-
 public class ShooterConstants {
     
     public static final double lkP = 6e-5;
@@ -37,5 +34,7 @@ public class ShooterConstants {
         {10,60},
         {15,45}
     };
+
+    public static final double SHOOTER_STOP_DELAY = 1;
 
 }

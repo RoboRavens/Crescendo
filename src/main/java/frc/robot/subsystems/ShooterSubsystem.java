@@ -55,15 +55,6 @@ public class ShooterSubsystem extends SubsystemBase {
         return _shooterPieceSensor.get();
     }
 
-    public Command createShootWithSensorCommand() {
-        var parallelShootWithSensor = new ParallelRaceGroup(
-                new ShootCommand(this),
-                new SequentialCommandGroup(
-                        new WaitUntilCommand(() -> this.hasPiece() == false),
-                        new WaitCommand(1)));
-        return parallelShootWithSensor;
-    }
-
     private void populateShooterAngleMap(){
         for(int i=0; i<ShooterConstants.SHOOTER_ANGLE_PAIRS.length; i++){
             shooterAngleMap.put(ShooterConstants.SHOOTER_ANGLE_PAIRS[i][0], ShooterConstants.SHOOTER_ANGLE_PAIRS[i][1]);
