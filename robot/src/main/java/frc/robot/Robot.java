@@ -12,6 +12,7 @@ import com.pathplanner.lib.path.PathPlannerTrajectory;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -20,6 +21,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.controls.ButtonCode;
+import frc.controls.ButtonCode.Buttons;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
 import frc.robot.subsystems.AutoChooserSubsystemReact;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -36,9 +39,12 @@ import frc.util.StateManagement.ShooterRevTargetState;
 import frc.util.StateManagement.TrapSourceLaneTargetState;
 
 /**
- * The VM is configured to automatically run this class, and to call the functions corresponding to
- * each mode, as described in the TimedRobot documentation. If you change the name of this class or
- * the package after creating this project, you must also update the manifest file in the resource
+ * The VM is configured to automatically run this class, and to call the
+ * functions corresponding to
+ * each mode, as described in the TimedRobot documentation. If you change the
+ * name of this class or
+ * the package after creating this project, you must also update the manifest
+ * file in the resource
  * directory.
  */
 public class Robot extends TimedRobot {
@@ -55,6 +61,7 @@ public class Robot extends TimedRobot {
   public static final ReactDashSubsystem REACT_DASH_SUBSYSTEM = new ReactDashSubsystem();
   public static final AutoChooserSubsystemReact AUTO_CHOOSER = new AutoChooserSubsystemReact();
   public static final TeleopDashboardSubsystem TELEOP_DASHBOARD_SUBSYSTEM = new TeleopDashboardSubsystem();
+  public static final ButtonCode BUTTON_CODE = new ButtonCode();
   // States
   public static ScoringTargetState SCORING_TARGET_STATE = ScoringTargetState.SPEAKER;
   public static IntakeTargetState INTAKE_TARGET_STATE = IntakeTargetState.GROUND;
@@ -79,16 +86,17 @@ public class Robot extends TimedRobot {
   }
 
   /**
-   * This function is run when the robot is first started up and should be used for any
+   * This function is run when the robot is first started up and should be used
+   * for any
    * initialization code.
    */
   @Override
   public void robotInit() {
     DRIVETRAIN_SUBSYSTEM.setDefaultCommand(DRIVETRAIN_DEFAULT_COMMAND);
     new Trigger(() -> XBOX_CONTROLLER.getLeftBumper()
-      && (XBOX_CONTROLLER.getRightBumper())
-      && (XBOX_CONTROLLER.getYButton()))
-      .onTrue(new InstantCommand(() -> DRIVETRAIN_SUBSYSTEM.zeroGyroscope()));
+        && (XBOX_CONTROLLER.getRightBumper())
+        && (XBOX_CONTROLLER.getYButton()))
+        .onTrue(new InstantCommand(() -> DRIVETRAIN_SUBSYSTEM.zeroGyroscope()));
     AUTO_CHOOSER.ShowTab();
 
     // Test button that changes the score target to trap
@@ -102,11 +110,13 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     setDriverStationData();
-    // PathPlannerTrajectory traj = exampleChoreoTraj.getTrajectory(new ChassisSpeeds(0, 0, 0), new Rotation2d(0, 0));
+    // PathPlannerTrajectory traj = exampleChoreoTraj.getTrajectory(new
+    // ChassisSpeeds(0, 0, 0), new Rotation2d(0, 0));
     // DRIVETRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(traj).andThen(AutoBuilder.followPath(exampleChoreoTraj)).schedule();
-    // PathPlannerTrajectory traj = sixNotePath.getTrajectory(new ChassisSpeeds(0, 0, 0), new Rotation2d(0, 0));
+    // PathPlannerTrajectory traj = sixNotePath.getTrajectory(new ChassisSpeeds(0,
+    // 0, 0), new Rotation2d(0, 0));
     // DRIVETRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(traj).andThen(AutoBuilder.followPath(sixNotePath)).schedule();
-    
+
     Command m_autonomousCommand = AUTO_CHOOSER.GetAutoCommand();
 
     // // schedule the autonomous command (example)
@@ -117,9 +127,12 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+  }
 
-  /** This function is called once each time the robot enters teleoperated mode. */
+  /**
+   * This function is called once each time the robot enters teleoperated mode.
+   */
   @Override
   public void teleopInit() {
     setDriverStationData();
@@ -127,21 +140,29 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during teleoperated mode. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+  }
 
   /** This function is called once each time the robot enters test mode. */
   @Override
-  public void testInit() {}
+  public void testInit() {
+  }
 
   /** This function is called periodically during test mode. */
   @Override
-  public void testPeriodic() {}
-  
+  public void testPeriodic() {
+  }
+
   // Due to the manner in which the robot connects to the driver station,
   // which differs between the shop and match play,
-  // this method needs to called both periodically AND in the auto/tele init methods.
+  // this method needs to called both periodically AND in the auto/tele init
+  // methods.
   private void setDriverStationData() {
     // allianceColor = DriverStation.getAlliance().get();
     // AUTO_CHOOSER.BuildAutoChooser(allianceColor);
+  }
+
+  private void configureButtonBindings() {
+    BUTTON_CODE.getButton(Buttons.INTAKE_GROUND);
   }
 }
