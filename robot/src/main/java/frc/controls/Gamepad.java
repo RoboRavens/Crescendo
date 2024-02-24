@@ -58,82 +58,44 @@ public class Gamepad {
 		int buttonNumber;
 
 		switch (button) {
-		case A:
+		case SCORE_SPEAKER:
 			buttonNumber = 1;
 			break;
-		case B:
+		case SCORE_AMP:
 			buttonNumber = 2;
 			break;
-		case X:
+		case SCORE_TRAP:
 			buttonNumber = 3;
 			break;
-		case Y:
+		case SCORE_CLIMB:
 			buttonNumber = 4;
 			break;
-		case LEFTBUMPER:
+		case INTAKE_GROUND:
 			buttonNumber = 5;
 			break;
-		case RIGHTBUMPER:
+		case INTAKE_SOURCE:
 			buttonNumber = 6;
 			break;
-		case BACK:
+		case INTAKE_TRAP_SOURCE:
 			buttonNumber = 7;
 			break;
-		case START:
+		case SIGNAL_CO_OP:
 			buttonNumber = 8;
 			break;
-		case LEFTSTICK:
+		case SIGNAL_AMP:
 			buttonNumber = 9;
 			break;
-		case RIGHTSTICK:
+		case SOURCE_LANE_LEFT:
 			buttonNumber = 10;
 			break;
-		// Button locations will need to be tested and changed.
-		case SUBSTATION_INTAKE:
-			buttonNumber = 9;
-			break;
-		case SET_ARM_TO_SCORE_TARGET_STATE:
-			buttonNumber = 2;
-			break;
-		case RETRACT_ARM_FULL:
-			buttonNumber = 1;
-			break;
-		case EJECT_PIECE:
-			buttonNumber = 8;
-			break;
-		case EXTEND_ARM:
+		case SOURCE_LANE_CENTER:
 			buttonNumber = 11;
 			break;
-		case RETRACT_ARM:
-			buttonNumber = 9;
-			break;
-		case ROTATE_ARM_FORWARD:
+		case SOURCE_LANE_RIGHT:
 			buttonNumber = 12;
 			break;
-		case ROTATE_ARM_BACKWARD:
-			buttonNumber = 10;
-			break;
-		// Switch buttons
-		case ARM_EXTENSION_MANUAL_OVERRIDE:
-			buttonNumber = 2;
-			break;
-		case ARM_ROTATION_MANUAL_OVERRIDE:
-			buttonNumber = 4;
-			break;
-		case ENDGAME_OVERRIDE:
-			buttonNumber = 1;
-			break;
-		case IGNORE_ROTATION_LIMITS:
-			buttonNumber = 8;
-			break;
-		case IGNORE_EXTENSION_LIMITS:
-			buttonNumber = 6;
-			break;
-		case ODOMETRY_OVERRIDE:
-			buttonNumber = 7;
-			break;
-		case PIECE_SENSOR_OVERRIDE:
-			buttonNumber = 5;
+		case TEMPORARY_ARM_UP:
+			buttonNumber = 13;
 			break;
 		default:
 			throw new IllegalArgumentException("Button code " + button.name() + " was not setup correctly.");
