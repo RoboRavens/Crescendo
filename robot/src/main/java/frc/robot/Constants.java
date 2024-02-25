@@ -14,4 +14,6 @@ public class Constants {
     public static final double SLEW_FRAMES_TO_MAX_X_VELOCITY = 10; // forward-back
     public static final double SLEW_FRAMES_TO_MAX_Y_VELOCITY = 10; // left-right
     public static final double SLEW_FRAMES_TO_MAX_ANGULAR_VELOCITY = 10; // turning
+
+    public static final Gains ELBOW_PID = new Gains(1, 0.000, 0.0000, 0.0, 0, 1);
 }

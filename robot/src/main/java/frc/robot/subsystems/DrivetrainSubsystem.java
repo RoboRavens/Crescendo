@@ -368,6 +368,7 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
 
     var roll = this.getRoll();
     SmartDashboard.putNumber("roll", roll);
+    SmartDashboard.putNumber("Gyroscope rotation (degrees)", getGyroscopeRotation().getDegrees());
   }
 
   // public boolean drivetrainIsAtTargetCoordinates() {
