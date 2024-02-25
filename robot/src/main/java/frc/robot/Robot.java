@@ -24,12 +24,17 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.controls.ButtonCode;
 import frc.controls.ButtonCode.Buttons;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
+import frc.robot.commands.shooter.ShootCommand;
 import frc.robot.subsystems.AutoChooserSubsystemReact;
 import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.subsystems.ElbowSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.PoseEstimatorSubsystem;
 import frc.robot.subsystems.ReactDashSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TeleopDashboardSubsystem;
+import frc.robot.subsystems.WristSubsystem;
 import frc.util.StateManagement.ArmUpTargetState;
 import frc.util.StateManagement.ClimbPositionTargetState;
 import frc.util.StateManagement.IntakeTargetState;
@@ -62,6 +67,10 @@ public class Robot extends TimedRobot {
   public static final AutoChooserSubsystemReact AUTO_CHOOSER = new AutoChooserSubsystemReact();
   public static final TeleopDashboardSubsystem TELEOP_DASHBOARD_SUBSYSTEM = new TeleopDashboardSubsystem();
   public static final ButtonCode BUTTON_CODE = new ButtonCode();
+  public static final IntakeSubsystem INTAKE_SUBSYSTEM = new IntakeSubsystem();
+  public static final ShooterSubsystem SHOOTER_SUBSYSTEM = new ShooterSubsystem();
+  public static final ElbowSubsystem ELBOW_SUBSYSTEM = new ElbowSubsystem();
+  public static final WristSubsystem WRIST_SUBSYSTEM = new WristSubsystem();
   // States
   public static ScoringTargetState SCORING_TARGET_STATE = ScoringTargetState.SPEAKER;
   public static IntakeTargetState INTAKE_TARGET_STATE = IntakeTargetState.GROUND;
@@ -103,6 +112,8 @@ public class Robot extends TimedRobot {
     new Trigger(() -> XBOX_CONTROLLER.getAButton()).toggleOnTrue(
       new InstantCommand(() -> {SCORING_TARGET_STATE = ScoringTargetState.TRAP; System.out.println("Clicked A");})
     );
+
+    new Trigger(() -> SHOOTER_SUBSYSTEM.hasPiece() && XBOX_CONTROLLER.getLeftBumper()).onTrue(new ShootCommand());
 
     configureButtonBindings();
   }
