@@ -94,10 +94,10 @@ class App extends React.Component<{}, {
   selectedAutoFromRobot: string,
   autoOptions: Array<string>,
   selectedScoreType: string,
-  defenseModeEnabled: boolean,
   selectedIntakeType: string,
   selectedClimbPosition: string,
-  activeDefenseToggled: boolean,
+  armUp: boolean,
+  armUpToggle: boolean,
   selectedSourceLane: string,
   signalSelection: string,
   startShooter: boolean
@@ -117,10 +117,10 @@ class App extends React.Component<{}, {
       selectedAutoFromRobot: "NONE",
       autoOptions: [],
       selectedScoreType: "SPEAKER",
-      defenseModeEnabled: false,
       selectedIntakeType: "GROUND",
       selectedClimbPosition: "LEFT_CLOSE",
-      activeDefenseToggled: false,
+      armUp: false,
+      armUpToggle: false,
       selectedSourceLane: "CENTER",
       signalSelection: "NONE",
       startShooter: false
@@ -216,10 +216,10 @@ class App extends React.Component<{}, {
     topics.selectedAutoPub?.setValue(value);
   };
 
-  handleDefenseModeSelection(enabled: boolean) {
-    enabled ? this.enableDefenseAnimation() : this.disableDefenseAnimation();
+  handleArmUpSelection(enabled: boolean) {
+    enabled ? this.enableArmUpAnimation() : this.disableArmUpAnimation();
     this.setState({
-      defenseModeEnabled: enabled
+      armUp: enabled
     });
     topics.armUpPub?.setValue(enabled);
   }
@@ -236,14 +236,14 @@ class App extends React.Component<{}, {
     });
   }
 
-  disableDefenseAnimation() {
+  disableArmUpAnimation() {
     const animatedElements : HTMLCollectionOf<SVGAnimateElement> = window.document.getElementsByTagName("animate");
     for (const index in animatedElements) {
       animatedElements.item(Number(index))?.endElement();
     }
   }
 
-  enableDefenseAnimation() {
+  enableArmUpAnimation() {
     const animatedElements : HTMLCollectionOf<SVGAnimateElement> = window.document.getElementsByTagName("animate");
     for (const index in animatedElements) {
       animatedElements.item(Number(index))?.beginElement();
@@ -300,7 +300,7 @@ class App extends React.Component<{}, {
     NT_CORE.createTopic<string>('/ReactDash/Teleop/rpub/selectedScoreType', NetworkTablesTypeInfos.kString)
     .subscribe((value: string | null) => this.handleScoreSelection(value ?? this.state.selectedScoreType), true);
     NT_CORE.createTopic<boolean>('/ReactDash/Teleop/rpub/armUp', NetworkTablesTypeInfos.kString)
-    .subscribe((value: boolean | null) => this.handleDefenseModeSelection(value ?? this.state.defenseModeEnabled), true);
+    .subscribe((value: boolean | null) => this.handleArmUpSelection(value ?? this.state.armUp), true);
     NT_CORE.createTopic<string>('/ReactDash/Teleop/rpub/selectedIntakeType', NetworkTablesTypeInfos.kString)
     .subscribe((value: string | null) => this.handleIntakeSelection(value ?? this.state.selectedIntakeType), true);
     NT_CORE.createTopic<string>('/ReactDash/Teleop/rpub/selectedClimbPosition', NetworkTablesTypeInfos.kString)
@@ -311,7 +311,6 @@ class App extends React.Component<{}, {
     .subscribe((value: string | null) => this.handleSignalSelection(value ?? this.state.signalSelection), true);
     NT_CORE.createTopic<boolean>('/ReactDash/Teleop/rpub/startShooter', NetworkTablesTypeInfos.kString)
     .subscribe((value: boolean | null) => this.handleStartShooterToggle(value ?? this.state.startShooter), true);
-
     
     NT_CORE.createTopic<string>('/ReactDash/Autonomous/rpub/selectedAuto', NetworkTablesTypeInfos.kString, "No Auto")
       .subscribe((value: string | null) => { this.setSelectedAutoFromRobot(value); }, true);
@@ -323,6 +322,19 @@ class App extends React.Component<{}, {
   }
 
   handleScoreSelection(type: string) {
+    // If the current climbing option is NOT a middle location, and we select trap as the scoring option, the climbing option should change to the middle climbing location on the selected chain
+    if (type == "TRAP") {
+      const selectedClimbPosition = this.state.selectedClimbPosition
+      if (selectedClimbPosition == "OPPOSITE_RIGHT" || selectedClimbPosition == "OPPOSITE_LEFT") {
+        this.handleClimbSelection("OPPOSITE_CENTER");
+      }
+      else if (selectedClimbPosition == "RIGHT_CLOSE" || selectedClimbPosition == "RIGHT_FAR") {
+        this.handleClimbSelection("RIGHT_CENTER");
+      }
+      else if (selectedClimbPosition == "LEFT_CLOSE" || selectedClimbPosition == "LEFT_FAR") {
+        this.handleClimbSelection("LEFT_CENTER");
+      }
+    }
     const currentSelectedButton = window.document.getElementById(type)
     if (currentSelectedButton != null) currentSelectedButton.style.backgroundColor = "#43a5ff"
     const previouslySelectedButton = window.document.getElementById(this.state.selectedScoreType)
@@ -385,6 +397,10 @@ class App extends React.Component<{}, {
   }
 
   handleClimbSelection(selection: string) {
+    // If a non-trap (non-middle) climbing option is selected, and trap is the scoring target, change the scoring target to climb
+    if (selection != "LEFT_CENTER" && selection != "RIGHT_CENTER" && selection != "OPPOSITE_CENTER" && this.state.selectedScoreType == "TRAP") {
+      this.handleScoreSelection("CLIMB");
+    }
     topics.selectedClimbPositionPub?.setValue(selection);
     this.setState({selectedClimbPosition: selection})
   }
@@ -585,24 +601,24 @@ class App extends React.Component<{}, {
                         </Stack>
                         <Stack style={{transform: 'translate(-50%, -50%)'}} position="absolute" top="50%" left="50%" height={'100'} direction={'column'} alignItems={'center'} marginTop={2} spacing={4}>
                             <Switch onChange={(e) => {
-                              this.handleDefenseModeSelection(e.target.checked);
+                              this.handleArmUpSelection(e.target.checked);
                               this.setState({
-                                activeDefenseToggled: e.target.checked
+                                armUpToggle: e.target.checked
                               });
                             }}/>
                             <Item 
-                              style={{backgroundColor: this.state.defenseModeEnabled ? "#43a5ff" : "#262b32"}} 
+                              style={{backgroundColor: this.state.armUp ? "#43a5ff" : "#262b32"}} 
                               // Touch screen
-                              onTouchStart={() => !this.state.activeDefenseToggled ? this.handleDefenseModeSelection(true): null} 
-                              onTouchEnd={() => !this.state.activeDefenseToggled ? this.handleDefenseModeSelection(false) : null} 
+                              onTouchStart={() => !this.state.armUpToggle ? this.handleArmUpSelection(true): null} 
+                              onTouchEnd={() => !this.state.armUpToggle ? this.handleArmUpSelection(false) : null} 
                               // Laptop
-                              onMouseDown={() => !this.state.activeDefenseToggled ? this.handleDefenseModeSelection(true): null} 
-                              onMouseUp={() => !this.state.activeDefenseToggled ? this.handleDefenseModeSelection(false) : null} 
+                              onMouseDown={() => !this.state.armUpToggle ? this.handleArmUpSelection(true): null} 
+                              onMouseUp={() => !this.state.armUpToggle ? this.handleArmUpSelection(false) : null} 
                             >
                               <p style={{margin: 0}}>Temporary Enable</p>
                             </Item>
                         </Stack>
-                        {this.state.defenseModeEnabled ? <Puff
+                        {this.state.armUp ? <Puff
                           height="300"
                           width="300"
                           color={COLOR_RED}
