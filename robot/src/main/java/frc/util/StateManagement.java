@@ -3,8 +3,10 @@ package frc.util;
 import frc.robot.Robot;
 
 public class StateManagement {
-    // Both the button panel and the teleop dashboard will update these target states (initialized in Robot.java)
-    // The Robot.java target states may be used anywhere in code to fire other commands
+    // Both the button panel and the teleop dashboard will update these target
+    // states (initialized in Robot.java)
+    // The Robot.java target states may be used anywhere in code to fire other
+    // commands
     public enum ScoringTargetState {
         SPEAKER,
         AMP,
@@ -52,6 +54,7 @@ public class StateManagement {
         OPPOSITE_CENTER,
         OPPOSITE_LEFT
     }
+
     // TODO: Set this state
     public enum ZoneState {
         NONE,
@@ -65,6 +68,7 @@ public class StateManagement {
         OPPONENT_SOURCE,
         OPPONENT_AMP,
     }
+
     // TODO: Set this state
     public enum LoadState {
         LOADED,
@@ -74,9 +78,11 @@ public class StateManagement {
 
     public enum OverallState {
         EMPTY_TRANSIT, // When the robot does not have a note
-        SEEKING_NOTE, // When the robot does not have a note but has a target scoring state that requires a note
+        SEEKING_NOTE, // When the robot does not have a note but has a target scoring state that
+                      // requires a note
         LOADED_TRANSIT,
-        LOADING, // When the robot detects a note and has a target scoring state that requires a note
+        LOADING, // When the robot detects a note and has a target scoring state that requires a
+                 // note
         SCORING,
         PREPARING_TO_SCORE,
     }
@@ -85,6 +91,7 @@ public class StateManagement {
         FREEHAND,
         ROBOT_ALIGN
     }
+
     // TODO: Set this state
     public enum LimelightDetectsNoteState {
         IN_RANGE,
@@ -93,8 +100,10 @@ public class StateManagement {
 
     public static boolean isRobotReadyToShoot() {
         // TODO: Implement this method
-        // This should consider if the robot has a note, if we are aligned with the scoring target, and if the shooter is up to speed
-        if (Robot.LOAD_STATE == LoadState.LOADED);
+        // This should consider if the robot has a note, if we are aligned with the
+        // scoring target, and if the shooter is up to speed
+        if (Robot.LOAD_STATE == LoadState.LOADED)
+            ;
         return false;
     }
 }

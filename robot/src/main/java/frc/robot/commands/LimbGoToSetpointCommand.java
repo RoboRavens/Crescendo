@@ -22,6 +22,9 @@ public class LimbGoToSetpointCommand extends Command {
   public void initialize() {
     Robot.ELBOW_SUBSYSTEM.goToPosition(_targetLimbSetPoint.getElbowRotationPosition());
     Robot.WRIST_SUBSYSTEM.goToPosition(_targetLimbSetPoint.getWristRotationPosition());
+    String name = _targetLimbSetPoint.getName();
+    System.out.println(name);
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.

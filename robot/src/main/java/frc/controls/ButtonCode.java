@@ -5,16 +5,21 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 public class ButtonCode {
 
-	private Joystick OP_PAD_BUTTONS = new Joystick(0);
-	private Joystick OP_PAD_TOGGLE = new Joystick(0);
+	private Joystick OP_PAD_BUTTONS = new Joystick(1);
+	private Joystick OP_PAD_TOGGLE = new Joystick(2);
 
 	public enum Buttons {
 		GROUND_PICKUP_AND_SPEAKER_SCORING(1),
-		AMP_SCORING(2),
-		TRAP_SCORING(3),
-		AMP_AND_SPEAKER_SOURCE_INTAKE(4),
-		TRAP_SOURCE_INTAKE(8),
-		DEFENDED_SPEAKER_SCORING(9);
+    	DEFENDED_SPEAKER_SCORING(2),
+		AMP_SCORING(3),
+		TRAP_SCORING(4),
+		MOVE_ELBOW_UP(7),
+		MOVE_ELBOW_DOWN(10),
+	    MOVE_WRIST_UP(6),
+		MOVE_WRIST_DOWN(11),
+		AMP_AND_SPEAKER_SOURCE_INTAKE(8),
+		TRAP_SOURCE_INTAKE(9);
+
 
 
 		private final int button;
