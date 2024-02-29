@@ -18,6 +18,7 @@ import frc.controls.ButtonCode.Buttons;
 import frc.robot.commands.LimbGoToSetpointCommand;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
 import frc.robot.commands.intake.IntakeCommand;
+import frc.robot.commands.intake.IntakeFeedCommand;
 import frc.robot.commands.shooter.ShootCommand;
 import frc.robot.subsystems.AutoChooserSubsystemReact;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -30,6 +31,7 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TeleopDashboardSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 import frc.robot.util.arm.LimbSetpoint;
+import frc.util.StateManagement;
 import frc.util.StateManagement.ArmUpTargetState;
 import frc.util.StateManagement.ClimbPositionTargetState;
 import frc.util.StateManagement.DrivetrainState;
@@ -96,6 +98,9 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("Shooter Rev Target State", SHOOTER_REV_TARGET_STATE.toString());
     SmartDashboard.putString("Climb Position Target State", CLIMB_POSITION_TARGET_STATE.toString());
     setNonButtonDependentOverallStates();
+    // TODO: Create a method that returns the wrist setpoint, and replace the below wrist rotation setpoints with that method
+    LimbSetpoint.SPEAKER_SCORING = new LimbSetpoint("", 0, 0); 
+    LimbSetpoint.DEFENDED_SPEAKER_SCORING = new LimbSetpoint("", 0, 0);
   }
 
   /**
@@ -177,8 +182,12 @@ public class Robot extends TimedRobot {
   private void configureButtonBindings() {
     // If the left trigger is held
     new Trigger(() -> XBOX_CONTROLLER.getLeftTriggerAxis() > 0)
-        .onTrue(new InstantCommand(() -> DRIVETRAIN_STATE = DrivetrainState.ROBOT_ALIGN))
-        .onFalse(new InstantCommand(() -> DRIVETRAIN_STATE = DrivetrainState.FREEHAND));
+      .onTrue(new InstantCommand(() -> DRIVETRAIN_STATE = DrivetrainState.ROBOT_ALIGN))
+      .onFalse(new InstantCommand(() -> DRIVETRAIN_STATE = DrivetrainState.FREEHAND));
+    // If the robot is ready to shoot and we hold A, feed the note into the shooter
+    new Trigger(() -> StateManagement.isRobotReadyToShoot() && XBOX_CONTROLLER.getAButton())
+      .onTrue(new IntakeFeedCommand(INTAKE_SUBSYSTEM));
+
     BUTTON_CODE.getButton(Buttons.GROUND_PICKUP_AND_SPEAKER_SCORING).and(() -> LOAD_STATE == LoadState.EMPTY)
         .whileTrue(new InstantCommand(() -> System.out.println("Ground Pickup")));
     // .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.GROUND_PICKUP));

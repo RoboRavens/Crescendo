@@ -1,5 +1,7 @@
 package frc.util;
 
+import frc.robot.Robot;
+
 public class StateManagement {
     // Both the button panel and the teleop dashboard will update these target states (initialized in Robot.java)
     // The Robot.java target states may be used anywhere in code to fire other commands
@@ -87,5 +89,12 @@ public class StateManagement {
     public enum LimelightDetectsNoteState {
         IN_RANGE,
         NO_NOTE
+    }
+
+    public static boolean isRobotReadyToShoot() {
+        // TODO: Implement this method
+        // This should consider if the robot has a note, if we are aligned with the scoring target, and if the shooter is up to speed
+        if (Robot.LOAD_STATE == LoadState.LOADED);
+        return false;
     }
 }
