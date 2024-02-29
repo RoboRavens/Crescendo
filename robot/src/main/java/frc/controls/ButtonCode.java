@@ -2,11 +2,12 @@ package frc.controls;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.RobotMap;
 
 public class ButtonCode {
 
-	private Joystick OP_PAD_BUTTONS = new Joystick(1);
-	private Joystick OP_PAD_TOGGLE = new Joystick(2);
+	private Joystick OP_PAD_BUTTONS = new Joystick(RobotMap.BUTTONS_CONTROLLER_PORT);
+	private Joystick OP_PAD_TOGGLE = new Joystick(RobotMap.OVERRIDES_CONTROLLER_PORT);
 
 	public enum Buttons {
 		GROUND_PICKUP_AND_SPEAKER_SCORING(1),
