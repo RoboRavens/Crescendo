@@ -23,7 +23,10 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.controls.ButtonCode;
 import frc.controls.ButtonCode.Buttons;
+import frc.robot.commands.LimbGoToSetpointCommand;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
+import frc.robot.commands.intake.IntakeCommand;
+import frc.robot.commands.intake.IntakeFeedCommand;
 import frc.robot.commands.shooter.ShootCommand;
 import frc.robot.subsystems.AutoChooserSubsystemReact;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -35,10 +38,15 @@ import frc.robot.subsystems.ReactDashSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TeleopDashboardSubsystem;
 import frc.robot.subsystems.WristSubsystem;
+import frc.robot.util.arm.LimbSetpoint;
 import frc.util.StateManagement.ArmUpTargetState;
 import frc.util.StateManagement.ClimbPositionTargetState;
+import frc.util.StateManagement.DrivetrainState;
 import frc.util.StateManagement.IntakeTargetState;
 import frc.util.StateManagement.LEDSignalTargetState;
+import frc.util.StateManagement.LimelightDetectsNoteState;
+import frc.util.StateManagement.LoadState;
+import frc.util.StateManagement.OverallState;
 import frc.util.StateManagement.ScoringTargetState;
 import frc.util.StateManagement.ShooterRevTargetState;
 import frc.util.StateManagement.TrapSourceLaneTargetState;
@@ -79,6 +87,10 @@ public class Robot extends TimedRobot {
   public static ArmUpTargetState ARM_UP_TARGET_STATE = ArmUpTargetState.FREE;
   public static ShooterRevTargetState SHOOTER_REV_TARGET_STATE = ShooterRevTargetState.OFF;
   public static ClimbPositionTargetState CLIMB_POSITION_TARGET_STATE = ClimbPositionTargetState.LEFT_CLOSE;
+  public static OverallState OVERALL_STATE = OverallState.EMPTY_TRANSIT;
+  public static LoadState LOAD_STATE = LoadState.EMPTY;
+  public static DrivetrainState DRIVETRAIN_STATE = DrivetrainState.FREEHAND;
+  public static LimelightDetectsNoteState LIMELIGHT_DETECTS_NOTE_STATE = LimelightDetectsNoteState.NO_NOTE;
 
   @Override
   public void robotPeriodic() {
@@ -92,6 +104,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("Arm Up Target State", ARM_UP_TARGET_STATE.toString());
     SmartDashboard.putString("Shooter Rev Target State", SHOOTER_REV_TARGET_STATE.toString());
     SmartDashboard.putString("Climb Position Target State", CLIMB_POSITION_TARGET_STATE.toString());
+    setNonButtonDependentOverallStates();
   }
 
   /**
@@ -116,6 +129,7 @@ public class Robot extends TimedRobot {
     new Trigger(() -> SHOOTER_SUBSYSTEM.hasPiece() && XBOX_CONTROLLER.getLeftBumper()).onTrue(new ShootCommand());
 
     configureButtonBindings();
+    configureTriggers();
   }
 
   /** This function is run once each time the robot enters autonomous mode. */
@@ -176,6 +190,55 @@ public class Robot extends TimedRobot {
 
   private void configureButtonBindings() {
     BUTTON_CODE.getButton(Buttons.INTAKE_TRAP_SOURCE)
-    .onTrue(new InstantCommand(() -> INTAKE_TARGET_STATE = IntakeTargetState.TRAP_SOURCE));
+      .onTrue(new InstantCommand(() -> INTAKE_TARGET_STATE = IntakeTargetState.TRAP_SOURCE));
+    // If the left trigger is held
+    new Trigger(() -> XBOX_CONTROLLER.getLeftTriggerAxis() > 0)
+      .onTrue(new InstantCommand(() -> DRIVETRAIN_STATE = DrivetrainState.ROBOT_ALIGN))
+      .onFalse(new InstantCommand(() -> DRIVETRAIN_STATE = DrivetrainState.FREEHAND));
+  }
+
+  private void setNonButtonDependentOverallStates() {
+    // If the robot detects a note and has a target scoring state that requires a note
+    if (OVERALL_STATE == OverallState.SEEKING_NOTE && LIMELIGHT_DETECTS_NOTE_STATE == LimelightDetectsNoteState.IN_RANGE) {
+      OVERALL_STATE = OverallState.LOADING;
+    }
+    // If the robot does not have a note and is not in the process of loading a note, but has a target scoring state that requires a note
+    if (LOAD_STATE == LoadState.EMPTY && OVERALL_STATE != OverallState.LOADING && SCORING_TARGET_STATE != ScoringTargetState.CLIMB) {
+      OVERALL_STATE = OverallState.SEEKING_NOTE;
+    }
+    else if (LOAD_STATE == LoadState.LOADED || LOAD_STATE == LoadState.TRAP_LOADED) {
+      OVERALL_STATE = OverallState.LOADED_TRANSIT;
+    }
+  }
+
+  private void configureTriggers() {
+    // If we are seeking a note and intend to intake from the ground, 
+    // set our arm position to the ground setpoint
+    new Trigger(() -> OVERALL_STATE == OverallState.SEEKING_NOTE
+                    && INTAKE_TARGET_STATE == IntakeTargetState.GROUND)
+      .onTrue(new LimbGoToSetpointCommand(LimbSetpoint.GROUND_PICKUP));
+    // If we are seeking a note and intend to intake a regular note from the source, 
+    // set our arm position to the source setpoint
+    new Trigger(() -> OVERALL_STATE == OverallState.SEEKING_NOTE
+                    && INTAKE_TARGET_STATE == IntakeTargetState.SOURCE)
+      .onTrue(new LimbGoToSetpointCommand(LimbSetpoint.AMP_AND_SPEAKER_SOURCE_INTAKE));
+    // If we are seeking a note and intend to intake a note from the source to score in the trap,
+    // set our arm position to the source trap setpoint
+    new Trigger(() -> OVERALL_STATE == OverallState.SEEKING_NOTE
+                    && INTAKE_TARGET_STATE == IntakeTargetState.TRAP_SOURCE)
+      .onTrue(new LimbGoToSetpointCommand(LimbSetpoint.TRAP_SOURCE_INTAKE));  
+    // If the robot's overall state is loading the note,
+    // flash our LEDs and start the intake
+    new Trigger(() -> OVERALL_STATE == OverallState.LOADING)
+      .onTrue(new IntakeCommand(INTAKE_SUBSYSTEM)
+      .alongWith(new InstantCommand(() -> System.out.println("Flash LEDs Green")))); // TODO: implement a flash LEDs command
+    // If the robot is loaded with a note and we intend to score in the amp,
+    // set our arm position to the amp setpoint
+    new Trigger(() -> OVERALL_STATE == OverallState.LOADED_TRANSIT)
+      .onTrue(new LimbGoToSetpointCommand(LimbSetpoint.AMP_SCORING));
+    // If the robot is loaded with a note and we intend to score in the trap,
+    // set our arm position to the trap setpoint
+    new Trigger(() -> OVERALL_STATE == OverallState.LOADED_TRANSIT)
+      .onTrue(new LimbGoToSetpointCommand(LimbSetpoint.TRAP_SCORING));
   }
 }
