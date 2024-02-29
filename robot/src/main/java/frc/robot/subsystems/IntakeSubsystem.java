@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import java.util.function.BooleanSupplier;
 
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 
@@ -24,23 +25,27 @@ public class IntakeSubsystem extends SubsystemBase {
       false);
   private BufferedDigitalInput _pieceSensorTrap = new BufferedDigitalInput(RobotMap.INTAKE_TRAP_SENSOR_DIO_PORT, 3, false,
       false);
-  private CANSparkMax _sparkMax = new CANSparkMax(RobotMap.INTAKE_MOTOR_CAN_ID, MotorType.kBrushless);
+  private TalonFX _intakeMotor = new TalonFX(RobotMap.INTAKE_MOTOR_CAN_ID);
 
   public void startIntake() {
-    _sparkMax.set(IntakeConstants.INTAKE_SPARK_MAX_SPEED);
+    _intakeMotor.set(IntakeConstants.INTAKE_SPARK_MAX_SPEED);
   }
+
+  public void setPowerManually(double speed) {
+    _intakeMotor.set(speed);
+}
 
   // Stops all
   public void stop() {
-    _sparkMax.set(IntakeConstants.INTAKE_SPARK_MAX_STOP);
+    _intakeMotor.set(IntakeConstants.INTAKE_SPARK_MAX_STOP);
   }
 
   public void startTrapIntake() {
-    _sparkMax.set(IntakeConstants.INTAKE_SPARK_MAX_SPEED * -1);
+    _intakeMotor.set(IntakeConstants.INTAKE_SPARK_MAX_SPEED * -1);
   }
 
   public void startTrapLaunch() {
-    _sparkMax.set(IntakeConstants.INTAKE_SPARK_MAX_SPEED);
+    _intakeMotor.set(IntakeConstants.INTAKE_SPARK_MAX_SPEED);
   }
 
   public boolean intakeHasPiece() {

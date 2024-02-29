@@ -62,7 +62,7 @@ public class Robot extends TimedRobot {
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_FOUR = new LimelightSubsystem("limelight-four");
   public static final DrivetrainSubsystem DRIVETRAIN_SUBSYSTEM = new DrivetrainSubsystem();
   public static final PoseEstimatorSubsystem POSE_ESTIMATOR_SUBSYSTEM = new PoseEstimatorSubsystem();
-  public static final XboxController XBOX_CONTROLLER = new XboxController(0);
+  public static final XboxController DRIVE_CONTROLLER = new XboxController(0);
   public static DriverStation.Alliance allianceColor = Alliance.Blue;
   public static final DrivetrainDefaultCommand DRIVETRAIN_DEFAULT_COMMAND = new DrivetrainDefaultCommand();
   public static final ReactDashSubsystem REACT_DASH_SUBSYSTEM = new ReactDashSubsystem();
@@ -113,13 +113,14 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     DRIVETRAIN_SUBSYSTEM.setDefaultCommand(DRIVETRAIN_DEFAULT_COMMAND);
-    new Trigger(() -> XBOX_CONTROLLER.getLeftBumper()
-        && (XBOX_CONTROLLER.getRightBumper())
-        && (XBOX_CONTROLLER.getYButton()))
+    
+    new Trigger(() -> DRIVE_CONTROLLER.getLeftBumper()
+        && (DRIVE_CONTROLLER.getRightBumper())
+        && (DRIVE_CONTROLLER.getYButton()))
         .onTrue(new InstantCommand(() -> DRIVETRAIN_SUBSYSTEM.zeroGyroscope()));
     AUTO_CHOOSER.ShowTab();
 
-    new Trigger(() -> SHOOTER_SUBSYSTEM.hasPiece() && XBOX_CONTROLLER.getLeftBumper()).onTrue(new ShootCommand());
+    new Trigger(() -> SHOOTER_SUBSYSTEM.hasPiece() && DRIVE_CONTROLLER.getLeftBumper()).onTrue(new ShootCommand());
 
     configureButtonBindings();
     configureTriggers();
@@ -183,11 +184,11 @@ public class Robot extends TimedRobot {
 
   private void configureButtonBindings() {
     // If the left trigger is held
-    new Trigger(() -> XBOX_CONTROLLER.getLeftTriggerAxis() > 0)
+    new Trigger(() -> DRIVE_CONTROLLER.getLeftTriggerAxis() > 0)
         .onTrue(new InstantCommand(() -> DRIVETRAIN_STATE = DrivetrainState.ROBOT_ALIGN))
         .onFalse(new InstantCommand(() -> DRIVETRAIN_STATE = DrivetrainState.FREEHAND));
     // If the robot is ready to shoot and we hold A, feed the note into the shooter
-    new Trigger(() -> StateManagement.isRobotReadyToShoot() && XBOX_CONTROLLER.getAButton())
+    new Trigger(() -> StateManagement.isRobotReadyToShoot() && DRIVE_CONTROLLER.getAButton())
         .onTrue(new IntakeFeedCommand(INTAKE_SUBSYSTEM));
 
     BUTTON_CODE.getButton(Buttons.GROUND_PICKUP_AND_SPEAKER_SCORING).and(() -> LOAD_STATE == LoadState.EMPTY)
