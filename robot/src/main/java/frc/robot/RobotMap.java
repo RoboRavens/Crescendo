@@ -1,6 +1,11 @@
 package frc.robot;
 
 public class RobotMap {
+    // CONTROLLERS
+    public static final int DRIVE_CONTROLLER_PORT = 0;
+    public static final int OVERRIDES_CONTROLLER_PORT = 1;
+    public static final int BUTTONS_CONTROLLER_PORT = 2;
+
     // DRIVETRAIN
     // start at 10
     public static final double DRIVETRAIN_TRACKWIDTH_METERS = 0.4445; // The left-to-right distance between the drivetrain wheels
@@ -34,7 +39,7 @@ public class RobotMap {
     public static final int SHOOTER_RIGHT_MOTOR_CAN_ID = 7;
 
     // Intake
-    public static final int INTAKE_MOTOR_CAN_ID = 0;
+    public static final int INTAKE_MOTOR_CAN_ID = 8;
     
     //needs can IDs these are placeholders
     public static final int ELBOW_ROTATION_MOTOR = 1;
