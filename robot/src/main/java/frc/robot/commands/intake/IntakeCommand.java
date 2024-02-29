@@ -27,6 +27,7 @@ public class IntakeCommand extends Command {
 
   @Override
   public boolean isFinished() {
+    // TODO: Implement logic to stop the intake once detected by the beambreak
     return false;
   }
 }
