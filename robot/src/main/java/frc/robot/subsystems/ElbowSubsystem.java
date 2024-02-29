@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants;
 import frc.robot.RobotMap;
 
 public class ElbowSubsystem extends SubsystemBase {
@@ -26,11 +25,12 @@ public class ElbowSubsystem extends SubsystemBase {
   private TalonFX _elbowRotationFollower = new TalonFX(RobotMap.ELBOW_ROTATION_FOLLOWER_MOTOR);
   private DigitalInput _forwardLimitSwitch = new DigitalInput(RobotMap.ELBOW_FORWARD_LIMIT_DIO);
 
+  private Slot0Configs _pidConfig = ElbowConstants.getSlot0Configs();
+
   public ElbowSubsystem() {
     var talonFXConfiguration = new TalonFXConfiguration();
     talonFXConfiguration.MotionMagic.MotionMagicAcceleration = 100;
     talonFXConfiguration.MotionMagic.MotionMagicCruiseVelocity = 20;
-    talonFXConfiguration.Slot0 = this.GetSlot0Config();
 
     talonFXConfiguration.Audio.BeepOnBoot = false;
     talonFXConfiguration.Audio.BeepOnConfig = false;
@@ -42,8 +42,9 @@ public class ElbowSubsystem extends SubsystemBase {
     //talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     //talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -5;
 
-    _elbowRotationMotor.getConfigurator().setPosition(0);
+    _elbowRotationMotor.getConfigurator().setPosition(ElbowConstants.ENCODER_POSITION_AT_GROUND_PICKUP);
     _elbowRotationMotor.getConfigurator().apply(talonFXConfiguration);
+    this.updateStaticFeedfoward();
 
     _elbowRotationFollower.getConfigurator().apply(new AudioConfigs().withBeepOnBoot(false).withBeepOnConfig(false));
     _elbowRotationFollower.getConfigurator().apply(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake));
@@ -51,8 +52,8 @@ public class ElbowSubsystem extends SubsystemBase {
 
     var resetPositionCommand = new InstantCommand(() -> {
       var originalPosition = _elbowRotationMotor.getPosition().getValueAsDouble();
-      var newPosition = 0;
-      System.out.println("elbow position reset from " + originalPosition + " to " + newPosition);
+      var newPosition = ElbowConstants.ENCODER_POSITION_AT_GROUND_PICKUP;
+      System.out.println("ElbowSubsystem: position reset from " + originalPosition + " to " + newPosition);
       _elbowRotationMotor.stopMotor();
       _elbowRotationMotor.setPosition(newPosition);
     }, this).ignoringDisable(true);
@@ -60,32 +61,40 @@ public class ElbowSubsystem extends SubsystemBase {
     new Trigger(() -> _forwardLimitSwitch.get()).onFalse(resetPositionCommand);
   }
 
-  private Slot0Configs GetSlot0Config() {
-    var slot0Config = new Slot0Configs();
-    slot0Config.kP = Constants.ELBOW_PID.kP;
-    slot0Config.kI = Constants.ELBOW_PID.kI;
-    slot0Config.kD = Constants.ELBOW_PID.kD;
-    var position = _elbowRotationMotor.getPosition().getValueAsDouble();
-    var horizontal = -5.27;
-    var vertical = -35.51;
+  private void updateStaticFeedfoward() {
+    var angle = this.getRadiansFromPosition(this.getPosition());
+    var staticFeedForward = this.getStaticFeedforwardFromRadians(angle);
 
-    var unitsTo90 = vertical - horizontal;
-    var angle = (Math.PI / 2) * ((position - horizontal) / unitsTo90);
     SmartDashboard.putNumber("Elbow Angle Degrees", Math.toDegrees(angle));
-    var staticFeedForward = Math.cos(angle) * .025 * -1;
     SmartDashboard.putNumber("Elbow Feedforward", staticFeedForward);
-
-    slot0Config.kS = staticFeedForward;
-
-    return slot0Config;
+    if (_pidConfig.kS != staticFeedForward) {
+      _pidConfig.kS = staticFeedForward;
+      _elbowRotationMotor.getConfigurator().apply(_pidConfig);
+    }
   }
+
+  private double getStaticFeedforwardFromRadians(double angle) {
+    var staticFeedForward = Math.cos(angle) * ElbowConstants.MOTOR_POWER_FEEDFORWARD_AT_HORIZONTAL * ElbowConstants.MOTOR_POWER_DIRECTION_TO_GO_UP_FROM_HORIZONTAL;
+    return staticFeedForward;
+  }
+
+  private double getRadiansFromPosition(double position) {
+    double unitsTo90 = ElbowConstants.ENCODER_POSITION_AT_VERTICAL - ElbowConstants.ENCODER_POSITION_AT_HORIZONTAL;
+    double distanceFromHorizontal = ((position - ElbowConstants.ENCODER_POSITION_AT_HORIZONTAL) / unitsTo90);
+    double angleInRadians = distanceFromHorizontal * (Math.PI / 2);
+    return angleInRadians;
+  }
+
+  //private double getPositionFromRadians(double radians) {
+  //  return 0;
+  //}
 
   public void setPowerManually(double power){
     _elbowRotationMotor.set(power);
   }
 
   public void goToPosition(double setpoint) {
-    System.out.println("goToPosition " + setpoint);
+    System.out.println("ElbowSubsystem: goToPosition " + setpoint);
     _elbowRotationMotor.setControl(new MotionMagicVoltage(setpoint));
   }
 
@@ -95,14 +104,9 @@ public class ElbowSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    var pidConfig = GetSlot0Config();
-    _elbowRotationMotor.getConfigurator().apply(pidConfig);
+    this.updateStaticFeedfoward();
     SmartDashboard.putNumber("Elbow RotationMotor pos", _elbowRotationMotor.getPosition().getValueAsDouble());
     SmartDashboard.putBoolean("Elbow ForwardLimitSwitch", _forwardLimitSwitch.get());
-  }
-
-  public void resetPosition() {
-    _elbowRotationMotor.setPosition(0);
   }
 
   public double getPosition() {
