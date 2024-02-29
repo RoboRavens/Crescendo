@@ -123,14 +123,14 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // var alliance = DriverStation.getAlliance().get();
-    // if (_currentAlliance != alliance) {
-    //   this.UpdateAlliance(alliance);
-    // }
+    var alliance = DriverStation.getAlliance().get();
+    if (_currentAlliance != alliance) {
+      this.UpdateAlliance(alliance);
+    }
 
-    // _selectedAutoRobotPub.set(this.GetAuto().getText());
+    _selectedAutoRobotPub.set(this.GetAuto().getText());
 
-    // _matchTimePub.set(Timer.getMatchTime());
-    // _alliancePub.set(DriverStation.getAlliance().get().name());
+    _matchTimePub.set(Timer.getMatchTime());
+    _alliancePub.set(DriverStation.getAlliance().get().name());
   }
 }

@@ -177,8 +177,8 @@ public class Robot extends TimedRobot {
   // this method needs to called both periodically AND in the auto/tele init
   // methods.
   private void setDriverStationData() {
-    // allianceColor = DriverStation.getAlliance().get();
-    // AUTO_CHOOSER.BuildAutoChooser(allianceColor);
+    allianceColor = DriverStation.getAlliance().get();
+    AUTO_CHOOSER.BuildAutoChooser(allianceColor);
   }
 
   private void configureButtonBindings() {
@@ -217,8 +217,7 @@ public class Robot extends TimedRobot {
   }
 
   private void setNonButtonDependentOverallStates() {
-    // If the robot detects a note and has a target scoring state that requires a
-    // note
+    // If the robot detects a note and has a target scoring state that requires a note
     if (OVERALL_STATE == OverallState.SEEKING_NOTE
         && LIMELIGHT_DETECTS_NOTE_STATE == LimelightDetectsNoteState.IN_RANGE) {
       OVERALL_STATE = OverallState.LOADING;
