@@ -154,7 +154,7 @@ public class Robot extends TimedRobot {
       () -> ELBOW_SUBSYSTEM.setPowerManually(0), 
       ELBOW_SUBSYSTEM));
 
-    // configureButtonBindings();
+    configureButtonBindings();
   }
 
   /** This function is run once each time the robot enters autonomous mode. */
