@@ -14,7 +14,9 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
@@ -49,14 +51,15 @@ public class ElbowSubsystem extends SubsystemBase {
     _elbowRotationFollower.getConfigurator().apply(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake));
     _elbowRotationFollower.setControl(new Follower(_elbowRotationMotor.getDeviceID(), false));
 
-    new Trigger(() -> _forwardLimitSwitch.get()).onFalse(new InstantCommand(() -> {
+    var resetPositionCommand = new InstantCommand(() -> {
       var originalPosition = _elbowRotationMotor.getPosition().getValueAsDouble();
-      var newPosition = 5;
+      var newPosition = 0;
       System.out.println("elbow position reset from " + originalPosition + " to " + newPosition);
       _elbowRotationMotor.stopMotor();
       _elbowRotationMotor.setPosition(newPosition);
-      ;
-    }).ignoringDisable(true));
+    }, this).ignoringDisable(true);
+
+    new Trigger(() -> _forwardLimitSwitch.get()).onFalse(resetPositionCommand);
   }
 
   public void setPowerManually(double power){
@@ -64,6 +67,7 @@ public class ElbowSubsystem extends SubsystemBase {
   }
 
   public void goToPosition(double setpoint) {
+    System.out.println("goToPosition " + setpoint);
     _elbowRotationMotor.setControl(new MotionMagicVoltage(setpoint));
   }
 
@@ -82,6 +86,6 @@ public class ElbowSubsystem extends SubsystemBase {
   }
 
   public double getPosition() {
-      return _elbowRotationFollower.getPosition().getValueAsDouble();
+      return _elbowRotationMotor.getPosition().getValueAsDouble();
   }
 }

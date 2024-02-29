@@ -20,10 +20,15 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.controls.ButtonCode;
 import frc.controls.ButtonCode.Buttons;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
+import frc.robot.commands.elbow.ElbowDefaultCommand;
+import frc.robot.commands.elbow.ElbowGoToPositionCommand;
+import frc.robot.commands.intake.IntakeCommand;
 import frc.robot.commands.shooter.ShootCommand;
 import frc.robot.subsystems.AutoChooserSubsystemReact;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -60,7 +65,7 @@ public class Robot extends TimedRobot {
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_FOUR = new LimelightSubsystem("limelight-four");
   public static final DrivetrainSubsystem DRIVETRAIN_SUBSYSTEM = new DrivetrainSubsystem();
   public static final PoseEstimatorSubsystem POSE_ESTIMATOR_SUBSYSTEM = new PoseEstimatorSubsystem();
-  public static final XboxController XBOX_CONTROLLER = new XboxController(0);
+  public static final CommandXboxController DRIVE_CONTROLLER = new CommandXboxController(RobotMap.DRIVE_CONTROLLER_PORT);
   public static DriverStation.Alliance allianceColor = Alliance.Blue;
   public static final DrivetrainDefaultCommand DRIVETRAIN_DEFAULT_COMMAND = new DrivetrainDefaultCommand();
   public static final ReactDashSubsystem REACT_DASH_SUBSYSTEM = new ReactDashSubsystem();
@@ -102,20 +107,54 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     DRIVETRAIN_SUBSYSTEM.setDefaultCommand(DRIVETRAIN_DEFAULT_COMMAND);
-    new Trigger(() -> XBOX_CONTROLLER.getLeftBumper()
-        && (XBOX_CONTROLLER.getRightBumper())
-        && (XBOX_CONTROLLER.getYButton()))
+    ELBOW_SUBSYSTEM.setDefaultCommand(new ElbowDefaultCommand());
+
+    new Trigger(() -> DRIVE_CONTROLLER.getHID().getLeftBumper()
+        && (DRIVE_CONTROLLER.getHID().getRightBumper())
+        && (DRIVE_CONTROLLER.getHID().getYButton()))
         .onTrue(new InstantCommand(() -> DRIVETRAIN_SUBSYSTEM.zeroGyroscope()));
     AUTO_CHOOSER.ShowTab();
 
     // Test button that changes the score target to trap
-    new Trigger(() -> XBOX_CONTROLLER.getAButton()).toggleOnTrue(
+    /*new Trigger(() -> DRIVE_CONTROLLER.getHID().getAButton()).toggleOnTrue(
       new InstantCommand(() -> {SCORING_TARGET_STATE = ScoringTargetState.TRAP; System.out.println("Clicked A");})
-    );
+    );*/
 
-    new Trigger(() -> SHOOTER_SUBSYSTEM.hasPiece() && XBOX_CONTROLLER.getLeftBumper()).onTrue(new ShootCommand());
+    // intake with left trigger
+    DRIVE_CONTROLLER.leftBumper().whileTrue(new IntakeCommand(INTAKE_SUBSYSTEM));
 
-    configureButtonBindings();
+    // shoot with right trigger (must have piece)
+    // new Trigger(() -> SHOOTER_SUBSYSTEM.hasPiece() && DRIVE_CONTROLLER.getHID().getLeftBumper()).onTrue(new ShootCommand());
+
+    DRIVE_CONTROLLER.rightBumper().whileTrue(new StartEndCommand(
+      () -> SHOOTER_SUBSYSTEM.setPowerManually(.5),
+      () -> SHOOTER_SUBSYSTEM.setPowerManually(0),
+      SHOOTER_SUBSYSTEM));
+    /*
+    DRIVE_CONTROLLER.y().whileTrue(new StartEndCommand(
+      () -> WRIST_SUBSYSTEM.setPowerManually(.2),
+      () -> WRIST_SUBSYSTEM.setPowerManually(0), 
+      WRIST_SUBSYSTEM));
+
+    DRIVE_CONTROLLER.a().whileTrue(new StartEndCommand(
+      () -> WRIST_SUBSYSTEM.setPowerManually(-.2),
+      () -> WRIST_SUBSYSTEM.setPowerManually(0),
+      WRIST_SUBSYSTEM));
+    */
+    DRIVE_CONTROLLER.y().whileTrue(new ElbowGoToPositionCommand(-25));
+    DRIVE_CONTROLLER.a().whileTrue(new ElbowGoToPositionCommand(-2));
+
+    DRIVE_CONTROLLER.x().whileTrue(new StartEndCommand(
+      () -> ELBOW_SUBSYSTEM.setPowerManually(.1),
+      () -> ELBOW_SUBSYSTEM.setPowerManually(0), 
+      ELBOW_SUBSYSTEM));
+
+    DRIVE_CONTROLLER.b().whileTrue(new StartEndCommand(
+      () -> ELBOW_SUBSYSTEM.setPowerManually(-.1),
+      () -> ELBOW_SUBSYSTEM.setPowerManually(0), 
+      ELBOW_SUBSYSTEM));
+
+    // configureButtonBindings();
   }
 
   /** This function is run once each time the robot enters autonomous mode. */

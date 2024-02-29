@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
@@ -12,13 +13,14 @@ import frc.robot.RobotMap;
 public class ShooterSubsystem extends SubsystemBase {
     private BufferedDigitalInput _shooterPieceSensor = new BufferedDigitalInput(RobotMap.SHOOTER_PIECE_SENSOR, 3, false,
             false);
-    private CANSparkMax _leftSparkMax = new CANSparkMax(RobotMap.SHOOTER_LEFT_MOTOR_CAN_ID, MotorType.kBrushless);
-    private CANSparkMax _rightSparkMax = new CANSparkMax(RobotMap.SHOOTER_RIGHT_MOTOR_CAN_ID, MotorType.kBrushless);
-    private SparkPIDController _lSparkPIDController = _leftSparkMax.getPIDController();
-    private SparkPIDController _rSparkPIDController = _rightSparkMax.getPIDController();
+    private TalonFX _leftSparkMax = new TalonFX(RobotMap.SHOOTER_LEFT_MOTOR_CAN_ID);
+    private TalonFX _rightSparkMax = new TalonFX(RobotMap.SHOOTER_RIGHT_MOTOR_CAN_ID);
+    //private SparkPIDController _lSparkPIDController = _leftSparkMax.getPIDController();
+    //private SparkPIDController _rSparkPIDController = _rightSparkMax.getPIDController();
     private InterpolatingDoubleTreeMap shooterAngleMap = new InterpolatingDoubleTreeMap();
 
     public ShooterSubsystem() {
+        /*
         _lSparkPIDController.setP(ShooterConstants.lkP);
         _lSparkPIDController.setI(ShooterConstants.lkI);
         _lSparkPIDController.setD(ShooterConstants.lkD);
@@ -32,13 +34,18 @@ public class ShooterSubsystem extends SubsystemBase {
         _rSparkPIDController.setIZone(ShooterConstants.rkIz);
         _rSparkPIDController.setFF(ShooterConstants.rkFF);
         _rSparkPIDController.setOutputRange(ShooterConstants.rkMinOutput, ShooterConstants.rkMaxOutput);
-
+        */
         populateShooterAngleMap();
     }
 
     public void startShooter() {
-        _lSparkPIDController.setReference(ShooterConstants.lmaxRPM * ShooterConstants.lShooterVelocityPercentage, CANSparkMax.ControlType.kVelocity);
-        _rSparkPIDController.setReference(ShooterConstants.rmaxRPM * ShooterConstants.rShooterVelocityPercentage, CANSparkMax.ControlType.kVelocity);
+        //_lSparkPIDController.setReference(ShooterConstants.lmaxRPM * ShooterConstants.lShooterVelocityPercentage, CANSparkMax.ControlType.kVelocity);
+        //_rSparkPIDController.setReference(ShooterConstants.rmaxRPM * ShooterConstants.rShooterVelocityPercentage, CANSparkMax.ControlType.kVelocity);
+    }
+
+    public void setPowerManually(double speed) {
+        _leftSparkMax.set(speed);
+        _rightSparkMax.set(speed * -1);
     }
 
     public void stopShooting() {

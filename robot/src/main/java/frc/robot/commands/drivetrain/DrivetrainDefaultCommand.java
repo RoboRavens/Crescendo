@@ -39,9 +39,9 @@ public class DrivetrainDefaultCommand extends Command {
     @Override
     public void execute() {
         double controllerDirection = Robot.allianceColor == Alliance.Red ? 1 : -1;
-        double x = Robot.XBOX_CONTROLLER.getLeftY() * controllerDirection;
-        double y = Robot.XBOX_CONTROLLER.getLeftX() * controllerDirection;
-        double r = Robot.XBOX_CONTROLLER.getRightX() * -1;
+        double x = Robot.DRIVE_CONTROLLER.getLeftY() * controllerDirection;
+        double y = Robot.DRIVE_CONTROLLER.getLeftX() * controllerDirection;
+        double r = Robot.DRIVE_CONTROLLER.getRightX() * -1;
         Rotation2d a = Robot.DRIVETRAIN_SUBSYSTEM.getOdometryRotation(); // The angle of the robot as measured by a gyroscope. The robot's angle is considered to be zero when it is facing directly away from your alliance station wall.
     
         x = Deadband.adjustValueToZero(x, Constants.JOYSTICK_DEADBAND);
