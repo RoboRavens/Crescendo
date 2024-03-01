@@ -68,7 +68,7 @@ public class DrivetrainAutoAimCommand extends Command {
         r = r * Constants.DRIVE_MAX_TURN_RADIANS_PER_SECOND;
         */
         var targetChassisSpeeds = new ChassisSpeeds(
-            Robot.DRIVE_CONTROLLER.getLeftTriggerAxis() * 1.5, // x translation
+            Robot.DRIVE_CONTROLLER.getLeftTriggerAxis() * 3, // x translation
              0, // y translation
             r // rotation
            // a // The angle of the robot as measured by a gyroscope.
