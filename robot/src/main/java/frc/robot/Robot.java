@@ -75,7 +75,7 @@ public class Robot extends TimedRobot {
   public static final ShooterSubsystem SHOOTER_SUBSYSTEM = new ShooterSubsystem();
   public static final ElbowSubsystem ELBOW_SUBSYSTEM = new ElbowSubsystem();
   public static final WristSubsystem WRIST_SUBSYSTEM = new WristSubsystem();
-  public static final XboxController XBOX_CONTROLLER = new XboxController(0);
+  // public static final XboxController XBOX_CONTROLLER = new XboxController(0);
   // States
   public static ScoringTargetState SCORING_TARGET_STATE = ScoringTargetState.SPEAKER;
   public static IntakeTargetState INTAKE_TARGET_STATE = IntakeTargetState.GROUND;
@@ -124,7 +124,7 @@ public class Robot extends TimedRobot {
     AUTO_CHOOSER.ShowTab();
 
     new Trigger(() -> SHOOTER_SUBSYSTEM.hasPiece() && DRIVE_CONTROLLER.getLeftBumper()).onTrue(new ShootCommand());
-    new Trigger(() -> XBOX_CONTROLLER.getLeftTriggerAxis() > .1).whileTrue(DRIVETRAIN_AUTO_AIM_COMMAND);
+    new Trigger(() -> DRIVE_CONTROLLER.getLeftTriggerAxis() > .1).whileTrue(DRIVETRAIN_AUTO_AIM_COMMAND);
 
     configureButtonBindings();
     configureTriggers();
