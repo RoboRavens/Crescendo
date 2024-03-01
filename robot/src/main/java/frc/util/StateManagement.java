@@ -70,7 +70,7 @@ public class StateManagement {
     public enum OverallState {
         EMPTY_TRANSIT, // When the robot does not have a note
         SEEKING_NOTE, // When the robot does not have a note but has a target scoring state that requires a note
-        LOADED_TRANSIT,
+        LOADED_TRANSIT, // When the robot has a note
         LOADING, // When the robot detects a note and has a target scoring state that requires a note
         SCORING,
         PREPARING_TO_SCORE,

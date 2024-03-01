@@ -234,6 +234,11 @@ public class Robot extends TimedRobot {
   }
 
   private void configureTriggers() {
+    // If the arm-up toggle is on and our intake target is ground,
+    // set the intake target to the source
+    new Trigger(() -> ARM_UP_TARGET_STATE == ArmUpTargetState.UP
+        && INTAKE_TARGET_STATE == IntakeTargetState.GROUND)
+        .whileTrue(new InstantCommand(() -> INTAKE_TARGET_STATE = IntakeTargetState.SOURCE));
     // If we are seeking a note and intend to intake from the ground,
     // set our arm position to the ground setpoint
     new Trigger(() -> OVERALL_STATE == OverallState.SEEKING_NOTE
@@ -257,11 +262,25 @@ public class Robot extends TimedRobot {
     // TODO:^^ implement a flash LEDs command ^^
     // If the robot is loaded with a note and we intend to score in the amp,
     // set our arm position to the amp setpoint
-    new Trigger(() -> OVERALL_STATE == OverallState.LOADED_TRANSIT)
+    new Trigger(() -> OVERALL_STATE == OverallState.LOADED_TRANSIT 
+        && SCORING_TARGET_STATE == ScoringTargetState.AMP)
         .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.AMP_SCORING));
     // If the robot is loaded with a note and we intend to score in the trap,
     // set our arm position to the trap setpoint
-    new Trigger(() -> OVERALL_STATE == OverallState.LOADED_TRANSIT)
+    new Trigger(() -> OVERALL_STATE == OverallState.LOADED_TRANSIT
+        && SCORING_TARGET_STATE == ScoringTargetState.TRAP)
         .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.TRAP_SCORING));
+    // If the robot is loaded with a note and we intend to score in the speaker,
+    // set our arm position to the speaker setpoint
+    new Trigger(() -> OVERALL_STATE == OverallState.LOADED_TRANSIT
+        && SCORING_TARGET_STATE == ScoringTargetState.SPEAKER
+        && ARM_UP_TARGET_STATE == ArmUpTargetState.FREE)
+        .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.SPEAKER_SCORING));
+    // Otherwise, if the arm-up toggle is on,
+    // set our arm position to the "up configuration"
+    new Trigger(() -> OVERALL_STATE == OverallState.LOADED_TRANSIT
+        && SCORING_TARGET_STATE == ScoringTargetState.SPEAKER
+        && ARM_UP_TARGET_STATE == ArmUpTargetState.UP)
+        .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.SPEAKER_SCORING_ARM_UP));
   }
 }

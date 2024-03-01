@@ -14,6 +14,9 @@ import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.util.Deadband;
 import frc.util.Scale;
 import frc.util.Slew;
+import frc.util.StateManagement.DrivetrainState;
+import frc.util.StateManagement.OverallState;
+import frc.util.StateManagement.ScoringTargetState;
 
 public class DrivetrainDefaultCommand extends Command {
 
@@ -42,29 +45,37 @@ public class DrivetrainDefaultCommand extends Command {
         double x = Robot.DRIVE_CONTROLLER.getLeftY() * controllerDirection;
         double y = Robot.DRIVE_CONTROLLER.getLeftX() * controllerDirection;
         double r = Robot.DRIVE_CONTROLLER.getRightX() * -1;
-        Rotation2d a = Robot.DRIVETRAIN_SUBSYSTEM.getOdometryRotation(); // The angle of the robot as measured by a gyroscope. The robot's angle is considered to be zero when it is facing directly away from your alliance station wall.
-    
-        x = Deadband.adjustValueToZero(x, Constants.JOYSTICK_DEADBAND);
-        y = Deadband.adjustValueToZero(y, Constants.JOYSTICK_DEADBAND);
-        r = Deadband.adjustValueToZero(r, Constants.JOYSTICK_DEADBAND);
+        Rotation2d a = Robot.DRIVETRAIN_SUBSYSTEM.getOdometryRotation(); // The angle of the robot as measured by a gyroscope. The robot's angle is considered to be zero when it is facing directly away from your alliance station wall.        
+        
+        if (Robot.DRIVETRAIN_STATE == DrivetrainState.FREEHAND) {
+            x = Deadband.adjustValueToZero(x, Constants.JOYSTICK_DEADBAND);
+            y = Deadband.adjustValueToZero(y, Constants.JOYSTICK_DEADBAND);
+            r = Deadband.adjustValueToZero(r, Constants.JOYSTICK_DEADBAND);
 
-        x = x * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
-        y = y * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
-        r = r * Constants.DRIVE_MAX_TURN_RADIANS_PER_SECOND;
+            x = x * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
+            y = y * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
+            r = r * Constants.DRIVE_MAX_TURN_RADIANS_PER_SECOND;
 
-        var targetChassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-            x, // x translation
-            y, // y translation
-            r, // rotation
-            a // The angle of the robot as measured by a gyroscope.
-        );
+            var targetChassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+                x, // x translation
+                y, // y translation
+                r, // rotation
+                a // The angle of the robot as measured by a gyroscope.
+            );
 
-        targetChassisSpeeds.vxMetersPerSecond = Slew.GetSlewedTarget(_velocityXSlewRate, targetChassisSpeeds.vxMetersPerSecond, _chassisSpeeds.vxMetersPerSecond);
-        targetChassisSpeeds.vyMetersPerSecond = Slew.GetSlewedTarget(_velocityYSlewRate, targetChassisSpeeds.vyMetersPerSecond, _chassisSpeeds.vyMetersPerSecond);
-        targetChassisSpeeds.omegaRadiansPerSecond = Slew.GetSlewedTarget(_angularSlewRate, targetChassisSpeeds.omegaRadiansPerSecond, _chassisSpeeds.omegaRadiansPerSecond);
-        _chassisSpeeds = targetChassisSpeeds;
+            targetChassisSpeeds.vxMetersPerSecond = Slew.GetSlewedTarget(_velocityXSlewRate, targetChassisSpeeds.vxMetersPerSecond, _chassisSpeeds.vxMetersPerSecond);
+            targetChassisSpeeds.vyMetersPerSecond = Slew.GetSlewedTarget(_velocityYSlewRate, targetChassisSpeeds.vyMetersPerSecond, _chassisSpeeds.vyMetersPerSecond);
+            targetChassisSpeeds.omegaRadiansPerSecond = Slew.GetSlewedTarget(_angularSlewRate, targetChassisSpeeds.omegaRadiansPerSecond, _chassisSpeeds.omegaRadiansPerSecond);
+            _chassisSpeeds = targetChassisSpeeds;
 
-        Robot.DRIVETRAIN_SUBSYSTEM.drive(targetChassisSpeeds);
+            Robot.DRIVETRAIN_SUBSYSTEM.drive(targetChassisSpeeds);
+        }
+        else if (Robot.DRIVETRAIN_STATE == DrivetrainState.ROBOT_ALIGN) {
+            if (Robot.OVERALL_STATE == OverallState.LOADED_TRANSIT) {
+               
+            }
+        }
+        
     }
 
     // public double getYVelocity(Translation2d target) {
