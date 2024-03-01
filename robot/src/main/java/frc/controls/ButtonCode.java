@@ -11,16 +11,15 @@ public class ButtonCode {
 
 	public enum Buttons {
 		GROUND_PICKUP_AND_SPEAKER_SCORING(1),
-    DEFENDED_SPEAKER_SCORING(2),
+		DEFENDED_SPEAKER_SCORING(2),
 		AMP_SCORING(3),
 		TRAP_SCORING(4),
 		AMP_AND_SPEAKER_SOURCE_INTAKE(8),
 		TRAP_SOURCE_INTAKE(9),
 		MOVE_ELBOW_UP(7),
 		MOVE_ELBOW_DOWN(10),
-	  MOVE_WRIST_UP(6),
+		MOVE_WRIST_UP(6),
 		MOVE_WRIST_DOWN(11);
-
 
 		private final int button;
 
@@ -36,12 +35,12 @@ public class ButtonCode {
 	// "toggle" is in place for switch
 	public enum Toggle {
 		ARM_UP(1);
-	
-	    private final int toggle;
 
-	    Toggle(int toggle) {
-		this.toggle = toggle;
-	    }
+		private final int toggle;
+
+		Toggle(int toggle) {
+			this.toggle = toggle;
+		}
 
 		public int getToggle() {
 			return toggle;
@@ -53,6 +52,6 @@ public class ButtonCode {
 	}
 
 	public JoystickButton getSwitch(Toggle toggle) {
-        return new JoystickButton(OP_PAD_TOGGLE, toggle.getToggle());
+		return new JoystickButton(OP_PAD_TOGGLE, toggle.getToggle());
 	}
 }
