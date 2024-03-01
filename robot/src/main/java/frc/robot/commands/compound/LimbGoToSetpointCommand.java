@@ -20,6 +20,7 @@ public class LimbGoToSetpointCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    System.out.println("LimbGoToSetpointCommand: initialize");
     Robot.ELBOW_SUBSYSTEM.goToPosition(_targetLimbSetPoint.getElbowRotationPosition());
     Robot.WRIST_SUBSYSTEM.goToPosition(_targetLimbSetPoint.getWristRotationPosition());
     String name = _targetLimbSetPoint.getName();

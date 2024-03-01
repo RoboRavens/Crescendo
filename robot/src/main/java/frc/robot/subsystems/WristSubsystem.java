@@ -10,21 +10,15 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.RobotMap;
-import frc.robot.util.Constants.Constants;
-import frc.robot.util.Constants.ElbowConstants;
 import frc.robot.util.Constants.WristConstants;
 
 public class WristSubsystem extends SubsystemBase {
   private TalonFX _wristRotationMotor = new TalonFX(RobotMap.WRIST_ROTATION_MOTOR);
-  private DigitalInput _forwardLimitSwitch = new DigitalInput(RobotMap.WRIST_FORWARD_LIMIT_DIO);
 
-  private Slot0Configs _pidConfig = ElbowConstants.getSlot0Configs();
+  private Slot0Configs _pidConfig = WristConstants.getSlot0Configs();
   public WristSubsystem() {
     var talonFXConfiguration = new TalonFXConfiguration();
     talonFXConfiguration.MotionMagic.MotionMagicAcceleration = 100;
@@ -70,6 +64,7 @@ public class WristSubsystem extends SubsystemBase {
     double angleInRadians = distanceFromHorizontal * (Math.PI / 2);
     return angleInRadians;
   }
+
   private double getPositionFromRadians(double angleInRadians) {
     double distanceFromHorizontal =  angleInRadians / (Math.PI / 2);
     double unitsTo90 = WristConstants.ENCODER_POSITION_AT_VERTICAL - WristConstants.ENCODER_POSITION_AT_HORIZONTAL;

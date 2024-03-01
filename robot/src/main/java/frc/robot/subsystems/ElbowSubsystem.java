@@ -32,6 +32,7 @@ public class ElbowSubsystem extends SubsystemBase {
     var talonFXConfiguration = new TalonFXConfiguration();
     talonFXConfiguration.MotionMagic.MotionMagicAcceleration = 100;
     talonFXConfiguration.MotionMagic.MotionMagicCruiseVelocity = 20;
+    talonFXConfiguration.Slot0 = _pidConfig;
 
     talonFXConfiguration.Audio.BeepOnBoot = false;
     talonFXConfiguration.Audio.BeepOnConfig = false;
@@ -86,17 +87,12 @@ public class ElbowSubsystem extends SubsystemBase {
     return angleInRadians;
   }
 
-  //?
-    private double getPositionFromRadians(double angleInRadians) {
+  private double getPositionFromRadians(double angleInRadians) {
     double distanceFromHorizontal =  angleInRadians / (Math.PI / 2);
     double unitsTo90 = ElbowConstants.ENCODER_POSITION_AT_VERTICAL - ElbowConstants.ENCODER_POSITION_AT_HORIZONTAL;
     double position = (distanceFromHorizontal * unitsTo90) + ElbowConstants.ENCODER_POSITION_AT_HORIZONTAL;
     return position;
   }
-
-  //private double getPositionFromRadians(double radians) {
-  //  return 0;
-  //}
 
   public void setPowerManually(double power){
     _elbowRotationMotor.set(power);
