@@ -43,30 +43,38 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
     
     // BLUE SIDE
     this.addBlueDefault(
-      new AutoMode("B1: Six Note Auto",
+      new AutoMode("B1: Six Note Path",
       () -> new PathPlannerAuto("SixNoteBlue"))
     );
     this.addOption(
-      new AutoMode("B2: North Midfield Auto",
+      new AutoMode("B2: North Midfield Path",
       () -> new PathPlannerAuto("NorthMidfieldBlue"))
     );
     this.addOption(
-      new AutoMode("B3: South Midfield Auto",
+      new AutoMode("B3: South Midfield Path",
       () -> new PathPlannerAuto("SouthMidfieldBlue"))
+    );
+    this.addOption(
+      new AutoMode("B4: Six Note Auto",
+      () -> SixNoteAutoCommand.getAutoMode())
     );
 
     // RED SIDE
     this.addRedDefault(
-      new AutoMode("R1: Six Note Auto",
+      new AutoMode("R1: Six Note Path",
       () -> new PathPlannerAuto("SixNoteBlue"))
     );
     this.addOption(
-      new AutoMode("R2: North Midfield Auto",
+      new AutoMode("R2: North Midfield Path",
       () -> new PathPlannerAuto("NorthMidfieldBlue"))
     );
     this.addOption(
-      new AutoMode("R3: South Midfield Auto",
+      new AutoMode("R3: South Midfield Path",
       () -> new PathPlannerAuto("SouthMidfieldBlue"))
+    );
+    this.addOption(
+      new AutoMode("R4: Six Note Auto",
+      () -> SixNoteAutoCommand.getAutoMode())
     );
   }
 
@@ -123,14 +131,14 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // var alliance = DriverStation.getAlliance().get();
-    // if (_currentAlliance != alliance) {
-    //   this.UpdateAlliance(alliance);
-    // }
+    var alliance = DriverStation.getAlliance().get();
+    if (_currentAlliance != alliance) {
+      this.UpdateAlliance(alliance);
+    }
 
-    // _selectedAutoRobotPub.set(this.GetAuto().getText());
+    _selectedAutoRobotPub.set(this.GetAuto().getText());
 
-    // _matchTimePub.set(Timer.getMatchTime());
-    // _alliancePub.set(DriverStation.getAlliance().get().name());
+    _matchTimePub.set(Timer.getMatchTime());
+    _alliancePub.set(DriverStation.getAlliance().get().name());
   }
 }

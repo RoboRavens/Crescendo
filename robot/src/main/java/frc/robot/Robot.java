@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -20,6 +22,7 @@ import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
 import frc.robot.commands.intake.IntakeCommand;
 import frc.robot.commands.intake.IntakeFeedCommand;
 import frc.robot.commands.shooter.ShootCommand;
+import frc.robot.commands.shooter.StartShooterCommand;
 import frc.robot.subsystems.AutoChooserSubsystemReact;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.ElbowSubsystem;
@@ -43,6 +46,7 @@ import frc.util.StateManagement.OverallState;
 import frc.util.StateManagement.ScoringTargetState;
 import frc.util.StateManagement.ShooterRevTargetState;
 import frc.util.StateManagement.TrapSourceLaneTargetState;
+import frc.util.StateManagement.ZoneState;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -84,6 +88,12 @@ public class Robot extends TimedRobot {
   public static LoadState LOAD_STATE = LoadState.EMPTY;
   public static DrivetrainState DRIVETRAIN_STATE = DrivetrainState.FREEHAND;
   public static LimelightDetectsNoteState LIMELIGHT_DETECTS_NOTE_STATE = LimelightDetectsNoteState.NO_NOTE;
+  public static ZoneState ZONE_STATE = ZoneState.NONE;
+
+  public Robot() {
+    // Register Named Commands for PathPlanner
+    NamedCommands.registerCommand("Start Shooter", new StartShooterCommand());
+  }
 
   @Override
   public void robotPeriodic() {
@@ -175,8 +185,8 @@ public class Robot extends TimedRobot {
   // this method needs to called both periodically AND in the auto/tele init
   // methods.
   private void setDriverStationData() {
-    // allianceColor = DriverStation.getAlliance().get();
-    // AUTO_CHOOSER.BuildAutoChooser(allianceColor);
+    allianceColor = DriverStation.getAlliance().get();
+    AUTO_CHOOSER.BuildAutoChooser(allianceColor);
   }
 
   private void configureButtonBindings() {

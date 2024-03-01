@@ -50,6 +50,11 @@ public class ShooterSubsystem extends SubsystemBase {
         return _shooterPieceSensor.get();
     }
 
+    // TODO: Implement this method
+    public boolean isShooterAtTargetShotVelocity() {
+        return true;
+    }
+
     private void populateShooterAngleMap(){
         for(int i=0; i<ShooterConstants.SHOOTER_ANGLE_PAIRS.length; i++){
             shooterAngleMap.put(ShooterConstants.SHOOTER_ANGLE_PAIRS[i][0], ShooterConstants.SHOOTER_ANGLE_PAIRS[i][1]);
