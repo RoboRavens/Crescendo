@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.controls.ButtonCode;
 import frc.controls.ButtonCode.Buttons;
@@ -25,6 +26,7 @@ import frc.robot.commands.intake.IntakeFeedCommand;
 import frc.robot.commands.shooter.ShootCommand;
 import frc.robot.commands.wrist.WristDefaultCommand;
 import frc.robot.commands.wrist.WristGoToPositionCommand;
+import frc.robot.commands.wrist.WristMoveManuallyCommand;
 import frc.robot.subsystems.AutoChooserSubsystemReact;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.ElbowSubsystem;
@@ -69,11 +71,9 @@ public class Robot extends TimedRobot {
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_FOUR = new LimelightSubsystem("limelight-four");
   public static final DrivetrainSubsystem DRIVETRAIN_SUBSYSTEM = new DrivetrainSubsystem();
   public static final PoseEstimatorSubsystem POSE_ESTIMATOR_SUBSYSTEM = new PoseEstimatorSubsystem();
-  public static final XboxController DRIVE_CONTROLLER = new XboxController(0);
+  public static final CommandXboxController COMMAND_DRIVE_CONTROLLER = new CommandXboxController(0);
+  public static final XboxController DRIVE_CONTROLLER = COMMAND_DRIVE_CONTROLLER.getHID();
   public static DriverStation.Alliance allianceColor = Alliance.Blue;
-  public static final DrivetrainDefaultCommand DRIVETRAIN_DEFAULT_COMMAND = new DrivetrainDefaultCommand();
-  public static final  ElbowDefaultCommand ELBOW_DEFAULT_COMMAND = new ElbowDefaultCommand();
-  public static final  WristDefaultCommand WRIST_DEFAULT_COMMAND = new WristDefaultCommand();
   public static final ReactDashSubsystem REACT_DASH_SUBSYSTEM = new ReactDashSubsystem();
   public static final AutoChooserSubsystemReact AUTO_CHOOSER = new AutoChooserSubsystemReact();
   public static final TeleopDashboardSubsystem TELEOP_DASHBOARD_SUBSYSTEM = new TeleopDashboardSubsystem();
@@ -82,6 +82,12 @@ public class Robot extends TimedRobot {
   public static final ShooterSubsystem SHOOTER_SUBSYSTEM = new ShooterSubsystem();
   public static final ElbowSubsystem ELBOW_SUBSYSTEM = new ElbowSubsystem();
   public static final WristSubsystem WRIST_SUBSYSTEM = new WristSubsystem();
+
+  // DEFAULT COMMANDS
+  public static final DrivetrainDefaultCommand DRIVETRAIN_DEFAULT_COMMAND = new DrivetrainDefaultCommand();
+  public static final ElbowDefaultCommand ELBOW_DEFAULT_COMMAND = new ElbowDefaultCommand();
+  public static final WristDefaultCommand WRIST_DEFAULT_COMMAND = new WristDefaultCommand();
+
   // States
   public static ScoringTargetState SCORING_TARGET_STATE = ScoringTargetState.SPEAKER;
   public static IntakeTargetState INTAKE_TARGET_STATE = IntakeTargetState.GROUND;
@@ -122,9 +128,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    ELBOW_SUBSYSTEM.setDefaultCommand(ELBOW_DEFAULT_COMMAND);
-    WRIST_SUBSYSTEM.setDefaultCommand(WRIST_DEFAULT_COMMAND);
     DRIVETRAIN_SUBSYSTEM.setDefaultCommand(DRIVETRAIN_DEFAULT_COMMAND);
+    ELBOW_SUBSYSTEM.setDefaultCommand(ELBOW_DEFAULT_COMMAND);
+    // WRIST_SUBSYSTEM.setDefaultCommand(WRIST_DEFAULT_COMMAND);
     
     new Trigger(() -> DRIVE_CONTROLLER.getLeftBumper()
         && (DRIVE_CONTROLLER.getRightBumper())
@@ -134,11 +140,28 @@ public class Robot extends TimedRobot {
 
     new Trigger(() -> SHOOTER_SUBSYSTEM.hasPiece() && DRIVE_CONTROLLER.getLeftBumper()).onTrue(new ShootCommand());
 
+    configureDriveControllerBindings();
     configureButtonBindings();
-    configureTriggers();
+    configureOverrideBindings();
   }
 
-  /** This function is run once each time the robot enters autonomous mode. */
+  private void configureDriveControllerBindings() {
+        // If the left trigger is held
+    new Trigger(() -> DRIVE_CONTROLLER.getLeftTriggerAxis() > 0)
+        .onTrue(new InstantCommand(() -> DRIVETRAIN_STATE = DrivetrainState.ROBOT_ALIGN))
+        .onFalse(new InstantCommand(() -> DRIVETRAIN_STATE = DrivetrainState.FREEHAND));
+    // If the robot is ready to shoot and we hold A, feed the note into the shooter
+    //new Trigger(() -> StateManagement.isRobotReadyToShoot() && DRIVE_CONTROLLER.getAButton())
+    //    .onTrue(new IntakeFeedCommand(INTAKE_SUBSYSTEM));
+
+    // Temporary testing buttons
+    COMMAND_DRIVE_CONTROLLER.y()
+      .whileTrue(new WristGoToPositionCommand(ElbowConstants.ENCODER_POSITION_AT_VERTICAL));
+    COMMAND_DRIVE_CONTROLLER.a()
+      .whileTrue(new WristGoToPositionCommand(WristConstants.ENCODER_POSITION_AT_HORIZONTAL));
+	}
+
+	/** This function is run once each time the robot enters autonomous mode. */
   @Override
   public void autonomousInit() {
     setDriverStationData();
@@ -195,14 +218,6 @@ public class Robot extends TimedRobot {
   }
 
   private void configureButtonBindings() {
-    // If the left trigger is held
-    new Trigger(() -> DRIVE_CONTROLLER.getLeftTriggerAxis() > 0)
-        .onTrue(new InstantCommand(() -> DRIVETRAIN_STATE = DrivetrainState.ROBOT_ALIGN))
-        .onFalse(new InstantCommand(() -> DRIVETRAIN_STATE = DrivetrainState.FREEHAND));
-    // If the robot is ready to shoot and we hold A, feed the note into the shooter
-    new Trigger(() -> StateManagement.isRobotReadyToShoot() && DRIVE_CONTROLLER.getAButton())
-        .onTrue(new IntakeFeedCommand(INTAKE_SUBSYSTEM));
-
     BUTTON_CODE.getButton(Buttons.GROUND_PICKUP_AND_SPEAKER_SCORING).and(() -> LOAD_STATE == LoadState.EMPTY)
         .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.GROUND_PICKUP));
     BUTTON_CODE.getButton(Buttons.GROUND_PICKUP_AND_SPEAKER_SCORING).and(() -> LOAD_STATE == LoadState.LOADED)
@@ -218,20 +233,14 @@ public class Robot extends TimedRobot {
     BUTTON_CODE.getButton(Buttons.TRAP_SOURCE_INTAKE)
         .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.TRAP_SOURCE_INTAKE));
 
-        //
-    BUTTON_CODE.getButton(Buttons.ELBOW_TO_SETPOINT)
-        .whileTrue(new ElbowGoToPositionCommand(ElbowConstants.ENCODER_POSITION_AT_VERTICAL));
-    BUTTON_CODE.getButton(Buttons.WRIST_TO_SETPOINT)
-        .whileTrue(new WristGoToPositionCommand(WristConstants.ENCODER_POSITION_AT_VERTICAL));
-
     BUTTON_CODE.getButton(Buttons.MOVE_ELBOW_UP)
         .whileTrue(new ElbowMoveManuallyCommand(Constants.MOVE_ELBOW_UP_MANUAL_POWER));
     BUTTON_CODE.getButton(Buttons.MOVE_ELBOW_DOWN)
         .whileTrue(new ElbowMoveManuallyCommand(Constants.MOVE_ELBOW_DOWN_MANUAL_POWER));
     BUTTON_CODE.getButton(Buttons.MOVE_WRIST_UP)
-        .whileTrue(new ElbowMoveManuallyCommand(Constants.MOVE_WRIST_UP_MANUAL_POWER));
+        .whileTrue(new WristMoveManuallyCommand(Constants.MOVE_WRIST_UP_MANUAL_POWER));
     BUTTON_CODE.getButton(Buttons.MOVE_WRIST_DOWN)
-        .whileTrue(new ElbowMoveManuallyCommand(Constants.MOVE_WRIST_DOWN_MANUAL_POWER));
+        .whileTrue(new WristMoveManuallyCommand(Constants.MOVE_WRIST_DOWN_MANUAL_POWER));
 
   }
 
@@ -251,7 +260,7 @@ public class Robot extends TimedRobot {
     }
   }
 
-  private void configureTriggers() {
+  private void configureOverrideBindings() {
     // If the arm-up toggle is on and our intake target is ground,
     // set the intake target to the source
     new Trigger(() -> ARM_UP_TARGET_STATE == ArmUpTargetState.UP

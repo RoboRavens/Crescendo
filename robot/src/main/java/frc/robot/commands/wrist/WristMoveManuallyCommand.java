@@ -8,25 +8,29 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
 
 public class WristMoveManuallyCommand extends Command {
-  Double power;
+  double _power;
 
-  public WristMoveManuallyCommand(Double power) {
+  public WristMoveManuallyCommand(double power) {
+    _power = power;
+    addRequirements(Robot.WRIST_SUBSYSTEM);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    Robot.WRIST_SUBSYSTEM.setPowerManually(_power);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Robot.WRIST_SUBSYSTEM.setPowerManually(power);
+    
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    Robot.WRIST_SUBSYSTEM.setPowerManually(0);
   }
 
   // Returns true when the command should end.

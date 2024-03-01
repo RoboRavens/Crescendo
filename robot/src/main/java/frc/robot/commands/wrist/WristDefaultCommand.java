@@ -10,7 +10,7 @@ import frc.robot.Robot;
 public class WristDefaultCommand extends Command {
   /** Creates a new WristDefaultCommand. */
   public WristDefaultCommand() {
-    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(Robot.WRIST_SUBSYSTEM);
   }
 
   // Called when the command is initially scheduled.
