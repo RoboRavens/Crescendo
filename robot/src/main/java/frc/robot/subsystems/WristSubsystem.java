@@ -4,19 +4,27 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.RobotMap;
 import frc.robot.util.Constants.Constants;
+import frc.robot.util.Constants.ElbowConstants;
 import frc.robot.util.Constants.WristConstants;
 
 public class WristSubsystem extends SubsystemBase {
   private TalonFX _wristRotationMotor = new TalonFX(RobotMap.WRIST_ROTATION_MOTOR);
+  private DigitalInput _forwardLimitSwitch = new DigitalInput(RobotMap.WRIST_FORWARD_LIMIT_DIO);
 
+  private Slot0Configs _pidConfig = ElbowConstants.getSlot0Configs();
   public WristSubsystem() {
     var talonFXConfiguration = new TalonFXConfiguration();
     talonFXConfiguration.MotionMagic.MotionMagicAcceleration = 100;
@@ -37,6 +45,36 @@ public class WristSubsystem extends SubsystemBase {
 
     _wristRotationMotor.getConfigurator().setPosition(0);
     _wristRotationMotor.getConfigurator().apply(talonFXConfiguration);
+  }
+
+  private void updateStaticFeedfoward() {
+    var angle = this.getRadiansFromPosition(this.getPosition());
+    var staticFeedForward = this.getStaticFeedforwardFromRadians(angle);
+
+    SmartDashboard.putNumber("Wrist Angle Degrees", Math.toDegrees(angle));
+    SmartDashboard.putNumber("Wrist Feedforward", staticFeedForward);
+    if (_pidConfig.kS != staticFeedForward) {
+      _pidConfig.kS = staticFeedForward;
+      _wristRotationMotor.getConfigurator().apply(_pidConfig);
+    }
+  }
+
+  private double getStaticFeedforwardFromRadians(double angle) {
+    var staticFeedForward = Math.cos(angle) * WristConstants.MOTOR_POWER_FEEDFORWARD_AT_HORIZONTAL * WristConstants.MOTOR_POWER_DIRECTION_TO_GO_UP_FROM_HORIZONTAL;
+    return staticFeedForward;
+  }
+
+  private double getRadiansFromPosition(double position) {
+    double unitsTo90 = WristConstants.ENCODER_POSITION_AT_VERTICAL - WristConstants.ENCODER_POSITION_AT_HORIZONTAL;
+    double distanceFromHorizontal = ((position - WristConstants.ENCODER_POSITION_AT_HORIZONTAL) / unitsTo90);
+    double angleInRadians = distanceFromHorizontal * (Math.PI / 2);
+    return angleInRadians;
+  }
+  private double getPositionFromRadians(double angleInRadians) {
+    double distanceFromHorizontal =  angleInRadians / (Math.PI / 2);
+    double unitsTo90 = WristConstants.ENCODER_POSITION_AT_VERTICAL - WristConstants.ENCODER_POSITION_AT_HORIZONTAL;
+    double position = (distanceFromHorizontal * unitsTo90) + WristConstants.ENCODER_POSITION_AT_HORIZONTAL;
+    return position;
   }
 
   public void setPowerManually(double power){

@@ -18,6 +18,7 @@ import frc.robot.commands.intake.IntakeCommand;
 import frc.robot.commands.intake.IntakeFeedCommand;
 import frc.robot.commands.intake.TrapIntakeCommand;
 import frc.robot.commands.intake.TrapLaunchCommand;
+import frc.robot.util.Constants.IntakeConstants;
 
 public class IntakeSubsystem extends SubsystemBase {
 

@@ -15,12 +15,16 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.controls.ButtonCode;
 import frc.controls.ButtonCode.Buttons;
-import frc.robot.commands.LimbGoToSetpointCommand;
-import frc.robot.commands.MoveElbowManuallyCommand;
+import frc.robot.commands.compound.LimbGoToSetpointCommand;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
+import frc.robot.commands.elbow.ElbowDefaultCommand;
+import frc.robot.commands.elbow.ElbowGoToPositionCommand;
+import frc.robot.commands.elbow.ElbowMoveManuallyCommand;
 import frc.robot.commands.intake.IntakeCommand;
 import frc.robot.commands.intake.IntakeFeedCommand;
 import frc.robot.commands.shooter.ShootCommand;
+import frc.robot.commands.wrist.WristDefaultCommand;
+import frc.robot.commands.wrist.WristGoToPositionCommand;
 import frc.robot.subsystems.AutoChooserSubsystemReact;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.ElbowSubsystem;
@@ -32,6 +36,8 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TeleopDashboardSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 import frc.robot.util.Constants.Constants;
+import frc.robot.util.Constants.ElbowConstants;
+import frc.robot.util.Constants.WristConstants;
 import frc.robot.util.arm.LimbSetpoint;
 import frc.util.StateManagement;
 import frc.util.StateManagement.ArmUpTargetState;
@@ -66,6 +72,8 @@ public class Robot extends TimedRobot {
   public static final XboxController DRIVE_CONTROLLER = new XboxController(0);
   public static DriverStation.Alliance allianceColor = Alliance.Blue;
   public static final DrivetrainDefaultCommand DRIVETRAIN_DEFAULT_COMMAND = new DrivetrainDefaultCommand();
+  public static final  ElbowDefaultCommand ELBOW_DEFAULT_COMMAND = new ElbowDefaultCommand();
+  public static final  WristDefaultCommand WRIST_DEFAULT_COMMAND = new WristDefaultCommand();
   public static final ReactDashSubsystem REACT_DASH_SUBSYSTEM = new ReactDashSubsystem();
   public static final AutoChooserSubsystemReact AUTO_CHOOSER = new AutoChooserSubsystemReact();
   public static final TeleopDashboardSubsystem TELEOP_DASHBOARD_SUBSYSTEM = new TeleopDashboardSubsystem();
@@ -86,6 +94,7 @@ public class Robot extends TimedRobot {
   public static LoadState LOAD_STATE = LoadState.EMPTY;
   public static DrivetrainState DRIVETRAIN_STATE = DrivetrainState.FREEHAND;
   public static LimelightDetectsNoteState LIMELIGHT_DETECTS_NOTE_STATE = LimelightDetectsNoteState.NO_NOTE;
+
 
   @Override
   public void robotPeriodic() {
@@ -113,6 +122,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    ELBOW_SUBSYSTEM.setDefaultCommand(ELBOW_DEFAULT_COMMAND);
+    WRIST_SUBSYSTEM.setDefaultCommand(WRIST_DEFAULT_COMMAND);
     DRIVETRAIN_SUBSYSTEM.setDefaultCommand(DRIVETRAIN_DEFAULT_COMMAND);
     
     new Trigger(() -> DRIVE_CONTROLLER.getLeftBumper()
@@ -207,14 +218,20 @@ public class Robot extends TimedRobot {
     BUTTON_CODE.getButton(Buttons.TRAP_SOURCE_INTAKE)
         .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.TRAP_SOURCE_INTAKE));
 
+        //
+    BUTTON_CODE.getButton(Buttons.ELBOW_TO_SETPOINT)
+        .whileTrue(new ElbowGoToPositionCommand(ElbowConstants.ENCODER_POSITION_AT_VERTICAL));
+    BUTTON_CODE.getButton(Buttons.WRIST_TO_SETPOINT)
+        .whileTrue(new WristGoToPositionCommand(WristConstants.ENCODER_POSITION_AT_VERTICAL));
+
     BUTTON_CODE.getButton(Buttons.MOVE_ELBOW_UP)
-        .whileTrue(new MoveElbowManuallyCommand(Constants.MOVE_ELBOW_UP_MANUAL_POWER));
+        .whileTrue(new ElbowMoveManuallyCommand(Constants.MOVE_ELBOW_UP_MANUAL_POWER));
     BUTTON_CODE.getButton(Buttons.MOVE_ELBOW_DOWN)
-        .whileTrue(new MoveElbowManuallyCommand(Constants.MOVE_ELBOW_DOWN_MANUAL_POWER));
+        .whileTrue(new ElbowMoveManuallyCommand(Constants.MOVE_ELBOW_DOWN_MANUAL_POWER));
     BUTTON_CODE.getButton(Buttons.MOVE_WRIST_UP)
-        .whileTrue(new MoveElbowManuallyCommand(Constants.MOVE_WRIST_UP_MANUAL_POWER));
+        .whileTrue(new ElbowMoveManuallyCommand(Constants.MOVE_WRIST_UP_MANUAL_POWER));
     BUTTON_CODE.getButton(Buttons.MOVE_WRIST_DOWN)
-        .whileTrue(new MoveElbowManuallyCommand(Constants.MOVE_WRIST_DOWN_MANUAL_POWER));
+        .whileTrue(new ElbowMoveManuallyCommand(Constants.MOVE_WRIST_DOWN_MANUAL_POWER));
 
   }
 

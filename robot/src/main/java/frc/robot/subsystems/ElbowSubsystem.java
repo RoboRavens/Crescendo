@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.RobotMap;
+import frc.robot.util.Constants.ElbowConstants;
 
 public class ElbowSubsystem extends SubsystemBase {
   private TalonFX _elbowRotationMotor = new TalonFX(RobotMap.ELBOW_ROTATION_MOTOR);
@@ -84,10 +85,12 @@ public class ElbowSubsystem extends SubsystemBase {
     double angleInRadians = distanceFromHorizontal * (Math.PI / 2);
     return angleInRadians;
   }
+
+  //?
     private double getPositionFromRadians(double angleInRadians) {
-    double position =  angleInRadians / (Math.PI / 2);
+    double distanceFromHorizontal =  angleInRadians / (Math.PI / 2);
     double unitsTo90 = ElbowConstants.ENCODER_POSITION_AT_VERTICAL - ElbowConstants.ENCODER_POSITION_AT_HORIZONTAL;
-    double distanceFromHorizontal = ((position - ElbowConstants.ENCODER_POSITION_AT_HORIZONTAL) / unitsTo90);
+    double position = (distanceFromHorizontal * unitsTo90) + ElbowConstants.ENCODER_POSITION_AT_HORIZONTAL;
     return position;
   }
 
