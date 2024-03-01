@@ -14,7 +14,7 @@ public class ZoneTests {
     public void zonetest(){
         FieldZones fieldZones = new FieldZones();
         var zone = fieldZones.getPointFieldZone(new Point2D.Double(15,7));
-        assertEquals("Blue Amp Subzone", zone.getName());
+        assertEquals("Red Robot Starting Subzone", zone.getName());
     }
     
 }
