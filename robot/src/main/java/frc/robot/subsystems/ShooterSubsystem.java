@@ -9,6 +9,7 @@ import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.ravenhardware.BufferedDigitalInput;
 import frc.robot.RobotMap;
+import frc.robot.util.Constants.ShooterConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
     private BufferedDigitalInput _shooterPieceSensor = new BufferedDigitalInput(RobotMap.SHOOTER_PIECE_SENSOR, 3, false,

@@ -2,25 +2,23 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.shooter;
+package frc.robot.commands.wrist;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
-import frc.robot.util.Constants.ShooterConstants;
 
-// This command turns on the shooter motors and automatically stops when
-// the robot detects it no longer has a piece
-public class ShootCommand extends Command {
-  private Timer _timer = new Timer();
-  public ShootCommand() {
-    this.addRequirements(Robot.SHOOTER_SUBSYSTEM);
+public class WristDefaultCommand extends Command {
+  /** Creates a new WristDefaultCommand. */
+  public WristDefaultCommand() {
+    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    Robot.SHOOTER_SUBSYSTEM.setPowerManually(.5);
+        System.out.println("WristDefaultCommand initialize");
+    var positionToHold = Robot.WRIST_SUBSYSTEM.getPosition();
+    Robot.WRIST_SUBSYSTEM.goToPosition(positionToHold);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -30,20 +28,12 @@ public class ShootCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    Robot.SHOOTER_SUBSYSTEM.stopShooting();
+    System.out.println("WristDefaultCommand end");
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(Robot.SHOOTER_SUBSYSTEM.hasPiece() == false){
-      _timer.start();
-      if(_timer.get() >= ShooterConstants.SHOOTER_STOP_DELAY){
-        _timer.stop();
-        _timer.reset();
-        return true;
-      }
-    }
     return false;
   }
 }
