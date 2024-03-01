@@ -7,7 +7,7 @@ package frc.robot.commands.shooter;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
-import frc.robot.subsystems.ShooterConstants;
+import frc.robot.util.Constants.ShooterConstants;
 
 // This command turns on the shooter motors and automatically stops when
 // the robot detects it no longer has a piece

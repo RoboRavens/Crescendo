@@ -10,9 +10,9 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.RobotMap;
-import frc.robot.WristConstants;
+import frc.robot.util.Constants.Constants;
+import frc.robot.util.Constants.WristConstants;
 
 public class WristSubsystem extends SubsystemBase {
   private TalonFX _wristRotationMotor = new TalonFX(RobotMap.WRIST_ROTATION_MOTOR);
@@ -22,8 +22,8 @@ public class WristSubsystem extends SubsystemBase {
     talonFXConfiguration.MotionMagic.MotionMagicAcceleration = 100;
     talonFXConfiguration.MotionMagic.MotionMagicCruiseVelocity = 20;
     talonFXConfiguration.Slot0.kP = WristConstants.WRIST_PID.kP;
-    talonFXConfiguration.Slot0.kI = Constants.ELBOW_PID.kI;
-    talonFXConfiguration.Slot0.kD = Constants.ELBOW_PID.kD;
+    talonFXConfiguration.Slot0.kI = WristConstants.WRIST_PID.kI;
+    talonFXConfiguration.Slot0.kD = WristConstants.WRIST_PID.kD;
 
     //talonFXConfiguration.Audio.BeepOnBoot = false;
     //talonFXConfiguration.Audio.BeepOnConfig = false;

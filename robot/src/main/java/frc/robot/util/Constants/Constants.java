@@ -1,4 +1,6 @@
-package frc.robot;
+package frc.robot.util.Constants;
+
+import frc.robot.Gains;
 
 public class Constants {
     // Limelight
