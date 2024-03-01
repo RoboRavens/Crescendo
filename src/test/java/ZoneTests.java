@@ -13,8 +13,8 @@ public class ZoneTests {
     @Test 
     public void zonetest(){
         FieldZones fieldZones = new FieldZones();
-        var zone = fieldZones.getPointFieldZone(new Point2D.Double(2,5));
-        assertEquals("Blue Inside Wing", zone.getName());
+        var zone = fieldZones.getPointFieldZone(new Point2D.Double(15,7));
+        assertEquals("Blue Amp Subzone", zone.getName());
     }
     
 }

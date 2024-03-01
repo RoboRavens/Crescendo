@@ -6,13 +6,17 @@ public class MirroredSubzone {
 
     public MirroredSubzone(String name, double southwestCornerX, double southwestCornerY, double width, double height, boolean flipZones) {
         if (flipZones) {
-            blueSubzone = new FieldSubzone("Blue " + name, FieldMeasurements.convertToRedWidthMeters(southwestCornerX + width), southwestCornerY, width, height);
+            blueSubzone = new FieldSubzone("Blue " + name, convertToRed(southwestCornerX + width), southwestCornerY, width, height);
             redSubzone = new FieldSubzone("Red " + name, southwestCornerX, southwestCornerY, width, height);
         }
         else {        
             blueSubzone = new FieldSubzone("Blue " + name, southwestCornerX, southwestCornerY, width, height);
-            redSubzone = new FieldSubzone("Red " + name, FieldMeasurements.convertToRedWidthMeters(southwestCornerX + width), southwestCornerY, width, height);
+            redSubzone = new FieldSubzone("Red " + name, convertToRed(southwestCornerX + width), southwestCornerY, width, height);
         }
+    }
+
+    public static double convertToRed(double blueAllianceWidth) {
+        return FieldConstants.FIELD_WIDTH_METERS - blueAllianceWidth;
     }
 
     public FieldSubzone getBlueSubzone() {
