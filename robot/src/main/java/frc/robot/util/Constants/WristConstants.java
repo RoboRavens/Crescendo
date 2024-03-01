@@ -10,9 +10,8 @@ public class WristConstants {
 	public static final double MOTOR_POWER_FEEDFORWARD_AT_HORIZONTAL = 0;
     public static final double MOTOR_POWER_DIRECTION_TO_GO_UP_FROM_HORIZONTAL = 0;
     
-    public static final double ENCODER_POSITION_AT_GROUND_PICKUP = 0;
-    public static final int ENCODER_POSITION_AT_VERTICAL = 0;
-    public static final int ENCODER_POSITION_AT_HORIZONTAL = 0;
+    public static final double ENCODER_POSITION_AT_ROBOT_START = 0;
+    public static final double ENCODER_POSITION_45_FROM_ROBOT_START = -3.049348;
 
     public static double ANGLE_FLOOR_PICKUP = 0.0;
     public static double ANGLE_AMP_SCORE = -20;

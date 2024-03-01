@@ -154,11 +154,14 @@ public class Robot extends TimedRobot {
     //new Trigger(() -> StateManagement.isRobotReadyToShoot() && DRIVE_CONTROLLER.getAButton())
     //    .onTrue(new IntakeFeedCommand(INTAKE_SUBSYSTEM));
 
+    COMMAND_DRIVE_CONTROLLER.leftBumper().whileTrue(new IntakeCommand(INTAKE_SUBSYSTEM));
+    COMMAND_DRIVE_CONTROLLER.rightBumper().whileTrue(new ShootCommand());
+
     // Temporary testing buttons
     COMMAND_DRIVE_CONTROLLER.y()
-      .whileTrue(new WristGoToPositionCommand(ElbowConstants.ENCODER_POSITION_AT_VERTICAL));
+      .whileTrue(new WristGoToPositionCommand(WristConstants.ENCODER_POSITION_45_FROM_ROBOT_START));
     COMMAND_DRIVE_CONTROLLER.a()
-      .whileTrue(new WristGoToPositionCommand(WristConstants.ENCODER_POSITION_AT_HORIZONTAL));
+      .whileTrue(new WristGoToPositionCommand(WristConstants.ENCODER_POSITION_AT_ROBOT_START));
 	}
 
 	/** This function is run once each time the robot enters autonomous mode. */

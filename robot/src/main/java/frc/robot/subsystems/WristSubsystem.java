@@ -39,6 +39,7 @@ public class WristSubsystem extends SubsystemBase {
 
     _wristRotationMotor.getConfigurator().setPosition(0);
     _wristRotationMotor.getConfigurator().apply(talonFXConfiguration);
+    this.updateStaticFeedfoward();
   }
 
   private void updateStaticFeedfoward() {
@@ -59,16 +60,16 @@ public class WristSubsystem extends SubsystemBase {
   }
 
   private double getRadiansFromPosition(double position) {
-    double unitsTo90 = WristConstants.ENCODER_POSITION_AT_VERTICAL - WristConstants.ENCODER_POSITION_AT_HORIZONTAL;
-    double distanceFromHorizontal = ((position - WristConstants.ENCODER_POSITION_AT_HORIZONTAL) / unitsTo90);
-    double angleInRadians = distanceFromHorizontal * (Math.PI / 2);
+    double unitsTo90 = WristConstants.ENCODER_POSITION_45_FROM_ROBOT_START - WristConstants.ENCODER_POSITION_AT_ROBOT_START;
+    double distanceFromHorizontal = ((position - WristConstants.ENCODER_POSITION_AT_ROBOT_START) / unitsTo90);
+    double angleInRadians = distanceFromHorizontal * (Math.PI / 4);
     return angleInRadians;
   }
 
   private double getPositionFromRadians(double angleInRadians) {
-    double distanceFromHorizontal =  angleInRadians / (Math.PI / 2);
-    double unitsTo90 = WristConstants.ENCODER_POSITION_AT_VERTICAL - WristConstants.ENCODER_POSITION_AT_HORIZONTAL;
-    double position = (distanceFromHorizontal * unitsTo90) + WristConstants.ENCODER_POSITION_AT_HORIZONTAL;
+    double distanceFromHorizontal =  angleInRadians / (Math.PI / 4);
+    double unitsTo90 = WristConstants.ENCODER_POSITION_45_FROM_ROBOT_START - WristConstants.ENCODER_POSITION_AT_ROBOT_START;
+    double position = (distanceFromHorizontal * unitsTo90) + WristConstants.ENCODER_POSITION_AT_ROBOT_START;
     return position;
   }
 
@@ -86,6 +87,7 @@ public class WristSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    this.updateStaticFeedfoward();
     SmartDashboard.putNumber("Wrist RotationMotor pos", _wristRotationMotor.getPosition().getValueAsDouble());
   }
 
