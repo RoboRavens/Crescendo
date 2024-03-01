@@ -67,11 +67,11 @@ public class DrivetrainAutoAimCommand extends Command {
         y = y * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
         r = r * Constants.DRIVE_MAX_TURN_RADIANS_PER_SECOND;
         */
-        var targetChassisSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(
+        var targetChassisSpeeds = new ChassisSpeeds(
             Robot.DRIVE_CONTROLLER.getLeftTriggerAxis() * 1.5, // x translation
-            y, // y translation
-            r, // rotation
-            a // The angle of the robot as measured by a gyroscope.
+             0, // y translation
+            r // rotation
+           // a // The angle of the robot as measured by a gyroscope.
         );
 
         targetChassisSpeeds.vxMetersPerSecond = Slew.GetSlewedTarget(_velocityXSlewRate, targetChassisSpeeds.vxMetersPerSecond, _chassisSpeeds.vxMetersPerSecond);

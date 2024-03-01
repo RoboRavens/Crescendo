@@ -124,7 +124,9 @@ public class Robot extends TimedRobot {
     AUTO_CHOOSER.ShowTab();
 
     new Trigger(() -> SHOOTER_SUBSYSTEM.hasPiece() && DRIVE_CONTROLLER.getLeftBumper()).onTrue(new ShootCommand());
-    new Trigger(() -> DRIVE_CONTROLLER.getLeftTriggerAxis() > .1).whileTrue(DRIVETRAIN_AUTO_AIM_COMMAND);
+    
+    
+    new Trigger(() -> DRIVE_CONTROLLER.getLeftTriggerAxis() > .1 && Robot.LIMELIGHT_SUBSYSTEM_ONE.getTv() == 1).whileTrue(DRIVETRAIN_AUTO_AIM_COMMAND);
 
     configureButtonBindings();
     configureTriggers();
