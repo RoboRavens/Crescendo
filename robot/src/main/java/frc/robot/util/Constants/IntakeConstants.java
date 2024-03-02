@@ -7,7 +7,7 @@ package frc.robot.util.Constants;
 /** Add your docs here. */
 public class IntakeConstants {
 
-  public static final double INTAKE_SPARK_MAX_SPEED = -.5;
-  public static final double INTAKE_SPARK_MAX_STOP = 0;
-
+    public static final double INTAKE_SPARK_MAX_SPEED = .2;
+    public static final double INTAKE_SPARK_MAX_STOP = 0;
+    public static final double INTAKE_SPARK_DELAY = 1;
 }
