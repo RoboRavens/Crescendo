@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.ravenhardware.BufferedDigitalInput;
 import frc.robot.RobotMap;
@@ -15,7 +17,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private TalonFX _intakeMotor = new TalonFX(RobotMap.INTAKE_MOTOR_CAN_ID);
 
   public void startIntake() {
-    _intakeMotor.set(IntakeConstants.INTAKE_SPARK_MAX_SPEED);
+    _intakeMotor.set(IntakeConstants.INTAKE_SPARK_MAX_SPEED * -1);
   }
 
   public void setPowerManually(double speed) {
@@ -28,7 +30,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public void startTrapIntake() {
-    _intakeMotor.set(IntakeConstants.INTAKE_SPARK_MAX_SPEED * -1);
+    _intakeMotor.set(IntakeConstants.INTAKE_SPARK_MAX_SPEED);
   }
 
   public void startTrapLaunch() {
@@ -41,5 +43,13 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public boolean trapHasPiece() {
     return _pieceSensorTrap.get();
+  }
+
+  @Override
+  public void periodic(){
+    _pieceSensorIntake.maintainState();
+    _pieceSensorTrap.maintainState();
+    SmartDashboard.putBoolean("Intake Piece", this.intakeHasPiece());
+    SmartDashboard.putBoolean("Trap Piece", this.trapHasPiece());
   }
 }

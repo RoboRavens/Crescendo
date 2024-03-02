@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.ravenhardware.BufferedDigitalInput;
 import frc.robot.RobotMap;
@@ -128,4 +129,10 @@ public class ShooterSubsystem extends SubsystemBase {
         double shootingAngle = Math.toDegrees(Math.atan(numerator / denumerator));
         return shootingAngle;
     }
+
+      @Override
+  public void periodic(){
+    _shooterPieceSensor.maintainState();
+    SmartDashboard.putBoolean("Shooter Piece", this.hasPiece());
+  }
 }
