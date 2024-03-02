@@ -4,11 +4,14 @@
 
 package frc.robot;
 
+import frc.robot.subsystems.LEDsSubsystem;
+import edu.wpi.first.math.proto.System;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -16,18 +19,15 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.controls.ButtonCode;
 import frc.controls.ButtonCode.Buttons;
+import frc.robot.commands.LEDs.LEDsSolidColorCommand;
 import frc.robot.commands.compound.LimbGoToSetpointCommand;
-import frc.robot.commands.elbow.ElbowMoveManuallyCommand;
 import frc.robot.commands.drivetrain.DrivetrainAutoAimCommand;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
 import frc.robot.commands.elbow.ElbowDefaultCommand;
-import frc.robot.commands.elbow.ElbowGoToPositionCommand;
 import frc.robot.commands.elbow.ElbowMoveManuallyCommand;
 import frc.robot.commands.intake.IntakeCommand;
-import frc.robot.commands.intake.IntakeFeedCommand;
 import frc.robot.commands.shooter.ShootCommand;
 import frc.robot.commands.wrist.WristDefaultCommand;
-import frc.robot.commands.wrist.WristGoToPositionCommand;
 import frc.robot.commands.wrist.WristMoveManuallyCommand;
 import frc.robot.subsystems.AutoChooserSubsystemReact;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -40,10 +40,7 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TeleopDashboardSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 import frc.robot.util.Constants.Constants;
-import frc.robot.util.Constants.ElbowConstants;
-import frc.robot.util.Constants.WristConstants;
 import frc.robot.util.arm.LimbSetpoint;
-import frc.util.StateManagement;
 import frc.util.StateManagement.ArmUpTargetState;
 import frc.util.StateManagement.ClimbPositionTargetState;
 import frc.util.StateManagement.DrivetrainState;
@@ -84,6 +81,7 @@ public class Robot extends TimedRobot {
   public static final IntakeSubsystem INTAKE_SUBSYSTEM = new IntakeSubsystem();
   public static final ShooterSubsystem SHOOTER_SUBSYSTEM = new ShooterSubsystem();
   public static final ElbowSubsystem ELBOW_SUBSYSTEM = new ElbowSubsystem();
+  public static final LEDsSubsystem LEDS_SUBSYSTEM = new LEDsSubsystem();
   public static final WristSubsystem WRIST_SUBSYSTEM = new WristSubsystem();
 
   // DEFAULT COMMANDS
@@ -288,7 +286,7 @@ public class Robot extends TimedRobot {
     // LEDs and start the intake
     new Trigger(() -> OVERALL_STATE == OverallState.LOADING)
         .whileTrue(new IntakeCommand(INTAKE_SUBSYSTEM)
-            .alongWith(new InstantCommand(() -> System.out.println("Flash LEDs Green"))));
+            .alongWith(new LEDsSolidColorCommand(LEDS_SUBSYSTEM, Color.kDarkGreen)));
     // TODO:^^ implement a flash LEDs command ^^
     // If the robot is loaded with a note and we intend to score in the amp,
     // set our arm position to the amp setpoint
