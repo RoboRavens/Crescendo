@@ -29,6 +29,7 @@ public class WristDefaultCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     System.out.println("WristDefaultCommand end");
+    Robot.WRIST_SUBSYSTEM.setPowerManually(0);
   }
 
   // Returns true when the command should end.

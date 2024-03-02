@@ -7,7 +7,7 @@ import frc.robot.Gains;
 public class WristConstants {
     public static final Gains WRIST_PID = new Gains(1, 0.000, 0.0000, 0.0, 0, 1);
 
-	public static final double MOTOR_POWER_FEEDFORWARD_AT_HORIZONTAL = 0;
+	public static final double MOTOR_POWER_FEEDFORWARD_AT_HORIZONTAL = -0.079;
     public static final double MOTOR_POWER_DIRECTION_TO_GO_UP_FROM_HORIZONTAL = 0;
     
     public static final double ENCODER_POSITION_AT_ROBOT_START = 0;

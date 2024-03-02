@@ -87,6 +87,11 @@ public class ElbowSubsystem extends SubsystemBase {
     return angleInRadians;
   }
 
+  public double getRadians() {
+    double radians = this.getRadiansFromPosition(this.getPosition());
+    return radians;
+  }
+
   private double getPositionFromRadians(double angleInRadians) {
     double distanceFromHorizontal =  angleInRadians / (Math.PI / 2);
     double unitsTo90 = ElbowConstants.ENCODER_POSITION_AT_VERTICAL - ElbowConstants.ENCODER_POSITION_AT_HORIZONTAL;

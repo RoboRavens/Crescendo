@@ -12,6 +12,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.util.Constants.WristConstants;
 
@@ -23,12 +24,10 @@ public class WristSubsystem extends SubsystemBase {
     var talonFXConfiguration = new TalonFXConfiguration();
     talonFXConfiguration.MotionMagic.MotionMagicAcceleration = 100;
     talonFXConfiguration.MotionMagic.MotionMagicCruiseVelocity = 20;
-    talonFXConfiguration.Slot0.kP = WristConstants.WRIST_PID.kP;
-    talonFXConfiguration.Slot0.kI = WristConstants.WRIST_PID.kI;
-    talonFXConfiguration.Slot0.kD = WristConstants.WRIST_PID.kD;
+    talonFXConfiguration.Slot0 = _pidConfig;
 
-    //talonFXConfiguration.Audio.BeepOnBoot = false;
-    //talonFXConfiguration.Audio.BeepOnConfig = false;
+    talonFXConfiguration.Audio.BeepOnBoot = false;
+    talonFXConfiguration.Audio.BeepOnConfig = false;
 
     talonFXConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
@@ -44,19 +43,19 @@ public class WristSubsystem extends SubsystemBase {
 
   private void updateStaticFeedfoward() {
     var angle = this.getRadiansFromPosition(this.getPosition());
-    var staticFeedForward = this.getStaticFeedforwardFromRadians(angle);
 
     SmartDashboard.putNumber("Wrist Angle Degrees", Math.toDegrees(angle));
-    SmartDashboard.putNumber("Wrist Feedforward", staticFeedForward);
-    if (_pidConfig.kS != staticFeedForward) {
-      _pidConfig.kS = staticFeedForward;
-      _wristRotationMotor.getConfigurator().apply(_pidConfig);
+    double totalAngle = angle + Robot.ELBOW_SUBSYSTEM.getRadians();
+    //SmartDashboard.putNumber("Total Angle Radians", totalAngle);
+    SmartDashboard.putNumber("Wrist Total Angle Degrees", Math.toDegrees(totalAngle));
+    //SmartDashboard.putNumber("Cosine Total Angle", Math.cos(totalAngle));
+    //SmartDashboard.putNumber("Wrist Total Angle", Math.toRadians(15)+totalAngle);
+    double wristFeedForward =  WristConstants.MOTOR_POWER_FEEDFORWARD_AT_HORIZONTAL * Math.cos(Math.toRadians(15)+totalAngle);
+    //SmartDashboard.putNumber("Wrist Feed Forward", wristFeedForward);
+    if (_pidConfig.kS != wristFeedForward) {
+       _pidConfig.kS = wristFeedForward;
+       _wristRotationMotor.getConfigurator().apply(_pidConfig);
     }
-  }
-
-  private double getStaticFeedforwardFromRadians(double angle) {
-    var staticFeedForward = Math.cos(angle) * WristConstants.MOTOR_POWER_FEEDFORWARD_AT_HORIZONTAL * WristConstants.MOTOR_POWER_DIRECTION_TO_GO_UP_FROM_HORIZONTAL;
-    return staticFeedForward;
   }
 
   private double getRadiansFromPosition(double position) {
@@ -64,6 +63,11 @@ public class WristSubsystem extends SubsystemBase {
     double distanceFromHorizontal = ((position - WristConstants.ENCODER_POSITION_AT_ROBOT_START) / unitsTo90);
     double angleInRadians = distanceFromHorizontal * (Math.PI / 4);
     return angleInRadians;
+  }
+
+  public double getRadians() {
+    double radians = this.getRadiansFromPosition(getPosition());
+    return radians;
   }
 
   private double getPositionFromRadians(double angleInRadians) {

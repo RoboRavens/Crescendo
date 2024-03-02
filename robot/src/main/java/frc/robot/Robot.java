@@ -130,7 +130,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     DRIVETRAIN_SUBSYSTEM.setDefaultCommand(DRIVETRAIN_DEFAULT_COMMAND);
     ELBOW_SUBSYSTEM.setDefaultCommand(ELBOW_DEFAULT_COMMAND);
-    // WRIST_SUBSYSTEM.setDefaultCommand(WRIST_DEFAULT_COMMAND);
+    WRIST_SUBSYSTEM.setDefaultCommand(WRIST_DEFAULT_COMMAND);
     
     new Trigger(() -> DRIVE_CONTROLLER.getLeftBumper()
         && (DRIVE_CONTROLLER.getRightBumper())
