@@ -151,17 +151,11 @@ public class Robot extends TimedRobot {
         .onTrue(new InstantCommand(() -> DRIVETRAIN_STATE = DrivetrainState.ROBOT_ALIGN))
         .onFalse(new InstantCommand(() -> DRIVETRAIN_STATE = DrivetrainState.FREEHAND));
     // If the robot is ready to shoot and we hold A, feed the note into the shooter
-    //new Trigger(() -> StateManagement.isRobotReadyToShoot() && DRIVE_CONTROLLER.getAButton())
-    //    .onTrue(new IntakeFeedCommand(INTAKE_SUBSYSTEM));
+    new Trigger(() -> StateManagement.isRobotReadyToShoot() && DRIVE_CONTROLLER.getAButton())
+      .onTrue(new IntakeFeedCommand(INTAKE_SUBSYSTEM));
 
-    COMMAND_DRIVE_CONTROLLER.leftBumper().whileTrue(new IntakeCommand(INTAKE_SUBSYSTEM));
-    COMMAND_DRIVE_CONTROLLER.rightBumper().whileTrue(new ShootCommand());
-
-    // Temporary testing buttons
-    COMMAND_DRIVE_CONTROLLER.y()
-      .whileTrue(new WristGoToPositionCommand(WristConstants.ENCODER_POSITION_45_FROM_ROBOT_START));
-    COMMAND_DRIVE_CONTROLLER.a()
-      .whileTrue(new WristGoToPositionCommand(WristConstants.ENCODER_POSITION_AT_ROBOT_START));
+    // COMMAND_DRIVE_CONTROLLER.leftBumper().whileTrue(new IntakeCommand(INTAKE_SUBSYSTEM));
+    // COMMAND_DRIVE_CONTROLLER.rightBumper().whileTrue(new ShootCommand());
 	}
 
 	/** This function is run once each time the robot enters autonomous mode. */
