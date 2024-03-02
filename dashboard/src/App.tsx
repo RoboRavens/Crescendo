@@ -567,7 +567,7 @@ class App extends React.Component<{}, {
                         </Stack>
                       </Stack>
                       <Stack marginTop={2} marginLeft={2}>
-                        <p style={{marginBottom: 0}}>Trap Source Lane Selection</p>    
+                        <p style={{marginBottom: 0}}>Source Lane Selection</p>    
                       </Stack>
                       <Stack width={'100%'} direction="column" spacing={2} marginTop={2} marginLeft={2}>
                         <Stack direction="row" spacing={2}>

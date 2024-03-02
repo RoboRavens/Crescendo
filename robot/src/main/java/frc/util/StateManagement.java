@@ -23,7 +23,7 @@ public class StateManagement {
         AMP_SIGNAL,
         NONE
     }
-    public enum TrapSourceLaneTargetState {
+    public enum SourceLaneTargetState {
         LEFT,
         CENTER,
         RIGHT
@@ -48,7 +48,7 @@ public class StateManagement {
         OPPOSITE_CENTER,
         OPPOSITE_LEFT
     }
-    // TODO: Set this state
+    // NONE, NEUTRAL, and WING zones set in Robot.java
     public enum ZoneState {
         NONE,
         ALLIANCE_WING,
@@ -61,12 +61,14 @@ public class StateManagement {
         OPPONENT_SOURCE,
         OPPONENT_AMP,
     }
-    // TODO: Set this state
+    // Set in Robot.java
     public enum LoadState {
+        SHOOTER_LOADED,
         LOADED,
         TRAP_LOADED,
         EMPTY
     }
+    // Set in Robot.java
     public enum OverallState {
         EMPTY_TRANSIT, // When the robot does not have a note
         SEEKING_NOTE, // When the robot does not have a note but has a target scoring state that requires a note
@@ -75,6 +77,7 @@ public class StateManagement {
         SCORING,
         PREPARING_TO_SCORE,
     }
+    // Set in Robot.java
     public enum DrivetrainState {
         FREEHAND,
         ROBOT_ALIGN
@@ -87,6 +90,9 @@ public class StateManagement {
     public static boolean isRobotReadyToShoot() {
         // TODO: Implement this method
         // This should consider if the robot has a note, if we are aligned with the scoring target, if we are in our alliance wing, and if the shooter is up to speed
+        if (Robot.LOAD_STATE != LoadState.EMPTY && Robot.ZONE_STATE == ZoneState.ALLIANCE_WING) {
+            return true;
+        }
         return false;
     }
 }

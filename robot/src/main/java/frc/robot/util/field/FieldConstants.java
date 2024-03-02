@@ -4,12 +4,10 @@
 
 package frc.robot.util.field;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 /** Add your docs here. */
 public class FieldConstants {
-
     public static final double BLUE_AMP_ZONE_SOUTHWEST_CORNER_X_METERS = 0;
     public static final double BLUE_AMP_ZONE_SOUTHWEST_CORNER_Y_METERS = 7.8;
     public static final double BLUE_AMP_ZONE_WIDTH_METERS = 3.26;
@@ -60,42 +58,58 @@ public class FieldConstants {
     public static final double EAST_NEUTRAL_ZONE_WIDTH_METERS = 2.42;
     public static final double EAST_NEUTRAL_ZONE_HEIGHT_METERS = 8.23;
 
-    public static final double CLIMBING_POINT_1_X_METERS = 6.31;
-    public static final double CLIMBING_POINT_1_Y_METERS = 5.01;
+    // Note: the below positions are for the blue side. Use the below methods to transform to red
+    // blue: opp left --> red: opp right
+    public static final Translation2d CLIMBING_POINT_1_METERS = new Translation2d(6.31, 5.01); 
     public static final double CLIMBING_POINT_1_ROTATION_RADIAN = -3.14;
 
-    public static final double CLIMBING_POINT_2_X_METERS = 6.31;
-    public static final double CLIMBING_POINT_2_Y_METERS = 4.14;
+    // blue: opp center --> red: opp center
+    public static final Translation2d CLIMBING_POINT_2_METERS = new Translation2d(6.31, 4.14); 
     public static final double CLIMBING_POINT_2_ROTATION_RADIAN = -3.14;
 
-    public static final double CLIMBING_POINT_3_X_METERS = 6.31;
-    public static final double CLIMBING_POINT_3_Y_METERS = 3.26;
+    // blue: opp right --> red: opp left
+    public static final Translation2d CLIMBING_POINT_3_METERS = new Translation2d(6.31, 3.26); 
     public static final double CLIMBING_POINT_3_ROTATION_RADIAN = -3.14;
     
-    public static final double CLIMBING_POINT_4_X_METERS = 4.87;
-    public static final double CLIMBING_POINT_4_Y_METERS = 2.44;
+    // blue: right far --> red: left far
+    public static final Translation2d CLIMBING_POINT_4_METERS = new Translation2d(4.87, 2.44); 
     public static final double CLIMBING_POINT_4_ROTATION_RADIAN = 1.05;
     
-    public static final double CLIMBING_POINT_5_X_METERS = 4.11;
-    public static final double CLIMBING_POINT_5_Y_METERS = 2.88;
+    // blue: right center --> red: left center
+    public static final Translation2d CLIMBING_POINT_5_METERS = new Translation2d(4.11, 2.88); 
     public static final double CLIMBING_POINT_5_ROTATION_RADIAN = 1.05;
     
-    public static final double CLIMBING_POINT_6_X_METERS = 3.35;
-    public static final double CLIMBING_POINT_6_Y_METERS = 3.31;
+    // blue: right close --> red: left close
+    public static final Translation2d CLIMBING_POINT_6_METERS = new Translation2d(3.35, 3.31); 
     public static final double CLIMBING_POINT_6_ROTATION_RADIAN = 1.05;
     
-    public static final double CLIMBING_POINT_7_X_METERS = 3.39;
-    public static final double CLIMBING_POINT_7_Y_METERS = 4.93;
-    public static final double CLIMBING_POINT_7_ROTATION_RADIANS = -1.05;
+    // blue: left close --> red: right close
+    public static final Translation2d CLIMBING_POINT_7_METERS = new Translation2d(3.39, 4.93); 
+    public static final double CLIMBING_POINT_7_ROTATION_RADIAN = -1.05;
     
-    public static final double CLIMBING_POINT_8_X_METERS = 4.15;
-    public static final double CLIMBING_POINT_8_Y_METERS = 5.37;
+    // blue: left center --> red: right center
+    public static final Translation2d CLIMBING_POINT_8_METERS = new Translation2d(4.15, 5.37);
     public static final double CLIMBING_POINT_8_ROTATION_RADIAN = -1.05;
     
-    public static final double CLIMBING_POINT_9_X_METERS = 4.91;
-    public static final double CLIMBING_POINT_9_Y_METERS = 5.8;
+    // blue: left far --> red: right far
+    public static final Translation2d CLIMBING_POINT_9_METERS = new Translation2d(4.91, 5.8);
     public static final double CLIMBING_POINT_9_ROTATION_RADIAN = -1.05;
-        
+
+    public static final Translation2d BLUE_AMP_SCORING_POSITION = new Translation2d(1.91, 7.74); 
+    public static final double BLUE_AMP_SCORING_ROTATION = 1.57;
+
+    public static final Translation2d RED_SOURCE_RIGHT_POSITION = new Translation2d(0.6, 1.36);
+    public static final Translation2d RED_SOURCE_CENTER_POSITION = new Translation2d(1.17, 1.03);
+    public static final Translation2d RED_SOURCE_LEFT_POSITION = new Translation2d(1.74, 0.7);
+    public static final double RED_SOURCE_ROTATION = -2.08;
+    
     public static final double FIELD_WIDTH_METERS = 16.54;
 
+    public static Translation2d mirrorPointToRight(Translation2d point) {
+        return new Translation2d(FIELD_WIDTH_METERS - point.getX(), point.getY());
+    }
+
+    public static double mirrorRotationToRight(double rotationValue) {
+        return Math.PI - rotationValue;
+    }
 }

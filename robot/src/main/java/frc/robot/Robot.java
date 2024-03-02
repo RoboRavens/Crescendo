@@ -39,6 +39,9 @@ import frc.robot.util.Constants.Constants;
 import frc.robot.util.Constants.ElbowConstants;
 import frc.robot.util.Constants.WristConstants;
 import frc.robot.util.arm.LimbSetpoint;
+import frc.robot.util.field.FieldSubzone;
+import frc.robot.util.field.FieldZone;
+import frc.robot.util.field.FieldZones;
 import frc.util.StateManagement;
 import frc.util.StateManagement.ArmUpTargetState;
 import frc.util.StateManagement.ClimbPositionTargetState;
@@ -50,7 +53,8 @@ import frc.util.StateManagement.LoadState;
 import frc.util.StateManagement.OverallState;
 import frc.util.StateManagement.ScoringTargetState;
 import frc.util.StateManagement.ShooterRevTargetState;
-import frc.util.StateManagement.TrapSourceLaneTargetState;
+import frc.util.StateManagement.SourceLaneTargetState;
+import frc.util.StateManagement.ZoneState;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -70,10 +74,8 @@ public class Robot extends TimedRobot {
   public static final DrivetrainSubsystem DRIVETRAIN_SUBSYSTEM = new DrivetrainSubsystem();
   public static final PoseEstimatorSubsystem POSE_ESTIMATOR_SUBSYSTEM = new PoseEstimatorSubsystem();
   public static final XboxController DRIVE_CONTROLLER = new XboxController(0);
-  public static DriverStation.Alliance allianceColor = Alliance.Blue;
+  public static Alliance allianceColor = Alliance.Blue;
   public static final DrivetrainDefaultCommand DRIVETRAIN_DEFAULT_COMMAND = new DrivetrainDefaultCommand();
-  public static final  ElbowDefaultCommand ELBOW_DEFAULT_COMMAND = new ElbowDefaultCommand();
-  public static final  WristDefaultCommand WRIST_DEFAULT_COMMAND = new WristDefaultCommand();
   public static final ReactDashSubsystem REACT_DASH_SUBSYSTEM = new ReactDashSubsystem();
   public static final AutoChooserSubsystemReact AUTO_CHOOSER = new AutoChooserSubsystemReact();
   public static final TeleopDashboardSubsystem TELEOP_DASHBOARD_SUBSYSTEM = new TeleopDashboardSubsystem();
@@ -82,11 +84,15 @@ public class Robot extends TimedRobot {
   public static final ShooterSubsystem SHOOTER_SUBSYSTEM = new ShooterSubsystem();
   public static final ElbowSubsystem ELBOW_SUBSYSTEM = new ElbowSubsystem();
   public static final WristSubsystem WRIST_SUBSYSTEM = new WristSubsystem();
+  public static FieldZones fieldZones = new FieldZones();
+  public static FieldSubzone fieldSubzone = FieldZones.noneSubzone;
+  public static final  ElbowDefaultCommand ELBOW_DEFAULT_COMMAND = new ElbowDefaultCommand();
+  public static final  WristDefaultCommand WRIST_DEFAULT_COMMAND = new WristDefaultCommand();
   // States
   public static ScoringTargetState SCORING_TARGET_STATE = ScoringTargetState.SPEAKER;
   public static IntakeTargetState INTAKE_TARGET_STATE = IntakeTargetState.GROUND;
   public static LEDSignalTargetState LED_SIGNAL_TARGET_STATE = LEDSignalTargetState.NONE;
-  public static TrapSourceLaneTargetState TRAP_SOURCE_LANE_TARGET_STATE = TrapSourceLaneTargetState.CENTER;
+  public static SourceLaneTargetState SOURCE_LANE_TARGET_STATE = SourceLaneTargetState.CENTER;
   public static ArmUpTargetState ARM_UP_TARGET_STATE = ArmUpTargetState.FREE;
   public static ShooterRevTargetState SHOOTER_REV_TARGET_STATE = ShooterRevTargetState.OFF;
   public static ClimbPositionTargetState CLIMB_POSITION_TARGET_STATE = ClimbPositionTargetState.LEFT_CLOSE;
@@ -94,7 +100,7 @@ public class Robot extends TimedRobot {
   public static LoadState LOAD_STATE = LoadState.EMPTY;
   public static DrivetrainState DRIVETRAIN_STATE = DrivetrainState.FREEHAND;
   public static LimelightDetectsNoteState LIMELIGHT_DETECTS_NOTE_STATE = LimelightDetectsNoteState.NO_NOTE;
-
+  public static ZoneState ZONE_STATE = ZoneState.NONE;
 
   @Override
   public void robotPeriodic() {
@@ -104,7 +110,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("Scoring Target State", SCORING_TARGET_STATE.toString());
     SmartDashboard.putString("Intake Target State", INTAKE_TARGET_STATE.toString());
     SmartDashboard.putString("LED Signal Target State", LED_SIGNAL_TARGET_STATE.toString());
-    SmartDashboard.putString("Trap Source Lane Target State", TRAP_SOURCE_LANE_TARGET_STATE.toString());
+    SmartDashboard.putString("Trap Source Lane Target State", SOURCE_LANE_TARGET_STATE.toString());
     SmartDashboard.putString("Arm Up Target State", ARM_UP_TARGET_STATE.toString());
     SmartDashboard.putString("Shooter Rev Target State", SHOOTER_REV_TARGET_STATE.toString());
     SmartDashboard.putString("Climb Position Target State", CLIMB_POSITION_TARGET_STATE.toString());
@@ -113,6 +119,7 @@ public class Robot extends TimedRobot {
     // wrist rotation setpoints with that method
     LimbSetpoint.SPEAKER_SCORING = new LimbSetpoint("", 0, 0);
     LimbSetpoint.DEFENDED_SPEAKER_SCORING = new LimbSetpoint("", 0, 0);
+    setZoneStateFromFieldZone();
   }
 
   /**
@@ -217,13 +224,6 @@ public class Robot extends TimedRobot {
         .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.AMP_AND_SPEAKER_SOURCE_INTAKE));
     BUTTON_CODE.getButton(Buttons.TRAP_SOURCE_INTAKE)
         .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.TRAP_SOURCE_INTAKE));
-
-        //
-    BUTTON_CODE.getButton(Buttons.ELBOW_TO_SETPOINT)
-        .whileTrue(new ElbowGoToPositionCommand(ElbowConstants.ENCODER_POSITION_AT_VERTICAL));
-    BUTTON_CODE.getButton(Buttons.WRIST_TO_SETPOINT)
-        .whileTrue(new WristGoToPositionCommand(WristConstants.ENCODER_POSITION_AT_VERTICAL));
-
     BUTTON_CODE.getButton(Buttons.MOVE_ELBOW_UP)
         .whileTrue(new ElbowMoveManuallyCommand(Constants.MOVE_ELBOW_UP_MANUAL_POWER));
     BUTTON_CODE.getButton(Buttons.MOVE_ELBOW_DOWN)
@@ -232,10 +232,22 @@ public class Robot extends TimedRobot {
         .whileTrue(new ElbowMoveManuallyCommand(Constants.MOVE_WRIST_UP_MANUAL_POWER));
     BUTTON_CODE.getButton(Buttons.MOVE_WRIST_DOWN)
         .whileTrue(new ElbowMoveManuallyCommand(Constants.MOVE_WRIST_DOWN_MANUAL_POWER));
-
   }
 
   private void setNonButtonDependentOverallStates() {
+    // Set the load state of the robot
+    if (INTAKE_SUBSYSTEM.trapHasPiece()) {
+      LOAD_STATE = LoadState.TRAP_LOADED;
+    }
+    else if (INTAKE_SUBSYSTEM.intakeHasPiece()) {
+      LOAD_STATE = LoadState.LOADED;
+    }
+    else if (SHOOTER_SUBSYSTEM.hasPiece()) {
+      LOAD_STATE = LoadState.SHOOTER_LOADED;
+    }
+    else {
+      LOAD_STATE = LoadState.EMPTY;
+    }
     // If the robot detects a note and has a target scoring state that requires a note
     if (OVERALL_STATE == OverallState.SEEKING_NOTE
         && LIMELIGHT_DETECTS_NOTE_STATE == LimelightDetectsNoteState.IN_RANGE) {
@@ -300,5 +312,35 @@ public class Robot extends TimedRobot {
         && SCORING_TARGET_STATE == ScoringTargetState.SPEAKER
         && ARM_UP_TARGET_STATE == ArmUpTargetState.UP)
         .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.SPEAKER_SCORING_ARM_UP));
+    // Rev the shooter when the manual shooter toggle is on
+    new Trigger(() -> SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON)
+      .whileTrue(new ShootCommand());
+  }
+
+  private void setZoneStateFromFieldZone() {
+    FieldZone fieldZone = fieldSubzone.getFieldZone();
+    boolean allianceOwnsZone = allianceColor.toString().equals(fieldZone.getZoneOwner().toString()); // Needs to be tested
+    // System.out.println(allianceOwnsZone);
+    // System.out.println(allianceColor.toString());
+    // System.out.println(fieldZone.getZoneOwner().toString());
+
+    SmartDashboard.putString("FieldZone", fieldZone.getName());
+
+    switch (fieldZone.getMacroZone()) {
+      case NONE:
+        ZONE_STATE = ZoneState.NONE;
+        break;
+      case NEUTRAL:
+        ZONE_STATE = ZoneState.NEUTRAL;
+        break;
+      case WING:
+        if (allianceOwnsZone) {
+          ZONE_STATE = ZoneState.ALLIANCE_WING;
+        }
+        else {
+          ZONE_STATE = ZoneState.OPPONENT_WING;
+        }
+        break;
+    }
   }
 }

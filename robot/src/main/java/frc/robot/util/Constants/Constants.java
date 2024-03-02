@@ -2,6 +2,8 @@ package frc.robot.util.Constants;
 
 import frc.robot.Gains;
 
+import edu.wpi.first.math.util.Units;
+
 public class Constants {
     // Limelight
     public static final double STATE_STANDARD_DEVIATION = .1;
@@ -24,5 +26,8 @@ public class Constants {
     public static final double MOVE_ELBOW_DOWN_MANUAL_POWER = -0.1; // Elbow down
     public static final Double MOVE_WRIST_UP_MANUAL_POWER = 0.1; // Wrist up
     public static final Double MOVE_WRIST_DOWN_MANUAL_POWER = -0.1; // Wrist down
+
+    // Drivetrain Alignment
+    public static final double ROBOT_IS_ALIGNED_ERROR_MARGIN_METERS = Units.inchesToMeters(2.5);
 
 }

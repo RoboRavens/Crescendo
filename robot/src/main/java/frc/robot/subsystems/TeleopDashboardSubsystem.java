@@ -19,7 +19,7 @@ import frc.util.StateManagement.IntakeTargetState;
 import frc.util.StateManagement.LEDSignalTargetState;
 import frc.util.StateManagement.ScoringTargetState;
 import frc.util.StateManagement.ShooterRevTargetState;
-import frc.util.StateManagement.TrapSourceLaneTargetState;
+import frc.util.StateManagement.SourceLaneTargetState;
 
 public class TeleopDashboardSubsystem extends SubsystemBase {
   
@@ -77,7 +77,7 @@ public class TeleopDashboardSubsystem extends SubsystemBase {
       _armUpPub.set(Robot.ARM_UP_TARGET_STATE.toString() == "UP");
       _climbPositionPub.set(Robot.CLIMB_POSITION_TARGET_STATE.toString());
       _intakePub.set(Robot.INTAKE_TARGET_STATE.toString());
-      _sourceLanePub.set(Robot.TRAP_SOURCE_LANE_TARGET_STATE.toString());
+      _sourceLanePub.set(Robot.SOURCE_LANE_TARGET_STATE.toString());
       _signalSelectionPub.set(Robot.LED_SIGNAL_TARGET_STATE.toString());
       _startShooterPub.set(Robot.SHOOTER_REV_TARGET_STATE.toString() == "ON");
     }
@@ -116,7 +116,7 @@ public class TeleopDashboardSubsystem extends SubsystemBase {
           _signalSelectionSubLastChange = lastChange;
           break;
         case "TRAP_SOURCE_LANE_TARGET_STATE":
-          Robot.TRAP_SOURCE_LANE_TARGET_STATE = TrapSourceLaneTargetState.valueOf(_sourceLaneSub.get("CENTER"));
+          Robot.SOURCE_LANE_TARGET_STATE = SourceLaneTargetState.valueOf(_sourceLaneSub.get("CENTER"));
           _sourceSubLastChange = lastChange;
           break;
         case "CLIMB_POSITION_TARGET_STATE":
