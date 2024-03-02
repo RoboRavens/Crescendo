@@ -133,7 +133,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     DRIVETRAIN_SUBSYSTEM.setDefaultCommand(DRIVETRAIN_DEFAULT_COMMAND);
     ELBOW_SUBSYSTEM.setDefaultCommand(ELBOW_DEFAULT_COMMAND);
-    // WRIST_SUBSYSTEM.setDefaultCommand(WRIST_DEFAULT_COMMAND);
+    WRIST_SUBSYSTEM.setDefaultCommand(WRIST_DEFAULT_COMMAND);
     
     new Trigger(() -> DRIVE_CONTROLLER.getLeftBumper()
         && (DRIVE_CONTROLLER.getRightBumper())
@@ -158,13 +158,10 @@ public class Robot extends TimedRobot {
         .onFalse(new InstantCommand(() -> DRIVETRAIN_STATE = DrivetrainState.FREEHAND));
     // If the robot is ready to shoot and we hold A, feed the note into the shooter
     //new Trigger(() -> StateManagement.isRobotReadyToShoot() && DRIVE_CONTROLLER.getAButton())
-    //    .onTrue(new IntakeFeedCommand(INTAKE_SUBSYSTEM));
+    //  .onTrue(new IntakeFeedCommand(INTAKE_SUBSYSTEM));
 
-    // Temporary testing buttons
-    COMMAND_DRIVE_CONTROLLER.y()
-      .whileTrue(new WristGoToPositionCommand(ElbowConstants.ENCODER_POSITION_AT_VERTICAL));
-    COMMAND_DRIVE_CONTROLLER.a()
-      .whileTrue(new WristGoToPositionCommand(WristConstants.ENCODER_POSITION_AT_HORIZONTAL));
+    // COMMAND_DRIVE_CONTROLLER.leftBumper().whileTrue(new IntakeCommand(INTAKE_SUBSYSTEM));
+    // COMMAND_DRIVE_CONTROLLER.rightBumper().whileTrue(new ShootCommand());
 	}
 
 	/** This function is run once each time the robot enters autonomous mode. */

@@ -16,7 +16,7 @@ public class WristDefaultCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-        System.out.println("WristDefaultCommand initialize");
+    System.out.println("WristDefaultCommand initialize");
     var positionToHold = Robot.WRIST_SUBSYSTEM.getPosition();
     Robot.WRIST_SUBSYSTEM.goToPosition(positionToHold);
   }
@@ -29,6 +29,7 @@ public class WristDefaultCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     System.out.println("WristDefaultCommand end");
+    Robot.WRIST_SUBSYSTEM.setPowerManually(0);
   }
 
   // Returns true when the command should end.
