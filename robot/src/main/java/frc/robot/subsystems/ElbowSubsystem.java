@@ -28,6 +28,8 @@ public class ElbowSubsystem extends SubsystemBase {
 
   private Slot0Configs _pidConfig = ElbowConstants.getSlot0Configs();
 
+  private double targetPosition = 0;
+
   public ElbowSubsystem() {
     var talonFXConfiguration = new TalonFXConfiguration();
     talonFXConfiguration.MotionMagic.MotionMagicAcceleration = 100;
@@ -61,6 +63,14 @@ public class ElbowSubsystem extends SubsystemBase {
     }, this).ignoringDisable(true);
 
     new Trigger(() -> _forwardLimitSwitch.get()).onFalse(resetPositionCommand);
+  }
+
+  public void setTargetPosition(double position) {
+    this.targetPosition = position;
+  }
+
+  public double getTargetPosition() {
+    return this.targetPosition;
   }
 
   private void updateStaticFeedfoward() {
