@@ -18,10 +18,12 @@ import frc.robot.Robot;
 
 public class PoseEstimatorSubsystem extends SubsystemBase {
     public final Field2d _field = new Field2d();
-    private double _timeStamp = Timer.getFPGATimestamp() - (Robot.LIMELIGHT_SUBSYSTEM_ONE.getTl() / 1000)
-        - (Robot.LIMELIGHT_SUBSYSTEM_ONE.getCl() / 1000);
-    private double _timeStamp2 = Timer.getFPGATimestamp() - (Robot.LIMELIGHT_SUBSYSTEM_TWO.getTl() / 1000)
+    private double _timeStamp = Timer.getFPGATimestamp() - (Robot.LIMELIGHT_SUBSYSTEM_TWO.getTl() / 1000)
         - (Robot.LIMELIGHT_SUBSYSTEM_TWO.getCl() / 1000);
+    private double _timeStamp2 = Timer.getFPGATimestamp() - (Robot.LIMELIGHT_SUBSYSTEM_THREE.getTl() / 1000)
+        - (Robot.LIMELIGHT_SUBSYSTEM_THREE.getCl() / 1000);
+    private double _timeStamp3 = Timer.getFPGATimestamp() - (Robot.LIMELIGHT_SUBSYSTEM_FOUR.getTl() / 1000)
+        - (Robot.LIMELIGHT_SUBSYSTEM_FOUR.getCl() / 1000);
     private Matrix<N3, N1> _stateStdDevs = VecBuilder.fill(Constants.STATE_STANDARD_DEVIATION,
         Constants.STATE_STANDARD_DEVIATION, Constants.STATE_STANDARD_DEVIATION);
     private Matrix<N3, N1> _visionStdDevs = VecBuilder.fill(Constants.STARTING_VISION_STANDARD_DEVIATION,
@@ -33,39 +35,46 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        updateVisionMeasurementTimestamp();
-        updateVisionMeasurmentTimestampSecondLimelight();
-        double ta = Robot.LIMELIGHT_SUBSYSTEM_ONE.getTa();
-        double ta2 = Robot.LIMELIGHT_SUBSYSTEM_TWO.getTa();
+        updateVisionMeasurementTimestampSecondLimelight();
+        updateVisionMeasurmentTimestampThirdLimelight();
+        updateVisionMeasurmentTimestampFourthLimelight();
+        double ta = Robot.LIMELIGHT_SUBSYSTEM_TWO.getTa();
+        double ta2 = Robot.LIMELIGHT_SUBSYSTEM_THREE.getTa();
+        double ta3 = Robot.LIMELIGHT_SUBSYSTEM_FOUR.getTa();
+        
 
         //SmartDashboard.putNumber("ta", ta);
 
   //      SmartDashboard.putNumber("ta2", ta2);
 
-        Pose2d firstLimelightPose = Robot.LIMELIGHT_SUBSYSTEM_ONE.getLimelightPoseWithOdometryRotation();
         Pose2d secondLimelightPose = Robot.LIMELIGHT_SUBSYSTEM_TWO.getLimelightPoseWithOdometryRotation();
+        Pose2d thirdLimelightPose = Robot.LIMELIGHT_SUBSYSTEM_THREE.getLimelightPoseWithOdometryRotation();
+        Pose2d fourthLimelightPose = Robot.LIMELIGHT_SUBSYSTEM_FOUR.getLimelightPoseWithOdometryRotation();
         //Pose2d robotPose = Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose();
         //Robot.LIMELIGHT_SUBSYSTEM_ONE.getPureLimelightRobotPose();
         //Robot.DRIVE_TRAIN_SUBSYSTEM.getPose();
         //Robot.DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation();
         //Robot.DRIVE_TRAIN_SUBSYSTEM.getSwerveModulePositions();
 
-        boolean hasVisionTarget = Robot.LIMELIGHT_SUBSYSTEM_ONE.hasVisionTarget() == 1;
-        boolean hasVisionTarget2 = Robot.LIMELIGHT_SUBSYSTEM_TWO.hasVisionTarget() == 1;
+        boolean hasVisionTarget = Robot.LIMELIGHT_SUBSYSTEM_TWO.hasVisionTarget() == 1;
+        boolean hasVisionTarget2 = Robot.LIMELIGHT_SUBSYSTEM_THREE.hasVisionTarget() == 1;
+        boolean hasVisionTarget3 = Robot.LIMELIGHT_SUBSYSTEM_FOUR.hasVisionTarget() == 1;
         //boolean firstLimelightIsWithinXDistance = Math.abs(robotPose.getX() - firstLimelightPose.getX()) < 2;
         //boolean firstLimelightIsWithinYDistance = Math.abs(robotPose.getY() - firstLimelightPose.getY()) < 2;
         //boolean secondLimelightIsWithinXDistance = Math.abs(robotPose.getX() - secondLimelightPose.getX()) < 2;
         //boolean secondLimelightIsWithinYDistance = Math.abs(robotPose.getY() - secondLimelightPose.getY()) < 2;
         boolean targetAreaIsSufficient = ta >= 0.4;
         boolean targetAreaIsSufficient2 = ta2 >= 0.4;
-        boolean fiducialIdIsCorrect2 = LimelightHelpers.getFiducialID("limelight-two") <= 8;
-        boolean fiducialIdIsCorrect = LimelightHelpers.getFiducialID("limelight") <= 8;
+        boolean targetAreaIsSufficient3 = ta3 >= 0.4;
+        boolean fiducialIdIsCorrect = LimelightHelpers.getFiducialID("limelight-front") <= 8;
+        boolean fiducialIdIsCorrect2 = LimelightHelpers.getFiducialID("limelight-backl") <= 8;
+        boolean fiducialIdIsCorrect3 = LimelightHelpers.getFiducialID("limelight-backr") <= 8;
 
         if (hasVisionTarget /*&& firstLimelightIsWithinXDistance && firstLimelightIsWithinYDistance*/
                 && targetAreaIsSufficient && fiducialIdIsCorrect) {
             //SmartDashboard.putBoolean("limelight has target", true);
             var vsStdDvs = PoseEstimatorSubsystem.GetVisionStdDevs(ta);
-            m_poseEstimator.addVisionMeasurement(firstLimelightPose, _timeStamp, vsStdDvs);
+            m_poseEstimator.addVisionMeasurement(secondLimelightPose, _timeStamp, vsStdDvs);
         } else {
             //SmartDashboard.putBoolean("limelight has target", false);
         }
@@ -74,7 +83,16 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
                 && targetAreaIsSufficient2 && fiducialIdIsCorrect2) {
             //SmartDashboard.putBoolean("limelight2 has target", true);
             var vsStdDvs = PoseEstimatorSubsystem.GetVisionStdDevs(ta2);
-            m_poseEstimator.addVisionMeasurement(secondLimelightPose, _timeStamp2, vsStdDvs);
+            m_poseEstimator.addVisionMeasurement(thirdLimelightPose, _timeStamp2, vsStdDvs);
+        } else {
+            //SmartDashboard.putBoolean("limelight2 has target", false);
+        }
+
+        if (hasVisionTarget3 /*&& secondLimelightIsWithinXDistance && secondLimelightIsWithinYDistance*/
+                && targetAreaIsSufficient3 && fiducialIdIsCorrect3) {
+            //SmartDashboard.putBoolean("limelight2 has target", true);
+            var vsStdDvs = PoseEstimatorSubsystem.GetVisionStdDevs(ta3);
+            m_poseEstimator.addVisionMeasurement(fourthLimelightPose, _timeStamp3, vsStdDvs);
         } else {
             //SmartDashboard.putBoolean("limelight2 has target", false);
         }
@@ -101,14 +119,19 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         return visionStdDevs;
     }
 
-    public void updateVisionMeasurementTimestamp() {
-        _timeStamp = Timer.getFPGATimestamp() - (Robot.LIMELIGHT_SUBSYSTEM_ONE.getTl() / 1000)
-            - (Robot.LIMELIGHT_SUBSYSTEM_ONE.getCl() / 1000);
+    public void updateVisionMeasurementTimestampSecondLimelight() {
+        _timeStamp = Timer.getFPGATimestamp() - (Robot.LIMELIGHT_SUBSYSTEM_TWO.getTl() / 1000)
+            - (Robot.LIMELIGHT_SUBSYSTEM_TWO.getCl() / 1000);
     }
 
-    public void updateVisionMeasurmentTimestampSecondLimelight() {
-        _timeStamp2 = Timer.getFPGATimestamp() - (Robot.LIMELIGHT_SUBSYSTEM_TWO.getTl() / 1000)
-            - (Robot.LIMELIGHT_SUBSYSTEM_ONE.getCl() / 1000);
+    public void updateVisionMeasurmentTimestampThirdLimelight() {
+        _timeStamp2 = Timer.getFPGATimestamp() - (Robot.LIMELIGHT_SUBSYSTEM_THREE.getTl() / 1000)
+            - (Robot.LIMELIGHT_SUBSYSTEM_THREE.getCl() / 1000);
+    }
+
+    public void updateVisionMeasurmentTimestampFourthLimelight() {
+        _timeStamp3 = Timer.getFPGATimestamp() - (Robot.LIMELIGHT_SUBSYSTEM_FOUR.getTl() / 1000)
+            - (Robot.LIMELIGHT_SUBSYSTEM_FOUR.getCl() / 1000);
     }
 
     private final SwerveDrivePoseEstimator m_poseEstimator = new SwerveDrivePoseEstimator(
@@ -119,8 +142,8 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         _stateStdDevs,
         _visionStdDevs);
 
-    public void resetOdometryPoseToLimelight() {
-        var gyroBasedPose = Robot.LIMELIGHT_SUBSYSTEM_ONE.getLimelightPoseWithOdometryRotation();
+    public void resetOdometryPoseFromSecondLimelight() {
+        var gyroBasedPose = Robot.LIMELIGHT_SUBSYSTEM_TWO.getLimelightPoseWithOdometryRotation();
        // System.out.println("resetOdometryPoseToLimelight: " + gyroBasedPose.getX() + " - " + gyroBasedPose.getY()
        //         + " - " + gyroBasedPose.getRotation().getDegrees());
         m_poseEstimator.resetPosition(
@@ -129,12 +152,20 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
             gyroBasedPose);
     }
 
-    public void resetOdometryPoseFromSecondLimelight(Rotation2d rotation2d, SwerveModulePosition[] modulePositions,
+    public void resetOdometryPoseFromThirdLimelight(Rotation2d rotation2d, SwerveModulePosition[] modulePositions,
             Pose2d poseMeters) {
         // Reset state estimate and error covariance
         m_poseEstimator.resetPosition(Robot.DRIVETRAIN_SUBSYSTEM.getGyroscopeRotation(),
             Robot.DRIVETRAIN_SUBSYSTEM.getSwerveModulePositions(),
-            Robot.LIMELIGHT_SUBSYSTEM_TWO.getLimelightPoseWithOdometryRotation());
+            Robot.LIMELIGHT_SUBSYSTEM_THREE.getLimelightPoseWithOdometryRotation());
+    }
+
+    public void resetOdometryPoseFromFourthLimelight(Rotation2d rotation2d, SwerveModulePosition[] modulePositions,
+            Pose2d poseMeters) {
+        // Reset state estimate and error covariance
+        m_poseEstimator.resetPosition(Robot.DRIVETRAIN_SUBSYSTEM.getGyroscopeRotation(),
+            Robot.DRIVETRAIN_SUBSYSTEM.getSwerveModulePositions(),
+            Robot.LIMELIGHT_SUBSYSTEM_FOUR.getLimelightPoseWithOdometryRotation());
     }
 
     // public void addVisionMeasurment(Pose2d robotPose, double timestampSeconds) {
