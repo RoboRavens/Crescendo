@@ -18,6 +18,8 @@ import frc.util.Slew;
 public class DrivetrainDefaultCommand extends Command {
 
     // Pose2d _targetPose = new Pose2d(Units.feetToMeters(2), Units.feetToMeters(2), Rotation2d.fromDegrees(-180));
+    private PIDController _yPID = new PIDController(.35, 0.0, 0);
+    private PIDController _xPID = new PIDController(.35, 0.0, 0);
 
     private ChassisSpeeds _chassisSpeeds = new ChassisSpeeds(0,0,0);
     private double _velocityXSlewRate = DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / Constants.SLEW_FRAMES_TO_MAX_X_VELOCITY;
@@ -67,63 +69,63 @@ public class DrivetrainDefaultCommand extends Command {
         Robot.DRIVETRAIN_SUBSYSTEM.drive(targetChassisSpeeds);
     }
 
-    // public double getYVelocity(Translation2d target) {
-    //     if (target == null) {
-    //         SmartDashboard.putNumber("Score Target Y", -1);
-    //         return 0;
-    //     }
+    public double getYVelocity(Translation2d target) {
+        if (target == null) {
+            SmartDashboard.putNumber("Score Target Y", -1);
+            return 0;
+        }
 
         
-    //     SmartDashboard.putNumber("Score Target Y", target.getY());
-    //     double yOffsetFromTarget = target.getY() - Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose().getY();
+        SmartDashboard.putNumber("Score Target Y", target.getY());
+        double yOffsetFromTarget = target.getY() - Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose().getY();
         
-    //     if (Math.abs(yOffsetFromTarget) < Constants.ROBOT_IS_ALIGNED_ERROR_MARGIN_METERS) {
-    //         return 0;
-    //     }
+        if (Math.abs(yOffsetFromTarget) < Constants.ROBOT_IS_ALIGNED_ERROR_MARGIN_METERS) {
+            return 0;
+        }
 
-    //     double ySpeed = _yPID.calculate(yOffsetFromTarget) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND * -1;
-    //     double velocityDirection = ySpeed < 0 ? -1 : 1;
-    //     if (Math.abs(ySpeed) > DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / 2) {
-    //         ySpeed = DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / 2 * velocityDirection;
-    //     } 
-    //     // If the y velocity is less than 0.2 and the robot is not yet within 0.5 inches from the target y location (exact value should be updated)
-    //     else if (Math.abs(ySpeed) < 0.2 && Math.abs(yOffsetFromTarget) > 0.0127) {
-    //         ySpeed = 0.2 * velocityDirection;
-    //     }
-    //     // If the offset is within 0.5 inches, set the speed to 0 (exact value should be updated)
-    //     else if (Math.abs(yOffsetFromTarget) < 0.0127) {
-    //         ySpeed = 0;
-    //     }
-    //     return ySpeed;
-    // }
+        double ySpeed = _yPID.calculate(yOffsetFromTarget) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND * -1;
+        double velocityDirection = ySpeed < 0 ? -1 : 1;
+        if (Math.abs(ySpeed) > DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / 2) {
+            ySpeed = DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / 2 * velocityDirection;
+        } 
+        // If the y velocity is less than 0.2 and the robot is not yet within 0.5 inches from the target y location (exact value should be updated)
+        else if (Math.abs(ySpeed) < 0.2 && Math.abs(yOffsetFromTarget) > 0.0127) {
+            ySpeed = 0.2 * velocityDirection;
+        }
+        // If the offset is within 0.5 inches, set the speed to 0 (exact value should be updated)
+        else if (Math.abs(yOffsetFromTarget) < 0.0127) {
+            ySpeed = 0;
+        }
+        return ySpeed;
+    }
 
-    // public double getXVelocity(Translation2d target) {
-    //     if (target == null) {
-    //         SmartDashboard.putNumber("Score Target X", -1);
-    //         return 0;
-    //     }
+    public double getXVelocity(Translation2d target) {
+        if (target == null) {
+            SmartDashboard.putNumber("Score Target X", -1);
+            return 0;
+        }
 
-    //     SmartDashboard.putNumber("Score Target X", target.getX());
-    //     double xOffsetFromTarget = target.getX() - Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose().getX();
+        SmartDashboard.putNumber("Score Target X", target.getX());
+        double xOffsetFromTarget = target.getX() - Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose().getX();
         
-    //     if (Math.abs(xOffsetFromTarget) < Constants.ROBOT_IS_ALIGNED_ERROR_MARGIN_METERS) {
-    //         return 0;
-    //     }
+        if (Math.abs(xOffsetFromTarget) < Constants.ROBOT_IS_ALIGNED_ERROR_MARGIN_METERS) {
+            return 0;
+        }
         
-    //     double xSpeed = _xPID.calculate(xOffsetFromTarget) * Robot.DRIVE_TRAIN_SUBSYSTEM.MAX_VELOCITY_METERS_PER_SECOND * -1;
-    //     double velocityDirection = xSpeed < 0 ? -1 : 1;
-    //     if (Math.abs(xSpeed) > DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / 2) {
-    //         xSpeed = DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / 2 * velocityDirection;
-    //     }
-    //     else if (Math.abs(xSpeed) < 0.2 && Math.abs(xOffsetFromTarget) > 0.0127) {
-    //         xSpeed = 0.2 * velocityDirection;
-    //     }
-    //     // If the offset is within 0.5 inches, set the speed to 0 (exact value should be updated)
-    //     else if (Math.abs(xOffsetFromTarget) < 0.0127) {
-    //         xSpeed = 0;
-    //     }
-    //     return xSpeed;
-    // }
+        double xSpeed = _xPID.calculate(xOffsetFromTarget) * Robot.DRIVETRAIN_SUBSYSTEM.MAX_VELOCITY_METERS_PER_SECOND * -1;
+        double velocityDirection = xSpeed < 0 ? -1 : 1;
+        if (Math.abs(xSpeed) > DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / 2) {
+            xSpeed = DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / 2 * velocityDirection;
+        }
+        else if (Math.abs(xSpeed) < 0.2 && Math.abs(xOffsetFromTarget) > 0.0127) {
+            xSpeed = 0.2 * velocityDirection;
+        }
+        // If the offset is within 0.5 inches, set the speed to 0 (exact value should be updated)
+        else if (Math.abs(xOffsetFromTarget) < 0.0127) {
+            xSpeed = 0;
+        }
+        return xSpeed;
+    }
 
     // private double getAngularVelocityForAlignment(double targetRotation) {
     //     // Assumes that the robot's initial rotation (0) is aligned with the scoring nodes
