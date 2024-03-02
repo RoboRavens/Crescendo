@@ -89,6 +89,11 @@ public class Robot extends TimedRobot {
   public static DrivetrainState DRIVETRAIN_STATE = DrivetrainState.FREEHAND;
   public static LimelightDetectsNoteState LIMELIGHT_DETECTS_NOTE_STATE = LimelightDetectsNoteState.NO_NOTE;
 
+//Extra
+  public double limelightHasTarget = Robot.LIMELIGHT_SUBSYSTEM_ONE.getTv();
+  public boolean intakeHasPiece = Robot.INTAKE_SUBSYSTEM.intakeHasPiece();
+  
+
   @Override
   public void robotPeriodic() {
     SmartDashboard.putString("Alliance Color", allianceColor.name());
@@ -126,7 +131,7 @@ public class Robot extends TimedRobot {
     new Trigger(() -> SHOOTER_SUBSYSTEM.hasPiece() && DRIVE_CONTROLLER.getLeftBumper()).onTrue(new ShootCommand());
     
     
-    new Trigger(() -> DRIVE_CONTROLLER.getLeftTriggerAxis() > .1 && Robot.LIMELIGHT_SUBSYSTEM_ONE.getTv() == 1).whileTrue(DRIVETRAIN_AUTO_AIM_COMMAND);
+    new Trigger(() -> DRIVE_CONTROLLER.getLeftTriggerAxis() > .1 && limelightHasTarget == 1 && intakeHasPiece == false).whileTrue(DRIVETRAIN_AUTO_AIM_COMMAND);
 
     configureButtonBindings();
     configureTriggers();
