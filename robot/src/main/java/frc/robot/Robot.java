@@ -16,7 +16,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.controls.ButtonCode;
 import frc.controls.ButtonCode.Buttons;
-import frc.robot.commands.compound.LimbGoToSetpointCommand;
+import frc.robot.commands.LimbGoToSetpointCommand;
+import frc.robot.commands.MoveElbowManuallyCommand;
+import frc.robot.commands.drivetrain.DrivetrainAutoAimCommand;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
 import frc.robot.commands.elbow.ElbowDefaultCommand;
 import frc.robot.commands.elbow.ElbowGoToPositionCommand;
@@ -74,6 +76,7 @@ public class Robot extends TimedRobot {
   public static final CommandXboxController COMMAND_DRIVE_CONTROLLER = new CommandXboxController(0);
   public static final XboxController DRIVE_CONTROLLER = COMMAND_DRIVE_CONTROLLER.getHID();
   public static DriverStation.Alliance allianceColor = Alliance.Blue;
+  public static final DrivetrainAutoAimCommand DRIVETRAIN_AUTO_AIM_COMMAND = new DrivetrainAutoAimCommand();
   public static final ReactDashSubsystem REACT_DASH_SUBSYSTEM = new ReactDashSubsystem();
   public static final AutoChooserSubsystemReact AUTO_CHOOSER = new AutoChooserSubsystemReact();
   public static final TeleopDashboardSubsystem TELEOP_DASHBOARD_SUBSYSTEM = new TeleopDashboardSubsystem();
@@ -87,7 +90,7 @@ public class Robot extends TimedRobot {
   public static final DrivetrainDefaultCommand DRIVETRAIN_DEFAULT_COMMAND = new DrivetrainDefaultCommand();
   public static final ElbowDefaultCommand ELBOW_DEFAULT_COMMAND = new ElbowDefaultCommand();
   public static final WristDefaultCommand WRIST_DEFAULT_COMMAND = new WristDefaultCommand();
-
+  
   // States
   public static ScoringTargetState SCORING_TARGET_STATE = ScoringTargetState.SPEAKER;
   public static IntakeTargetState INTAKE_TARGET_STATE = IntakeTargetState.GROUND;
@@ -139,6 +142,9 @@ public class Robot extends TimedRobot {
     AUTO_CHOOSER.ShowTab();
 
     new Trigger(() -> SHOOTER_SUBSYSTEM.hasPiece() && DRIVE_CONTROLLER.getLeftBumper()).onTrue(new ShootCommand());
+    
+    
+    new Trigger(() -> DRIVE_CONTROLLER.getLeftTriggerAxis() > .1 && Robot.LIMELIGHT_SUBSYSTEM_ONE.getTv() == 1).whileTrue(DRIVETRAIN_AUTO_AIM_COMMAND);
 
     configureDriveControllerBindings();
     configureButtonBindings();
