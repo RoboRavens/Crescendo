@@ -24,7 +24,6 @@ public class ShooterConstants {
 
     public static final double INITIAL_NOTE_SPEED = 20; // in m/s
     public static final double GRAVITY_ACCELERATION = 9.81;
-    public static final double SPEAKER_HEIGHT_METERS = 2.047801077;
 
     public static final double MAX_SHOOTER_SPEED = 5;
 
@@ -42,6 +41,9 @@ public class ShooterConstants {
         {15,45}
     };
 
+    public static final double SPEAKER_HEIGHT_METERS = 2.115;
+    public static final double SHOOTER_DOWN_HEIGHT_METERS = 0.418;
+    public static final double SHOOTER_UP_HEIGHT_METERS = 0.983;
     public static final double SHOOTER_STOP_DELAY = 1;
     public static final double LEFT_FEED_FORWARD = 0.5;
     public static final double RIGHT_FEED_FORWARD = 0.5;
