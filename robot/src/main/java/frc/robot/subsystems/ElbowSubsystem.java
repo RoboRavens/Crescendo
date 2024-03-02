@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.RobotMap;
 import frc.robot.util.Constants.ElbowConstants;
+import frc.robot.util.Constants.WristConstants;
 
 public class ElbowSubsystem extends SubsystemBase {
   private TalonFX _elbowRotationMotor = new TalonFX(RobotMap.ELBOW_ROTATION_MOTOR);
@@ -32,6 +33,9 @@ public class ElbowSubsystem extends SubsystemBase {
     var talonFXConfiguration = new TalonFXConfiguration();
     talonFXConfiguration.MotionMagic.MotionMagicAcceleration = 100;
     talonFXConfiguration.MotionMagic.MotionMagicCruiseVelocity = 20;
+    //talonFXConfiguration.Slot0.kP = ElbowConstants.ELBOW_PID.kP;
+    //talonFXConfiguration.Slot0.kI = ElbowConstants.ELBOW_PID.kI;
+    //talonFXConfiguration.Slot0.kD = ElbowConstants.ELBOW_PID.kD;
 
     talonFXConfiguration.Audio.BeepOnBoot = false;
     talonFXConfiguration.Audio.BeepOnConfig = false;
@@ -44,6 +48,7 @@ public class ElbowSubsystem extends SubsystemBase {
     //talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -5;
 
     _elbowRotationMotor.getConfigurator().setPosition(ElbowConstants.ENCODER_POSITION_AT_GROUND_PICKUP);
+    // _elbowRotationMotor.getConfigurator().setPosition(ElbowConstants.START_CONFIG);
     _elbowRotationMotor.getConfigurator().apply(talonFXConfiguration);
     this.updateStaticFeedfoward();
 
@@ -86,17 +91,26 @@ public class ElbowSubsystem extends SubsystemBase {
     return angleInRadians;
   }
 
-  //?
-    private double getPositionFromRadians(double angleInRadians) {
+    private double getDegreesFromPosition(double position) {
+    double unitsTo90 = ElbowConstants.ENCODER_POSITION_AT_VERTICAL - ElbowConstants.ENCODER_POSITION_AT_HORIZONTAL;
+    double distanceFromHorizontal = ((position - ElbowConstants.ENCODER_POSITION_AT_HORIZONTAL) / unitsTo90);
+    double angleInRadians = distanceFromHorizontal * 90;
+    return angleInRadians;
+  }
+
+  private double getPositionFromRadians(double angleInRadians) {
     double distanceFromHorizontal =  angleInRadians / (Math.PI / 2);
     double unitsTo90 = ElbowConstants.ENCODER_POSITION_AT_VERTICAL - ElbowConstants.ENCODER_POSITION_AT_HORIZONTAL;
     double position = (distanceFromHorizontal * unitsTo90) + ElbowConstants.ENCODER_POSITION_AT_HORIZONTAL;
     return position;
   }
 
-  //private double getPositionFromRadians(double radians) {
-  //  return 0;
-  //}
+  public double getPositionFromDegrees(double angleInDegrees) {
+    double distanceFromHorizontal = angleInDegrees * 1 / 90 ;
+    double unitsTo90 = ElbowConstants.ENCODER_POSITION_AT_VERTICAL - ElbowConstants.ENCODER_POSITION_AT_HORIZONTAL;
+    double position = (distanceFromHorizontal * unitsTo90) + ElbowConstants.ENCODER_POSITION_AT_HORIZONTAL;
+    return position;
+  }
 
   public void setPowerManually(double power){
     _elbowRotationMotor.set(power);

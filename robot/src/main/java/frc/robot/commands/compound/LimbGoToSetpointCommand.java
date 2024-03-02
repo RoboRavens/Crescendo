@@ -6,7 +6,8 @@ package frc.robot.commands.compound;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
-import frc.robot.util.arm.LimbSetpoint;
+import frc.robot.subsystems.ElbowSubsystem;
+import frc.robot.util.limb.LimbSetpoint;
 
 public class LimbGoToSetpointCommand extends Command {
   /** Creates a new LimbGoToSetpoint. */
@@ -20,8 +21,8 @@ public class LimbGoToSetpointCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    Robot.ELBOW_SUBSYSTEM.goToPosition(_targetLimbSetPoint.getElbowRotationPosition());
-    Robot.WRIST_SUBSYSTEM.goToPosition(_targetLimbSetPoint.getWristRotationPosition());
+    Robot.ELBOW_SUBSYSTEM.goToPosition(Robot.ELBOW_SUBSYSTEM.getPositionFromDegrees(_targetLimbSetPoint.getElbowRotationPosition()));
+    Robot.WRIST_SUBSYSTEM.goToPosition(Robot.WRIST_SUBSYSTEM.getPositionFromDegrees(_targetLimbSetPoint.getWristRotationPosition()));
     String name = _targetLimbSetPoint.getName();
     System.out.println(name);
   }

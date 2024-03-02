@@ -38,7 +38,7 @@ import frc.robot.subsystems.WristSubsystem;
 import frc.robot.util.Constants.Constants;
 import frc.robot.util.Constants.ElbowConstants;
 import frc.robot.util.Constants.WristConstants;
-import frc.robot.util.arm.LimbSetpoint;
+import frc.robot.util.limb.LimbSetpoint;
 import frc.util.StateManagement;
 import frc.util.StateManagement.ArmUpTargetState;
 import frc.util.StateManagement.ClimbPositionTargetState;
@@ -218,7 +218,6 @@ public class Robot extends TimedRobot {
     BUTTON_CODE.getButton(Buttons.TRAP_SOURCE_INTAKE)
         .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.TRAP_SOURCE_INTAKE));
 
-        //
     BUTTON_CODE.getButton(Buttons.ELBOW_TO_SETPOINT)
         .whileTrue(new ElbowGoToPositionCommand(ElbowConstants.ENCODER_POSITION_AT_VERTICAL));
     BUTTON_CODE.getButton(Buttons.WRIST_TO_SETPOINT)

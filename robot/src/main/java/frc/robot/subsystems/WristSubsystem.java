@@ -22,9 +22,8 @@ import frc.robot.util.Constants.WristConstants;
 
 public class WristSubsystem extends SubsystemBase {
   private TalonFX _wristRotationMotor = new TalonFX(RobotMap.WRIST_ROTATION_MOTOR);
-  private DigitalInput _forwardLimitSwitch = new DigitalInput(RobotMap.WRIST_FORWARD_LIMIT_DIO);
-
   private Slot0Configs _pidConfig = ElbowConstants.getSlot0Configs();
+
   public WristSubsystem() {
     var talonFXConfiguration = new TalonFXConfiguration();
     talonFXConfiguration.MotionMagic.MotionMagicAcceleration = 100;
@@ -33,18 +32,19 @@ public class WristSubsystem extends SubsystemBase {
     talonFXConfiguration.Slot0.kI = WristConstants.WRIST_PID.kI;
     talonFXConfiguration.Slot0.kD = WristConstants.WRIST_PID.kD;
 
-    //talonFXConfiguration.Audio.BeepOnBoot = false;
-    //talonFXConfiguration.Audio.BeepOnConfig = false;
+    talonFXConfiguration.Audio.BeepOnBoot = false;
+    talonFXConfiguration.Audio.BeepOnConfig = false;
 
     talonFXConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     //talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    //talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 5;
+    //talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = WristConstants.FORWARD_SOFT_LIMIT_THRESHOLD;
     //talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    //talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -5;
+    //talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = WristConstants.REVERSE_SOFT_LIMIT_THRESHOLD;
 
-    _wristRotationMotor.getConfigurator().setPosition(0);
+    _wristRotationMotor.getConfigurator().setPosition(WristConstants.ENCODER_POSITION_AT_GROUND_PICKUP);
     _wristRotationMotor.getConfigurator().apply(talonFXConfiguration);
+    this.updateStaticFeedfoward();
   }
 
   private void updateStaticFeedfoward() {
@@ -64,16 +64,32 @@ public class WristSubsystem extends SubsystemBase {
     return staticFeedForward;
   }
 
+  //change for 45degrees rather then 90
   private double getRadiansFromPosition(double position) {
-    double unitsTo90 = WristConstants.ENCODER_POSITION_AT_VERTICAL - WristConstants.ENCODER_POSITION_AT_HORIZONTAL;
-    double distanceFromHorizontal = ((position - WristConstants.ENCODER_POSITION_AT_HORIZONTAL) / unitsTo90);
-    double angleInRadians = distanceFromHorizontal * (Math.PI / 2);
+    double unitsTo45 = WristConstants.ENCODER_POSITION_AT_VERTICAL - WristConstants.ENCODER_POSITION_AT_HORIZONTAL;
+    double distanceFromHorizontal = ((position - WristConstants.ENCODER_POSITION_AT_HORIZONTAL) / unitsTo45);
+    double angleInRadians = distanceFromHorizontal * (Math.PI / 4);
     return angleInRadians;
   }
+
+  private double getDegreesFromPosition(double position) {
+    double unitsTo45 = ElbowConstants.ENCODER_POSITION_AT_VERTICAL - ElbowConstants.ENCODER_POSITION_AT_HORIZONTAL;
+    double distanceFromHorizontal = ((position - ElbowConstants.ENCODER_POSITION_AT_HORIZONTAL) / unitsTo45);
+    double angleInRadians = distanceFromHorizontal * 45;
+    return angleInRadians;
+  }
+
   private double getPositionFromRadians(double angleInRadians) {
-    double distanceFromHorizontal =  angleInRadians / (Math.PI / 2);
-    double unitsTo90 = WristConstants.ENCODER_POSITION_AT_VERTICAL - WristConstants.ENCODER_POSITION_AT_HORIZONTAL;
-    double position = (distanceFromHorizontal * unitsTo90) + WristConstants.ENCODER_POSITION_AT_HORIZONTAL;
+    double distanceFromHorizontal =  angleInRadians / (Math.PI / 4);
+    double unitsTo45 = WristConstants.ENCODER_POSITION_AT_VERTICAL - WristConstants.ENCODER_POSITION_AT_HORIZONTAL;
+    double position = (distanceFromHorizontal * unitsTo45) + WristConstants.ENCODER_POSITION_AT_HORIZONTAL;
+    return position;
+  }
+
+  public double getPositionFromDegrees(double angleInDegrees) {
+    double distanceFromHorizontal = angleInDegrees * 1 / 45 ;
+    double unitsTo45 = WristConstants.ENCODER_POSITION_AT_VERTICAL - WristConstants.ENCODER_POSITION_AT_HORIZONTAL;
+    double position = (distanceFromHorizontal * unitsTo45) + WristConstants.ENCODER_POSITION_AT_HORIZONTAL;
     return position;
   }
 
