@@ -4,12 +4,32 @@
 
 package frc.robot.subsystems;
 
+import static frc.robot.RobotMap.BACK_LEFT_MODULE_DRIVE_MOTOR;
+import static frc.robot.RobotMap.BACK_LEFT_MODULE_STEER_ENCODER;
+import static frc.robot.RobotMap.BACK_LEFT_MODULE_STEER_MOTOR;
+import static frc.robot.RobotMap.BACK_LEFT_MODULE_STEER_OFFSET;
+import static frc.robot.RobotMap.BACK_RIGHT_MODULE_DRIVE_MOTOR;
+import static frc.robot.RobotMap.BACK_RIGHT_MODULE_STEER_ENCODER;
+import static frc.robot.RobotMap.BACK_RIGHT_MODULE_STEER_MOTOR;
+import static frc.robot.RobotMap.BACK_RIGHT_MODULE_STEER_OFFSET;
+import static frc.robot.RobotMap.DRIVETRAIN_TRACKWIDTH_METERS;
+import static frc.robot.RobotMap.DRIVETRAIN_WHEELBASE_METERS;
+import static frc.robot.RobotMap.FRONT_LEFT_MODULE_DRIVE_MOTOR;
+import static frc.robot.RobotMap.FRONT_LEFT_MODULE_STEER_ENCODER;
+import static frc.robot.RobotMap.FRONT_LEFT_MODULE_STEER_MOTOR;
+import static frc.robot.RobotMap.FRONT_LEFT_MODULE_STEER_OFFSET;
+import static frc.robot.RobotMap.FRONT_RIGHT_MODULE_DRIVE_MOTOR;
+import static frc.robot.RobotMap.FRONT_RIGHT_MODULE_STEER_ENCODER;
+import static frc.robot.RobotMap.FRONT_RIGHT_MODULE_STEER_MOTOR;
+import static frc.robot.RobotMap.FRONT_RIGHT_MODULE_STEER_OFFSET;
+
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
+import com.revrobotics.CANSparkMax;
 import com.swervedrivespecialties.swervelib.MechanicalConfiguration;
 import com.swervedrivespecialties.swervelib.MkModuleConfiguration;
 // import com.swervedrivespecialties.swervelib.Mk4SwerveModuleBuilder;
@@ -19,8 +39,6 @@ import com.swervedrivespecialties.swervelib.MotorType;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -30,31 +48,17 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
-import frc.robot.Robot;
-import frc.robot.commands.drivetrain.RavenSwerveControllerCommand;
-import frc.robot.util.Constants.Constants;
-// import frc.robot.commands.drivetrain.RavenSwerveControllerCommand;
-// import frc.robot.shuffleboard.DrivetrainDiagnosticsShuffleboard;
-import frc.util.Deadband;
-import frc.util.SwerveModuleConverter;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import com.revrobotics.CANSparkMax;
-
-import java.awt.geom.Point2D;
-
-import static frc.robot.RobotMap.*;
-
-import java.util.List;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+// import frc.robot.commands.drivetrain.RavenSwerveControllerCommand;
+// import frc.robot.shuffleboard.DrivetrainDiagnosticsShuffleboard;
+import frc.util.Deadband;
+import frc.util.SwerveModuleConverter;
 
 // Template From: https://github.com/SwerveDriveSpecialties/swerve-template/blob/master/src/main/java/frc/robot/subsystems/DrivetrainSubsystem.java
 public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
