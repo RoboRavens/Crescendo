@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.auto.NamedCommands;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -14,15 +12,23 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.controls.ButtonCode;
 import frc.controls.ButtonCode.Buttons;
-import frc.robot.commands.LimbGoToSetpointCommand;
+import frc.robot.commands.compound.LimbGoToSetpointCommand;
+import frc.robot.commands.elbow.ElbowMoveManuallyCommand;
+import frc.robot.commands.drivetrain.DrivetrainAutoAimCommand;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
+import frc.robot.commands.elbow.ElbowDefaultCommand;
+import frc.robot.commands.elbow.ElbowGoToPositionCommand;
+import frc.robot.commands.elbow.ElbowMoveManuallyCommand;
 import frc.robot.commands.intake.IntakeCommand;
 import frc.robot.commands.intake.IntakeFeedCommand;
 import frc.robot.commands.shooter.ShootCommand;
-import frc.robot.commands.shooter.StartShooterCommand;
+import frc.robot.commands.wrist.WristDefaultCommand;
+import frc.robot.commands.wrist.WristGoToPositionCommand;
+import frc.robot.commands.wrist.WristMoveManuallyCommand;
 import frc.robot.subsystems.AutoChooserSubsystemReact;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.ElbowSubsystem;
@@ -33,6 +39,9 @@ import frc.robot.subsystems.ReactDashSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TeleopDashboardSubsystem;
 import frc.robot.subsystems.WristSubsystem;
+import frc.robot.util.Constants.Constants;
+import frc.robot.util.Constants.ElbowConstants;
+import frc.robot.util.Constants.WristConstants;
 import frc.robot.util.arm.LimbSetpoint;
 import frc.util.StateManagement;
 import frc.util.StateManagement.ArmUpTargetState;
@@ -46,7 +55,6 @@ import frc.util.StateManagement.OverallState;
 import frc.util.StateManagement.ScoringTargetState;
 import frc.util.StateManagement.ShooterRevTargetState;
 import frc.util.StateManagement.TrapSourceLaneTargetState;
-import frc.util.StateManagement.ZoneState;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -65,9 +73,10 @@ public class Robot extends TimedRobot {
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_FOUR = new LimelightSubsystem("limelight-four");
   public static final DrivetrainSubsystem DRIVETRAIN_SUBSYSTEM = new DrivetrainSubsystem();
   public static final PoseEstimatorSubsystem POSE_ESTIMATOR_SUBSYSTEM = new PoseEstimatorSubsystem();
-  public static final XboxController XBOX_CONTROLLER = new XboxController(0);
+  public static final CommandXboxController COMMAND_DRIVE_CONTROLLER = new CommandXboxController(0);
+  public static final XboxController DRIVE_CONTROLLER = COMMAND_DRIVE_CONTROLLER.getHID();
   public static DriverStation.Alliance allianceColor = Alliance.Blue;
-  public static final DrivetrainDefaultCommand DRIVETRAIN_DEFAULT_COMMAND = new DrivetrainDefaultCommand();
+  public static final DrivetrainAutoAimCommand DRIVETRAIN_AUTO_AIM_COMMAND = new DrivetrainAutoAimCommand();
   public static final ReactDashSubsystem REACT_DASH_SUBSYSTEM = new ReactDashSubsystem();
   public static final AutoChooserSubsystemReact AUTO_CHOOSER = new AutoChooserSubsystemReact();
   public static final TeleopDashboardSubsystem TELEOP_DASHBOARD_SUBSYSTEM = new TeleopDashboardSubsystem();
@@ -76,6 +85,12 @@ public class Robot extends TimedRobot {
   public static final ShooterSubsystem SHOOTER_SUBSYSTEM = new ShooterSubsystem();
   public static final ElbowSubsystem ELBOW_SUBSYSTEM = new ElbowSubsystem();
   public static final WristSubsystem WRIST_SUBSYSTEM = new WristSubsystem();
+
+  // DEFAULT COMMANDS
+  public static final DrivetrainDefaultCommand DRIVETRAIN_DEFAULT_COMMAND = new DrivetrainDefaultCommand();
+  public static final ElbowDefaultCommand ELBOW_DEFAULT_COMMAND = new ElbowDefaultCommand();
+  public static final WristDefaultCommand WRIST_DEFAULT_COMMAND = new WristDefaultCommand();
+  
   // States
   public static ScoringTargetState SCORING_TARGET_STATE = ScoringTargetState.SPEAKER;
   public static IntakeTargetState INTAKE_TARGET_STATE = IntakeTargetState.GROUND;
@@ -88,12 +103,6 @@ public class Robot extends TimedRobot {
   public static LoadState LOAD_STATE = LoadState.EMPTY;
   public static DrivetrainState DRIVETRAIN_STATE = DrivetrainState.FREEHAND;
   public static LimelightDetectsNoteState LIMELIGHT_DETECTS_NOTE_STATE = LimelightDetectsNoteState.NO_NOTE;
-  public static ZoneState ZONE_STATE = ZoneState.NONE;
-
-  public Robot() {
-    // Register Named Commands for PathPlanner
-    NamedCommands.registerCommand("Start Shooter", new StartShooterCommand());
-  }
 
   @Override
   public void robotPeriodic() {
@@ -108,8 +117,9 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("Shooter Rev Target State", SHOOTER_REV_TARGET_STATE.toString());
     SmartDashboard.putString("Climb Position Target State", CLIMB_POSITION_TARGET_STATE.toString());
     setNonButtonDependentOverallStates();
-    // TODO: Create a method that returns the wrist setpoint, and replace the below wrist rotation setpoints with that method
-    LimbSetpoint.SPEAKER_SCORING = new LimbSetpoint("", 0, 0); 
+    // TODO: Create a method that returns the wrist setpoint, and replace the below
+    // wrist rotation setpoints with that method
+    LimbSetpoint.SPEAKER_SCORING = new LimbSetpoint("", 0, 0);
     LimbSetpoint.DEFENDED_SPEAKER_SCORING = new LimbSetpoint("", 0, 0);
   }
 
@@ -121,19 +131,39 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     DRIVETRAIN_SUBSYSTEM.setDefaultCommand(DRIVETRAIN_DEFAULT_COMMAND);
-    new Trigger(() -> XBOX_CONTROLLER.getLeftBumper()
-        && (XBOX_CONTROLLER.getRightBumper())
-        && (XBOX_CONTROLLER.getYButton()))
+    ELBOW_SUBSYSTEM.setDefaultCommand(ELBOW_DEFAULT_COMMAND);
+    WRIST_SUBSYSTEM.setDefaultCommand(WRIST_DEFAULT_COMMAND);
+    
+    new Trigger(() -> DRIVE_CONTROLLER.getLeftBumper()
+        && (DRIVE_CONTROLLER.getRightBumper())
+        && (DRIVE_CONTROLLER.getYButton()))
         .onTrue(new InstantCommand(() -> DRIVETRAIN_SUBSYSTEM.zeroGyroscope()));
     AUTO_CHOOSER.ShowTab();
 
-    new Trigger(() -> SHOOTER_SUBSYSTEM.hasPiece() && XBOX_CONTROLLER.getLeftBumper()).onTrue(new ShootCommand());
+    new Trigger(() -> SHOOTER_SUBSYSTEM.hasPiece() && DRIVE_CONTROLLER.getLeftBumper()).onTrue(new ShootCommand());
+    
+    
+    new Trigger(() -> DRIVE_CONTROLLER.getLeftTriggerAxis() > .1 && Robot.LIMELIGHT_SUBSYSTEM_ONE.getTv() == 1).whileTrue(DRIVETRAIN_AUTO_AIM_COMMAND);
 
+    configureDriveControllerBindings();
     configureButtonBindings();
-    configureTriggers();
+    configureOverrideBindings();
   }
 
-  /** This function is run once each time the robot enters autonomous mode. */
+  private void configureDriveControllerBindings() {
+        // If the left trigger is held
+    new Trigger(() -> DRIVE_CONTROLLER.getLeftTriggerAxis() > 0)
+        .onTrue(new InstantCommand(() -> DRIVETRAIN_STATE = DrivetrainState.ROBOT_ALIGN))
+        .onFalse(new InstantCommand(() -> DRIVETRAIN_STATE = DrivetrainState.FREEHAND));
+    // If the robot is ready to shoot and we hold A, feed the note into the shooter
+    //new Trigger(() -> StateManagement.isRobotReadyToShoot() && DRIVE_CONTROLLER.getAButton())
+    //  .onTrue(new IntakeFeedCommand(INTAKE_SUBSYSTEM));
+
+    COMMAND_DRIVE_CONTROLLER.leftBumper().whileTrue(new IntakeCommand(INTAKE_SUBSYSTEM));
+    COMMAND_DRIVE_CONTROLLER.rightBumper().whileTrue(new ShootCommand());
+	}
+
+	/** This function is run once each time the robot enters autonomous mode. */
   @Override
   public void autonomousInit() {
     setDriverStationData();
@@ -190,42 +220,36 @@ public class Robot extends TimedRobot {
   }
 
   private void configureButtonBindings() {
-    // If the left trigger is held
-    new Trigger(() -> XBOX_CONTROLLER.getLeftTriggerAxis() > 0)
-      .onTrue(new InstantCommand(() -> DRIVETRAIN_STATE = DrivetrainState.ROBOT_ALIGN))
-      .onFalse(new InstantCommand(() -> DRIVETRAIN_STATE = DrivetrainState.FREEHAND));
-    // If the robot is ready to shoot and we hold A, feed the note into the shooter
-    new Trigger(() -> StateManagement.isRobotReadyToShoot() && XBOX_CONTROLLER.getAButton())
-      .onTrue(new IntakeFeedCommand(INTAKE_SUBSYSTEM));
+    // BUTTON_CODE.getButton(Buttons.GROUND_PICKUP_AND_SPEAKER_SCORING).and(() -> LOAD_STATE == LoadState.EMPTY)
+    //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.GROUND_PICKUP));
+    // BUTTON_CODE.getButton(Buttons.GROUND_PICKUP_AND_SPEAKER_SCORING).and(() -> LOAD_STATE == LoadState.LOADED)
+    //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.SPEAKER_SCORING));
+    // BUTTON_CODE.getButton(Buttons.DEFENDED_SPEAKER_SCORING)
+    //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.DEFENDED_SPEAKER_SCORING));
+    // BUTTON_CODE.getButton(Buttons.AMP_SCORING)
+    //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.AMP_SCORING));
+    // BUTTON_CODE.getButton(Buttons.TRAP_SCORING)
+    //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.TRAP_SCORING));
+    // BUTTON_CODE.getButton(Buttons.AMP_AND_SPEAKER_SOURCE_INTAKE)
+    //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.AMP_AND_SPEAKER_SOURCE_INTAKE));
+    // BUTTON_CODE.getButton(Buttons.TRAP_SOURCE_INTAKE)
+    //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.TRAP_SOURCE_INTAKE));
+    BUTTON_CODE.getButton(Buttons.GROUND_PICKUP_AND_SPEAKER_SCORING)
+      .whileTrue(new LimbGoToSetpointCommand(new LimbSetpoint("", -15, 0)));
 
-    BUTTON_CODE.getButton(Buttons.GROUND_PICKUP_AND_SPEAKER_SCORING).and(() -> LOAD_STATE == LoadState.EMPTY)
-        .whileTrue(new InstantCommand(() -> System.out.println("Ground Pickup")));
-    // .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.GROUND_PICKUP));
-    BUTTON_CODE.getButton(Buttons.GROUND_PICKUP_AND_SPEAKER_SCORING).and(() -> LOAD_STATE == LoadState.LOADED)
-        .whileTrue(new InstantCommand(() -> System.out.println("Speaker Scoring")));
-    // .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.SPEAKER_SCORING));
-    BUTTON_CODE.getButton(Buttons.AMP_SCORING)
-        .whileTrue(new InstantCommand(() -> System.out.println("Amp Scoring")));
-    // .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.AMP_SCORING));
-    BUTTON_CODE.getButton(Buttons.TRAP_SCORING)
-        .whileTrue(new InstantCommand(() -> System.out.println("Trap Scoring")));
-    // .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.TRAP_SCORING));
-    BUTTON_CODE.getButton(Buttons.AMP_AND_SPEAKER_SOURCE_INTAKE)
-        .whileTrue(new InstantCommand(() -> System.out.println("DualSource Intake")));
-    // .whileTrue(new
-    // LimbGoToSetpointCommand(LimbSetpoint.AMP_AND_SPEAKER_SOURCE_INTAKE));
-    BUTTON_CODE.getButton(Buttons.TRAP_SOURCE_INTAKE)
-        .whileTrue(new InstantCommand(() -> System.out.println("TrapSource Intake")));
-    // .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.TRAP_SOURCE_INTAKE));
-    BUTTON_CODE.getButton(Buttons.DEFENDED_SPEAKER_SCORING)
-        .whileTrue(new InstantCommand(() -> System.out.println("Defended Speaker Scoring")));
-    // .whileTrue(new
-    // LimbGoToSetpointCommand(LimbSetpoint.DEFENDED_SPEAKER_SCORING));
+    BUTTON_CODE.getButton(Buttons.MOVE_ELBOW_UP)
+        .whileTrue(new ElbowMoveManuallyCommand(Constants.MOVE_ELBOW_UP_MANUAL_POWER));
+    BUTTON_CODE.getButton(Buttons.MOVE_ELBOW_DOWN)
+        .whileTrue(new ElbowMoveManuallyCommand(Constants.MOVE_ELBOW_DOWN_MANUAL_POWER));
+    BUTTON_CODE.getButton(Buttons.MOVE_WRIST_UP)
+        .whileTrue(new WristMoveManuallyCommand(Constants.MOVE_WRIST_UP_MANUAL_POWER));
+    BUTTON_CODE.getButton(Buttons.MOVE_WRIST_DOWN)
+        .whileTrue(new WristMoveManuallyCommand(Constants.MOVE_WRIST_DOWN_MANUAL_POWER));
+
   }
 
   private void setNonButtonDependentOverallStates() {
-    // If the robot detects a note and has a target scoring state that requires a
-    // note
+    // If the robot detects a note and has a target scoring state that requires a note
     if (OVERALL_STATE == OverallState.SEEKING_NOTE
         && LIMELIGHT_DETECTS_NOTE_STATE == LimelightDetectsNoteState.IN_RANGE) {
       OVERALL_STATE = OverallState.LOADING;
@@ -240,36 +264,54 @@ public class Robot extends TimedRobot {
     }
   }
 
-  private void configureTriggers() {
-    // If we are seeking a note and intend to intake from the ground,
-    // set our arm position to the ground setpoint
-    new Trigger(() -> OVERALL_STATE == OverallState.SEEKING_NOTE
-        && INTAKE_TARGET_STATE == IntakeTargetState.GROUND)
-        .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.GROUND_PICKUP));
-    // If we are seeking a note and intend to intake a regular note from the source,
-    // set our arm position to the source setpoint
-    new Trigger(() -> OVERALL_STATE == OverallState.SEEKING_NOTE
-        && INTAKE_TARGET_STATE == IntakeTargetState.SOURCE)
-        .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.AMP_AND_SPEAKER_SOURCE_INTAKE));
-    // If we are seeking a note and intend to intake a note from the source to score
-    // in the trap,
-    // set our arm position to the source trap setpoint
-    new Trigger(() -> OVERALL_STATE == OverallState.SEEKING_NOTE
-        && INTAKE_TARGET_STATE == IntakeTargetState.TRAP_SOURCE)
-        .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.TRAP_SOURCE_INTAKE));
-    // If the robot's overall state is loading the note,
-    // flash our LEDs and start the intake
-    new Trigger(() -> OVERALL_STATE == OverallState.LOADING)
-        .whileTrue(new IntakeCommand(INTAKE_SUBSYSTEM)
-            .alongWith(new InstantCommand(() -> System.out.println("Flash LEDs Green")))); // TODO: implement a flash
-                                                                                           // LEDs command
-    // If the robot is loaded with a note and we intend to score in the amp,
-    // set our arm position to the amp setpoint
-    new Trigger(() -> OVERALL_STATE == OverallState.LOADED_TRANSIT)
-        .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.AMP_SCORING));
-    // If the robot is loaded with a note and we intend to score in the trap,
-    // set our arm position to the trap setpoint
-    new Trigger(() -> OVERALL_STATE == OverallState.LOADED_TRANSIT)
-        .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.TRAP_SCORING));
+  private void configureOverrideBindings() {
+    // // If the arm-up toggle is on and our intake target is ground,
+    // // set the intake target to the source
+    // new Trigger(() -> ARM_UP_TARGET_STATE == ArmUpTargetState.UP
+    //     && INTAKE_TARGET_STATE == IntakeTargetState.GROUND)
+    //     .whileTrue(new InstantCommand(() -> INTAKE_TARGET_STATE = IntakeTargetState.SOURCE));
+    // // If we are seeking a note and intend to intake from the ground,
+    // // set our arm position to the ground setpoint
+    // new Trigger(() -> OVERALL_STATE == OverallState.SEEKING_NOTE
+    //     && INTAKE_TARGET_STATE == IntakeTargetState.GROUND)
+    //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.GROUND_PICKUP));
+    // // If we are seeking a note and intend to intake a regular note from the source,
+    // // set our arm position to the source setpoint
+    // new Trigger(() -> OVERALL_STATE == OverallState.SEEKING_NOTE
+    //     && INTAKE_TARGET_STATE == IntakeTargetState.SOURCE)
+    //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.AMP_AND_SPEAKER_SOURCE_INTAKE));
+    // // If we are seeking a note and intend to intake a note from the source to score
+    // // in the trap, set our arm position to the source trap setpoint
+    // new Trigger(() -> OVERALL_STATE == OverallState.SEEKING_NOTE
+    //     && INTAKE_TARGET_STATE == IntakeTargetState.TRAP_SOURCE)
+    //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.TRAP_SOURCE_INTAKE));
+    // // If the robot's overall state is loading the note, flash our
+    // // LEDs and start the intake
+    // new Trigger(() -> OVERALL_STATE == OverallState.LOADING)
+    //     .whileTrue(new IntakeCommand(INTAKE_SUBSYSTEM)
+    //         .alongWith(new InstantCommand(() -> System.out.println("Flash LEDs Green"))));
+    // // TODO:^^ implement a flash LEDs command ^^
+    // // If the robot is loaded with a note and we intend to score in the amp,
+    // // set our arm position to the amp setpoint
+    // new Trigger(() -> OVERALL_STATE == OverallState.LOADED_TRANSIT 
+    //     && SCORING_TARGET_STATE == ScoringTargetState.AMP)
+    //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.AMP_SCORING));
+    // // If the robot is loaded with a note and we intend to score in the trap,
+    // // set our arm position to the trap setpoint
+    // new Trigger(() -> OVERALL_STATE == OverallState.LOADED_TRANSIT
+    //     && SCORING_TARGET_STATE == ScoringTargetState.TRAP)
+    //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.TRAP_SCORING));
+    // // If the robot is loaded with a note and we intend to score in the speaker,
+    // // set our arm position to the speaker setpoint
+    // new Trigger(() -> OVERALL_STATE == OverallState.LOADED_TRANSIT
+    //     && SCORING_TARGET_STATE == ScoringTargetState.SPEAKER
+    //     && ARM_UP_TARGET_STATE == ArmUpTargetState.FREE)
+    //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.SPEAKER_SCORING));
+    // // Otherwise, if the arm-up toggle is on,
+    // // set our arm position to the "up configuration"
+    // new Trigger(() -> OVERALL_STATE == OverallState.LOADED_TRANSIT
+    //     && SCORING_TARGET_STATE == ScoringTargetState.SPEAKER
+    //     && ARM_UP_TARGET_STATE == ArmUpTargetState.UP)
+    //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.SPEAKER_SCORING_ARM_UP));
   }
 }
