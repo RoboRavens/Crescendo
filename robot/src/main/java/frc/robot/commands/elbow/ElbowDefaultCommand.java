@@ -18,8 +18,9 @@ public class ElbowDefaultCommand extends Command {
   @Override
   public void initialize() {
     System.out.println("ElbowDefaultCommand: initialize");
-    var positionToHold = Robot.ELBOW_SUBSYSTEM.getPosition();
-    Robot.ELBOW_SUBSYSTEM.goToPosition(positionToHold);
+    // var positionToHold = Robot.ELBOW_SUBSYSTEM.getPosition();
+    // Robot.ELBOW_SUBSYSTEM.goToPosition(positionToHold);
+    Robot.ELBOW_SUBSYSTEM.goToPosition(Robot.ELBOW_SUBSYSTEM.getTargetPosition());
   }
 
   // Called every time the scheduler runs while the command is scheduled.

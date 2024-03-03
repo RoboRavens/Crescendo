@@ -20,6 +20,9 @@ public class WristSubsystem extends SubsystemBase {
   private TalonFX _wristRotationMotor = new TalonFX(RobotMap.WRIST_ROTATION_MOTOR);
 
   private Slot0Configs _pidConfig = WristConstants.getSlot0Configs();
+  
+  private double targetPosition = 0;
+  
   public WristSubsystem() {
     var talonFXConfiguration = new TalonFXConfiguration();
     talonFXConfiguration.MotionMagic.MotionMagicAcceleration = 100;
@@ -31,6 +34,16 @@ public class WristSubsystem extends SubsystemBase {
 
     talonFXConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
+    // low stator limit will prevent breaking static friction
+    talonFXConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
+    talonFXConfiguration.CurrentLimits.StatorCurrentLimit = 40;
+
+    // low supply limit will cap motor velocity
+    talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 10;
+    talonFXConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
+    talonFXConfiguration.CurrentLimits.SupplyCurrentThreshold = 10;
+    talonFXConfiguration.CurrentLimits.SupplyTimeThreshold = 0;
+
     //talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     //talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 5;
     //talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
@@ -39,6 +52,14 @@ public class WristSubsystem extends SubsystemBase {
     _wristRotationMotor.getConfigurator().setPosition(0);
     _wristRotationMotor.getConfigurator().apply(talonFXConfiguration);
     this.updateStaticFeedfoward();
+  }
+
+  public void setTargetPosition(double position) {
+    this.targetPosition = position;
+  }
+
+  public double getTargetPosition() {
+    return this.targetPosition;
   }
 
   private void updateStaticFeedfoward() {

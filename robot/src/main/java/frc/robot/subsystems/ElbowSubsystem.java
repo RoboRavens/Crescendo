@@ -28,6 +28,8 @@ public class ElbowSubsystem extends SubsystemBase {
 
   private Slot0Configs _pidConfig = ElbowConstants.getSlot0Configs();
 
+  private double targetPosition = 0;
+
   public ElbowSubsystem() {
     var talonFXConfiguration = new TalonFXConfiguration();
     talonFXConfiguration.MotionMagic.MotionMagicAcceleration = 100;
@@ -38,6 +40,16 @@ public class ElbowSubsystem extends SubsystemBase {
     talonFXConfiguration.Audio.BeepOnConfig = false;
 
     talonFXConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+    // low stator limit will prevent breaking static friction
+    talonFXConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
+    talonFXConfiguration.CurrentLimits.StatorCurrentLimit = 25;
+
+    // low supply limit will cap motor velocity
+    talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 10;
+    talonFXConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
+    talonFXConfiguration.CurrentLimits.SupplyCurrentThreshold = 10;
+    talonFXConfiguration.CurrentLimits.SupplyTimeThreshold = 0;
 
     //talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     //talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 5;
@@ -61,6 +73,14 @@ public class ElbowSubsystem extends SubsystemBase {
     }, this).ignoringDisable(true);
 
     new Trigger(() -> _forwardLimitSwitch.get()).onFalse(resetPositionCommand);
+  }
+
+  public void setTargetPosition(double position) {
+    this.targetPosition = position;
+  }
+
+  public double getTargetPosition() {
+    return this.targetPosition;
   }
 
   private void updateStaticFeedfoward() {

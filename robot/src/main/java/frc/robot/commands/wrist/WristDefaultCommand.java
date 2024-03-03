@@ -17,8 +17,9 @@ public class WristDefaultCommand extends Command {
   @Override
   public void initialize() {
     System.out.println("WristDefaultCommand initialize");
-    var positionToHold = Robot.WRIST_SUBSYSTEM.getPosition();
-    Robot.WRIST_SUBSYSTEM.goToPosition(positionToHold);
+    // var positionToHold = Robot.WRIST_SUBSYSTEM.getPosition();
+    // Robot.WRIST_SUBSYSTEM.goToPosition(positionToHold);
+    Robot.WRIST_SUBSYSTEM.goToPosition(Robot.WRIST_SUBSYSTEM.getTargetPosition());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
