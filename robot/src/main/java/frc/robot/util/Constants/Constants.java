@@ -24,5 +24,4 @@ public class Constants {
     public static final double MOVE_ELBOW_DOWN_MANUAL_POWER = 0.1; // Elbow down
     public static final Double MOVE_WRIST_UP_MANUAL_POWER = -0.1; // Wrist up
     public static final Double MOVE_WRIST_DOWN_MANUAL_POWER = 0.1; // Wrist down
-
 }
