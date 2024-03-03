@@ -34,6 +34,16 @@ public class WristSubsystem extends SubsystemBase {
 
     talonFXConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
+    // low stator limit will prevent breaking static friction
+    talonFXConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
+    talonFXConfiguration.CurrentLimits.StatorCurrentLimit = 40;
+
+    // low supply limit will cap motor velocity
+    talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 10;
+    talonFXConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
+    talonFXConfiguration.CurrentLimits.SupplyCurrentThreshold = 10;
+    talonFXConfiguration.CurrentLimits.SupplyTimeThreshold = 0;
+
     //talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     //talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 5;
     //talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;

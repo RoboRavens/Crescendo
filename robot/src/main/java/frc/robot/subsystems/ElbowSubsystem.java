@@ -25,6 +25,7 @@ public class ElbowSubsystem extends SubsystemBase {
   private TalonFX _elbowRotationMotor = new TalonFX(RobotMap.ELBOW_ROTATION_MOTOR);
   private TalonFX _elbowRotationFollower = new TalonFX(RobotMap.ELBOW_ROTATION_FOLLOWER_MOTOR);
   private DigitalInput _forwardLimitSwitch = new DigitalInput(RobotMap.ELBOW_FORWARD_LIMIT_DIO);
+  private boolean _atCurrentLimit = false;
 
   private Slot0Configs _pidConfig = ElbowConstants.getSlot0Configs();
 
@@ -40,6 +41,16 @@ public class ElbowSubsystem extends SubsystemBase {
     talonFXConfiguration.Audio.BeepOnConfig = false;
 
     talonFXConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+    // low stator limit will prevent breaking static friction
+    talonFXConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
+    talonFXConfiguration.CurrentLimits.StatorCurrentLimit = 25;
+
+    // low supply limit will cap motor velocity
+    talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 10;
+    talonFXConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
+    talonFXConfiguration.CurrentLimits.SupplyCurrentThreshold = 10;
+    talonFXConfiguration.CurrentLimits.SupplyTimeThreshold = 0;
 
     //talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     //talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 5;
@@ -127,6 +138,16 @@ public class ElbowSubsystem extends SubsystemBase {
     this.updateStaticFeedfoward();
     SmartDashboard.putNumber("Elbow RotationMotor pos", _elbowRotationMotor.getPosition().getValueAsDouble());
     SmartDashboard.putBoolean("Elbow ForwardLimitSwitch", _forwardLimitSwitch.get());
+    updateCurrentLimitVariable();
+  }
+  
+  private void updateCurrentLimitVariable() {
+    if (true) {
+      _atCurrentLimit = true;
+    }
+    else {
+      _atCurrentLimit = false;
+    }
   }
 
   public double getPosition() {
