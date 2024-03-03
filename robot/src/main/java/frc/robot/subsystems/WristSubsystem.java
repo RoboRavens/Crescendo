@@ -20,9 +20,6 @@ public class WristSubsystem extends SubsystemBase {
   private TalonFX _wristRotationMotor = new TalonFX(RobotMap.WRIST_ROTATION_MOTOR);
 
   private Slot0Configs _pidConfig = WristConstants.getSlot0Configs();
-  
-  private double targetPosition = 0;
-  
   public WristSubsystem() {
     var talonFXConfiguration = new TalonFXConfiguration();
     talonFXConfiguration.MotionMagic.MotionMagicAcceleration = 100;
@@ -52,14 +49,6 @@ public class WristSubsystem extends SubsystemBase {
     _wristRotationMotor.getConfigurator().setPosition(0);
     _wristRotationMotor.getConfigurator().apply(talonFXConfiguration);
     this.updateStaticFeedfoward();
-  }
-
-  public void setTargetPosition(double position) {
-    this.targetPosition = position;
-  }
-
-  public double getTargetPosition() {
-    return this.targetPosition;
   }
 
   private void updateStaticFeedfoward() {

@@ -19,7 +19,6 @@ public class WristGoToPositionCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    //Robot.WRIST_SUBSYSTEM.setTargetPosition(_targetPosition);
     Robot.WRIST_SUBSYSTEM.goToPosition(_targetPosition);
   }
 

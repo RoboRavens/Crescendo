@@ -18,7 +18,6 @@ public class ElbowGoToPositionCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    Robot.ELBOW_SUBSYSTEM.setTargetPosition(_targetPosition);
     Robot.ELBOW_SUBSYSTEM.goToPosition(_targetPosition);
   }
 
