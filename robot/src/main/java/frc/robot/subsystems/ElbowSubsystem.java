@@ -25,7 +25,6 @@ public class ElbowSubsystem extends SubsystemBase {
   private TalonFX _elbowRotationMotor = new TalonFX(RobotMap.ELBOW_ROTATION_MOTOR);
   private TalonFX _elbowRotationFollower = new TalonFX(RobotMap.ELBOW_ROTATION_FOLLOWER_MOTOR);
   private DigitalInput _forwardLimitSwitch = new DigitalInput(RobotMap.ELBOW_FORWARD_LIMIT_DIO);
-  private boolean _atCurrentLimit = false;
 
   private Slot0Configs _pidConfig = ElbowConstants.getSlot0Configs();
 
@@ -138,16 +137,6 @@ public class ElbowSubsystem extends SubsystemBase {
     this.updateStaticFeedfoward();
     SmartDashboard.putNumber("Elbow RotationMotor pos", _elbowRotationMotor.getPosition().getValueAsDouble());
     SmartDashboard.putBoolean("Elbow ForwardLimitSwitch", _forwardLimitSwitch.get());
-    updateCurrentLimitVariable();
-  }
-  
-  private void updateCurrentLimitVariable() {
-    if (true) {
-      _atCurrentLimit = true;
-    }
-    else {
-      _atCurrentLimit = false;
-    }
   }
 
   public double getPosition() {
