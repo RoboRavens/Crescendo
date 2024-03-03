@@ -22,11 +22,11 @@
                     "isInitialGuess": false,
                     "translationConstrained": true,
                     "headingConstrained": true,
-                    "controlIntervalCount": 11
+                    "controlIntervalCount": 12
                 },
                 {
-                    "x": 2.296902656555176,
-                    "y": 4.407501220703125,
+                    "x": 2.5,
+                    "y": 4.33,
                     "heading": -0.5,
                     "isInitialGuess": false,
                     "translationConstrained": true,
@@ -40,16 +40,16 @@
                     "isInitialGuess": false,
                     "translationConstrained": true,
                     "headingConstrained": true,
-                    "controlIntervalCount": 9
+                    "controlIntervalCount": 10
                 },
                 {
-                    "x": 2.2,
+                    "x": 2.45,
                     "y": 5.564249038696289,
                     "heading": 0,
                     "isInitialGuess": false,
                     "translationConstrained": true,
                     "headingConstrained": true,
-                    "controlIntervalCount": 9
+                    "controlIntervalCount": 10
                 },
                 {
                     "x": 1.6,
@@ -58,16 +58,16 @@
                     "isInitialGuess": false,
                     "translationConstrained": true,
                     "headingConstrained": true,
-                    "controlIntervalCount": 7
+                    "controlIntervalCount": 8
                 },
                 {
-                    "x": 2.297,
-                    "y": 6.7,
+                    "x": 2.5,
+                    "y": 6.8,
                     "heading": 0.5,
                     "isInitialGuess": false,
                     "translationConstrained": true,
                     "headingConstrained": true,
-                    "controlIntervalCount": 21
+                    "controlIntervalCount": 20
                 },
                 {
                     "x": 7.596153736114502,

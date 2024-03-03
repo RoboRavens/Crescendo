@@ -58,6 +58,18 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
       new AutoMode("B4: Six Note Auto",
       () -> SixNoteAutoCommand.getAutoMode())
     );
+    this.addOption(
+      new AutoMode("B5: North Midfield Auto",
+      () -> NorthMidfieldAutoCommand.getAutoMode())
+    );
+    this.addOption(
+      new AutoMode("B6: South Midfield Auto",
+      () -> SouthMidfieldAutoCommand.getAutoMode())
+    );
+    this.addOption(
+      new AutoMode("B7: 2",
+      () -> new PathPlannerAuto("SixNoteTest2"))
+    );
 
     // RED SIDE
     this.addRedDefault(
@@ -75,6 +87,14 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
     this.addOption(
       new AutoMode("R4: Six Note Auto",
       () -> SixNoteAutoCommand.getAutoMode())
+    );
+    this.addOption(
+      new AutoMode("R5: North Midfield Auto",
+      () -> NorthMidfieldAutoCommand.getAutoMode())
+    );
+    this.addOption(
+      new AutoMode("R6: South Midfield Auto",
+      () -> new PathPlannerAuto("SixNoteTest2"))
     );
   }
 

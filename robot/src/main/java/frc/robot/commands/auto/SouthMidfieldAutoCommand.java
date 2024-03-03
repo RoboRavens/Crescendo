@@ -13,7 +13,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Robot;
 import frc.robot.commands.intake.IntakeCommand;
@@ -22,13 +21,12 @@ import frc.robot.commands.shooter.StartShooterCommand;
 import frc.util.StateManagement.LoadState;
 import frc.util.StateManagement.ZoneState;
 
-public class SixNoteAutoCommand extends Command {
+public class SouthMidfieldAutoCommand extends Command {
   private static PathPlannerPath[] paths = new PathPlannerPath[]{
-    PathPlannerPath.fromChoreoTrajectory("SixNoteTest.1"),
-    PathPlannerPath.fromChoreoTrajectory("SixNoteTest.2"),
-    PathPlannerPath.fromChoreoTrajectory("SixNoteTest.3"),
-    PathPlannerPath.fromChoreoTrajectory("SixNoteTest.4"),
-    PathPlannerPath.fromChoreoTrajectory("SixNoteTest.5"),
+    PathPlannerPath.fromChoreoTrajectory("SouthMidfieldAutoBlue.1"),
+    PathPlannerPath.fromChoreoTrajectory("SouthMidfieldAutoBlue.2"),
+    PathPlannerPath.fromChoreoTrajectory("SouthMidfieldAutoBlue.3"),
+    PathPlannerPath.fromChoreoTrajectory("SouthMidfieldAutoBlue.4"),
   };
 
   public static Command getAutoMode() {
@@ -42,16 +40,10 @@ public class SixNoteAutoCommand extends Command {
               // .andThen(new IntakeFeedCommand(Robot.INTAKE_SUBSYSTEM))
               // .andThen(new IntakeCommand(Robot.INTAKE_SUBSYSTEM)), 
             AutoBuilder.followPath(paths[0])
-            .andThen(new WaitCommand(1))
           )
-          .andThen(AutoHelpers.buildNoteSubCommand(paths, 1))
-          .andThen(new WaitCommand(1)) // Runs the intake for first ground note and runs the next path while shooting the note
-          .andThen(AutoBuilder.followPath(paths[2]))
-          .andThen(new WaitCommand(1))
-          .andThen(AutoHelpers.buildNoteSubCommand(paths, 3))
-          .andThen(new WaitCommand(1))
-          .andThen(AutoBuilder.followPath(paths[4]))
-          .andThen(new WaitCommand(1)) // Runs the intake for second ground note and runs the next path while shooting the note
+          .andThen(AutoHelpers.buildNoteSubCommand(paths, 1)) 
+          .andThen(AutoHelpers.buildNoteSubCommand(paths, 2)) 
+          .andThen(AutoHelpers.buildNoteSubCommand(paths, 3)) 
           .andThen(new IntakeCommand(Robot.INTAKE_SUBSYSTEM)) // Runs the intake for the last note of the auto path (the third center note)
           )
       );
