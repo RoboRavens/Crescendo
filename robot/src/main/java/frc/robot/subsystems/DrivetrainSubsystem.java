@@ -4,25 +4,6 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.RobotMap.BACK_LEFT_MODULE_DRIVE_MOTOR;
-import static frc.robot.RobotMap.BACK_LEFT_MODULE_STEER_ENCODER;
-import static frc.robot.RobotMap.BACK_LEFT_MODULE_STEER_MOTOR;
-import static frc.robot.RobotMap.BACK_LEFT_MODULE_STEER_OFFSET;
-import static frc.robot.RobotMap.BACK_RIGHT_MODULE_DRIVE_MOTOR;
-import static frc.robot.RobotMap.BACK_RIGHT_MODULE_STEER_ENCODER;
-import static frc.robot.RobotMap.BACK_RIGHT_MODULE_STEER_MOTOR;
-import static frc.robot.RobotMap.BACK_RIGHT_MODULE_STEER_OFFSET;
-import static frc.robot.RobotMap.DRIVETRAIN_TRACKWIDTH_METERS;
-import static frc.robot.RobotMap.DRIVETRAIN_WHEELBASE_METERS;
-import static frc.robot.RobotMap.FRONT_LEFT_MODULE_DRIVE_MOTOR;
-import static frc.robot.RobotMap.FRONT_LEFT_MODULE_STEER_ENCODER;
-import static frc.robot.RobotMap.FRONT_LEFT_MODULE_STEER_MOTOR;
-import static frc.robot.RobotMap.FRONT_LEFT_MODULE_STEER_OFFSET;
-import static frc.robot.RobotMap.FRONT_RIGHT_MODULE_DRIVE_MOTOR;
-import static frc.robot.RobotMap.FRONT_RIGHT_MODULE_STEER_ENCODER;
-import static frc.robot.RobotMap.FRONT_RIGHT_MODULE_STEER_MOTOR;
-import static frc.robot.RobotMap.FRONT_RIGHT_MODULE_STEER_OFFSET;
-
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerTrajectory;
@@ -59,6 +40,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 // import frc.robot.shuffleboard.DrivetrainDiagnosticsShuffleboard;
 import frc.util.Deadband;
 import frc.util.SwerveModuleConverter;
+import static frc.robot.RobotMap.*;
 
 // Template From: https://github.com/SwerveDriveSpecialties/swerve-template/blob/master/src/main/java/frc/robot/subsystems/DrivetrainSubsystem.java
 public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
