@@ -104,7 +104,6 @@ public class Robot extends TimedRobot {
   public static DrivetrainState DRIVETRAIN_STATE = DrivetrainState.FREEHAND;
   public static LimelightDetectsNoteState LIMELIGHT_DETECTS_NOTE_STATE = LimelightDetectsNoteState.NO_NOTE;
 
-
   @Override
   public void robotPeriodic() {
     SmartDashboard.putString("Alliance Color", allianceColor.name());

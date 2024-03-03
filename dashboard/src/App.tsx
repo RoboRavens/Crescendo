@@ -98,8 +98,6 @@ class App extends React.Component<{}, {
   selectedClimbPosition: string,
   armUp: boolean,
   armUpToggle: boolean,
-  defenseModeEnabled: boolean,
-  activeDefenseToggled: boolean,
   selectedSourceLane: string,
   signalSelection: string,
   startShooter: boolean
@@ -123,8 +121,6 @@ class App extends React.Component<{}, {
       selectedClimbPosition: "LEFT_CLOSE",
       armUp: false,
       armUpToggle: false,
-      defenseModeEnabled: false,
-      activeDefenseToggled: false,
       selectedSourceLane: "CENTER",
       signalSelection: "NONE",
       startShooter: false

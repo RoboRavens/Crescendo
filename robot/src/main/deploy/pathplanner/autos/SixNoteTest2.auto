@@ -1,12 +1,6 @@
 {
   "version": 1.0,
-  "startingPose": {
-    "position": {
-      "x": 1.2464343309402466,
-      "y": 6.6517109870910645
-    },
-    "rotation": 17.188733853924695
-  },
+  "startingPose": null,
   "command": {
     "type": "sequential",
     "data": {
@@ -14,84 +8,90 @@
         {
           "type": "path",
           "data": {
-            "pathName": "NorthMidfieldAutoBlue.1"
+            "pathName": "6Note1"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.5
+            "waitTime": 1.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "NorthMidfieldAutoBlue.2"
+            "pathName": "6Note2"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.5
+            "waitTime": 1.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "NorthMidfieldAutoBlue.3"
+            "pathName": "6Note3"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.5
+            "waitTime": 1.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "NorthMidfieldAutoBlue.4"
+            "pathName": "6Note4"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.5
+            "waitTime": 1.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": null
+            "pathName": "6Note5"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.5
+            "waitTime": 1.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": null
+            "pathName": "6Note6"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.5
+            "waitTime": 1.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": null
+            "pathName": "6Note7"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
           }
         }
       ]
     }
   },
   "folder": null,
-  "choreoAuto": true
+  "choreoAuto": false
 }
