@@ -24,8 +24,11 @@ import frc.robot.commands.elbow.ElbowDefaultCommand;
 import frc.robot.commands.elbow.ElbowGoToPositionCommand;
 import frc.robot.commands.elbow.ElbowMoveManuallyCommand;
 import frc.robot.commands.intake.IntakeCommand;
-import frc.robot.commands.intake.IntakeFeedCommand;
+import frc.robot.commands.intake.FeedCommand;
+import frc.robot.commands.intake.FeedWithSensorCommand;
+import frc.robot.commands.intake.IntakeWithSensorCommand;
 import frc.robot.commands.shooter.ShootCommand;
+import frc.robot.commands.shooter.StartShooterCommand;
 import frc.robot.commands.wrist.WristDefaultCommand;
 import frc.robot.commands.wrist.WristGoToPositionCommand;
 import frc.robot.commands.wrist.WristMoveManuallyCommand;
@@ -133,35 +136,39 @@ public class Robot extends TimedRobot {
     DRIVETRAIN_SUBSYSTEM.setDefaultCommand(DRIVETRAIN_DEFAULT_COMMAND);
     ELBOW_SUBSYSTEM.setDefaultCommand(ELBOW_DEFAULT_COMMAND);
     WRIST_SUBSYSTEM.setDefaultCommand(WRIST_DEFAULT_COMMAND);
-    
-    new Trigger(() -> DRIVE_CONTROLLER.getLeftBumper()
-        && (DRIVE_CONTROLLER.getRightBumper())
-        && (DRIVE_CONTROLLER.getYButton()))
-        .onTrue(new InstantCommand(() -> DRIVETRAIN_SUBSYSTEM.zeroGyroscope()));
-    AUTO_CHOOSER.ShowTab();
 
-    new Trigger(() -> SHOOTER_SUBSYSTEM.hasPiece() && DRIVE_CONTROLLER.getLeftBumper()).onTrue(new ShootCommand());
-    
+    AUTO_CHOOSER.ShowTab();
     
     new Trigger(() -> DRIVE_CONTROLLER.getLeftTriggerAxis() > .1 && Robot.LIMELIGHT_SUBSYSTEM_ONE.getTv() == 1).whileTrue(DRIVETRAIN_AUTO_AIM_COMMAND);
 
     configureDriveControllerBindings();
+    configureAutomatedBehaviorBindings();
     configureButtonBindings();
     configureOverrideBindings();
   }
 
   private void configureDriveControllerBindings() {
-        // If the left trigger is held
+    // If the left trigger is held
     new Trigger(() -> DRIVE_CONTROLLER.getLeftTriggerAxis() > 0)
         .onTrue(new InstantCommand(() -> DRIVETRAIN_STATE = DrivetrainState.ROBOT_ALIGN))
         .onFalse(new InstantCommand(() -> DRIVETRAIN_STATE = DrivetrainState.FREEHAND));
+    
+    new Trigger(() -> DRIVE_CONTROLLER.getLeftBumper()
+        && (DRIVE_CONTROLLER.getRightBumper())
+        && (DRIVE_CONTROLLER.getYButton()))
+        .onTrue(new InstantCommand(() -> DRIVETRAIN_SUBSYSTEM.zeroGyroscope()));
     // If the robot is ready to shoot and we hold A, feed the note into the shooter
     //new Trigger(() -> StateManagement.isRobotReadyToShoot() && DRIVE_CONTROLLER.getAButton())
     //  .onTrue(new IntakeFeedCommand(INTAKE_SUBSYSTEM));
 
-    COMMAND_DRIVE_CONTROLLER.leftBumper().whileTrue(new IntakeCommand(INTAKE_SUBSYSTEM));
-    COMMAND_DRIVE_CONTROLLER.rightBumper().whileTrue(new ShootCommand());
+    COMMAND_DRIVE_CONTROLLER.leftBumper().whileTrue(new IntakeWithSensorCommand());
+    COMMAND_DRIVE_CONTROLLER.rightBumper().whileTrue(new FeedWithSensorCommand());
 	}
+
+  private void configureAutomatedBehaviorBindings() {
+    new Trigger(() -> Robot.SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON)
+      .whileTrue(new StartShooterCommand());
+  }
 
 	/** This function is run once each time the robot enters autonomous mode. */
   @Override

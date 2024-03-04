@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Robot;
 import frc.robot.commands.intake.IntakeCommand;
-import frc.robot.commands.intake.IntakeFeedCommand;
+import frc.robot.commands.intake.FeedCommand;
 import frc.robot.commands.shooter.StartShooterCommand;
 import frc.util.StateManagement.LoadState;
 import frc.util.StateManagement.ZoneState;

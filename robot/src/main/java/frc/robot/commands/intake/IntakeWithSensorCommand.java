@@ -4,14 +4,10 @@
 
 package frc.robot.commands.intake;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
-import frc.robot.util.Constants.IntakeConstants;
 
 public class IntakeWithSensorCommand extends Command {
-  private Timer _timer = new Timer();
-
   public IntakeWithSensorCommand() {
     this.addRequirements(Robot.INTAKE_SUBSYSTEM);
   }
@@ -36,14 +32,6 @@ public class IntakeWithSensorCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (Robot.INTAKE_SUBSYSTEM.intakeHasPiece() == true) {
-      _timer.start();
-      if (_timer.get() >= IntakeConstants.INTAKE_SPARK_DELAY) {
-        _timer.stop();
-        _timer.reset();
-        return true;
-      }
-    }
-    return false;
+    return Robot.SHOOTER_SUBSYSTEM.hasPiece();
   }
 }
