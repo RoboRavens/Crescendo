@@ -4,8 +4,19 @@
 
 package frc.robot.commands.compound;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ScheduleCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Robot;
+import frc.robot.commands.elbow.ElbowGoToPositionCommand;
+import frc.robot.commands.wrist.WristGoToPositionCommand;
+import frc.robot.subsystems.ElbowSubsystem;
+import frc.robot.util.Constants.ElbowConstants;
+import frc.robot.util.Constants.WristConstants;
 import frc.robot.util.arm.LimbSetpoint;
 
 public class LimbGoToSetpointCommand extends Command {
@@ -36,6 +47,7 @@ public class LimbGoToSetpointCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    System.out.println("LimbGoToSetpointCommand: end" + (interrupted ? " interrupted": ""));
     Robot.ELBOW_SUBSYSTEM.setPowerManually(0);
     Robot.WRIST_SUBSYSTEM.setPowerManually(0);
   }
@@ -49,5 +61,38 @@ public class LimbGoToSetpointCommand extends Command {
       return true;
     }
     return false;
+  }
+
+  public static Command GetMoveSafelyCommand(LimbSetpoint targetLimbSetPoint){
+    BooleanSupplier shouldRunAdvancedMovement = () -> {
+      var elbowTargetDegrees = targetLimbSetPoint.getElbowRotationDegrees();
+      var elbowCurrentDegrees = Math.toDegrees(Robot.ELBOW_SUBSYSTEM.getRadians());
+      var wristTargetDegrees = targetLimbSetPoint.getWristRotationDegrees();
+      var wristCurrentDegrees = Math.toDegrees(Robot.WRIST_SUBSYSTEM.getRadians());
+
+      // going up through the threshold
+      if (elbowTargetDegrees < 0 && elbowCurrentDegrees > 0) {
+        return true;
+      }
+      
+      // going down through the threshold
+      if (elbowTargetDegrees > 0 && elbowCurrentDegrees < 0) {
+        return true;
+      }
+      
+      return false;
+    };
+
+    var advancedMovementCommand = new SequentialCommandGroup(
+      new InstantCommand(() -> System.out.println("Running advancedMovementCommand")),
+      new WristGoToPositionCommand(WristConstants.DEGREES_FLOOR_PICKUP),
+      new ElbowGoToPositionCommand(targetLimbSetPoint.getElbowRotationPosition()),
+      new LimbGoToSetpointCommand(targetLimbSetPoint),
+      new InstantCommand(() -> System.out.println("Finished advancedMovementCommand"))
+    );
+
+    var basicMovementCommand = new LimbGoToSetpointCommand(targetLimbSetPoint);
+
+    return new ConditionalCommand(advancedMovementCommand, basicMovementCommand, shouldRunAdvancedMovement);
   }
 }

@@ -120,10 +120,6 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("Shooter Rev Target State", SHOOTER_REV_TARGET_STATE.toString());
     SmartDashboard.putString("Climb Position Target State", CLIMB_POSITION_TARGET_STATE.toString());
     setNonButtonDependentOverallStates();
-    // TODO: Create a method that returns the wrist setpoint, and replace the below
-    // wrist rotation setpoints with that method
-    LimbSetpoint.SPEAKER_SCORING = new LimbSetpoint("", 0, 0);
-    LimbSetpoint.DEFENDED_SPEAKER_SCORING = new LimbSetpoint("", 0, 0);
   }
 
   /**
@@ -136,6 +132,9 @@ public class Robot extends TimedRobot {
     DRIVETRAIN_SUBSYSTEM.setDefaultCommand(DRIVETRAIN_DEFAULT_COMMAND);
     ELBOW_SUBSYSTEM.setDefaultCommand(ELBOW_DEFAULT_COMMAND);
     WRIST_SUBSYSTEM.setDefaultCommand(WRIST_DEFAULT_COMMAND);
+
+    SmartDashboard.putData(ELBOW_SUBSYSTEM);
+    SmartDashboard.putData(WRIST_SUBSYSTEM);
 
     AUTO_CHOOSER.ShowTab();
     
@@ -231,8 +230,8 @@ public class Robot extends TimedRobot {
     //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.GROUND_PICKUP));
     // BUTTON_CODE.getButton(Buttons.GROUND_PICKUP_AND_SPEAKER_SCORING).and(() -> LOAD_STATE == LoadState.LOADED)
     //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.SPEAKER_SCORING));
-    // BUTTON_CODE.getButton(Buttons.DEFENDED_SPEAKER_SCORING)
-    //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.DEFENDED_SPEAKER_SCORING));
+    BUTTON_CODE.getButton(Buttons.DEFENDED_SPEAKER_SCORING)
+      .whileTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.DEFENDED_SPEAKER_SCORING));
     // BUTTON_CODE.getButton(Buttons.AMP_SCORING)
     //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.AMP_SCORING));
     // BUTTON_CODE.getButton(Buttons.TRAP_SCORING)
@@ -242,7 +241,7 @@ public class Robot extends TimedRobot {
     // BUTTON_CODE.getButton(Buttons.TRAP_SOURCE_INTAKE)
     //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.TRAP_SOURCE_INTAKE));
     BUTTON_CODE.getButton(Buttons.GROUND_PICKUP_AND_SPEAKER_SCORING)
-      .whileTrue(new LimbGoToSetpointCommand(new LimbSetpoint("", -15, 0)));
+      .whileTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.GROUND_PICKUP));
 
     BUTTON_CODE.getButton(Buttons.MOVE_ELBOW_UP)
         .whileTrue(new ElbowMoveManuallyCommand(Constants.MOVE_ELBOW_UP_MANUAL_POWER));

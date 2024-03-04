@@ -18,7 +18,7 @@ public class ElbowGoToPositionCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    Robot.ELBOW_SUBSYSTEM.setTargetPosition(_targetPosition);
+    System.out.println("ElbowGoToPositionCommand: initialize");
     Robot.ELBOW_SUBSYSTEM.goToPosition(_targetPosition);
   }
 
@@ -30,11 +30,17 @@ public class ElbowGoToPositionCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     Robot.ELBOW_SUBSYSTEM.stopElbowRotation();
+    System.out.println("ElbowGoToPositionCommand: end" + (interrupted ? " interrupted": ""));
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    double elbowDiff = Math.abs(Robot.ELBOW_SUBSYSTEM.getPosition() - _targetPosition);
+    if(elbowDiff <= 0.5){
+      return true;
+    }
+
     return false;
   }
 }
