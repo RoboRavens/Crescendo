@@ -62,7 +62,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "SouthMidfieldBlue.5"
+            "pathName": null
           }
         },
         {
@@ -74,7 +74,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "SouthMidfieldBlue.6"
+            "pathName": null
           }
         }
       ]

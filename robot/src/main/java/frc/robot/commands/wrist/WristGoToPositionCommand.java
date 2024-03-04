@@ -6,19 +6,20 @@ package frc.robot.commands.wrist;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
+import frc.robot.util.Constants.WristConstants;
 
 public class WristGoToPositionCommand extends Command {
   private double _targetPosition;
   /** Creates a new WristGoToPositionCommand. */
   public WristGoToPositionCommand(double position) {
-        _targetPosition = position;
+    _targetPosition = position;
     addRequirements(Robot.WRIST_SUBSYSTEM);
-    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    System.out.println("WristGoToPositionCommand: initialize");
     Robot.WRIST_SUBSYSTEM.goToPosition(_targetPosition);
   }
 
@@ -29,12 +30,18 @@ public class WristGoToPositionCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    System.out.println("WristGoToPositionCommand: end" + (interrupted ? " interrupted": ""));
     Robot.WRIST_SUBSYSTEM.stopWristRotation();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    double wristDiff = Math.abs(Robot.WRIST_SUBSYSTEM.getPosition() - _targetPosition);
+    if(wristDiff <= WristConstants.IS_AT_SETPOINT_BUFFER){
+      return true;
+    }
+
     return false;
   }
 }

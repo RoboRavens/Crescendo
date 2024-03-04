@@ -78,8 +78,8 @@ const topics: Topics = {
   startShooterPub: undefined
 };
 
-// const NT_CORE = NetworkTables.getInstanceByTeam(1188);
-const NT_CORE = NetworkTables.getInstanceByURI("localhost");
+const NT_CORE = NetworkTables.getInstanceByTeam(1188);
+// const NT_CORE = NetworkTables.getInstanceByURI("localhost");
 
 class App extends React.Component<{}, {
   connected: boolean,
@@ -98,8 +98,6 @@ class App extends React.Component<{}, {
   selectedClimbPosition: string,
   armUp: boolean,
   armUpToggle: boolean,
-  defenseModeEnabled: boolean,
-  activeDefenseToggled: boolean,
   selectedSourceLane: string,
   signalSelection: string,
   startShooter: boolean
@@ -123,8 +121,6 @@ class App extends React.Component<{}, {
       selectedClimbPosition: "LEFT_CLOSE",
       armUp: false,
       armUpToggle: false,
-      defenseModeEnabled: false,
-      activeDefenseToggled: false,
       selectedSourceLane: "CENTER",
       signalSelection: "NONE",
       startShooter: false

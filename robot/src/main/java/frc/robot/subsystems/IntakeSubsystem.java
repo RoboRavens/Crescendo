@@ -1,23 +1,11 @@
 package frc.robot.subsystems;
 
-import java.util.function.BooleanSupplier;
-
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkMax;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.ravenhardware.BufferedDigitalInput;
 import frc.robot.RobotMap;
-import frc.robot.commands.intake.IntakeCommand;
-import frc.robot.commands.intake.IntakeFeedCommand;
-import frc.robot.commands.intake.TrapIntakeCommand;
-import frc.robot.commands.intake.TrapLaunchCommand;
 import frc.robot.util.Constants.IntakeConstants;
 
 public class IntakeSubsystem extends SubsystemBase {
@@ -29,7 +17,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private TalonFX _intakeMotor = new TalonFX(RobotMap.INTAKE_MOTOR_CAN_ID);
 
   public void startIntake() {
-    _intakeMotor.set(IntakeConstants.INTAKE_SPARK_MAX_SPEED);
+    _intakeMotor.set(IntakeConstants.INTAKE_MOTOR_SPEED * -1);
   }
 
   public void setPowerManually(double speed) {
@@ -38,15 +26,15 @@ public class IntakeSubsystem extends SubsystemBase {
 
   // Stops all
   public void stop() {
-    _intakeMotor.set(IntakeConstants.INTAKE_SPARK_MAX_STOP);
+    _intakeMotor.set(IntakeConstants.INTAKE_MOTOR_STOP);
   }
 
   public void startTrapIntake() {
-    _intakeMotor.set(IntakeConstants.INTAKE_SPARK_MAX_SPEED * -1);
+    _intakeMotor.set(IntakeConstants.INTAKE_MOTOR_SPEED);
   }
 
   public void startTrapLaunch() {
-    _intakeMotor.set(IntakeConstants.INTAKE_SPARK_MAX_SPEED);
+    _intakeMotor.set(IntakeConstants.INTAKE_MOTOR_SPEED);
   }
 
   public boolean intakeHasPiece() {
@@ -57,28 +45,11 @@ public class IntakeSubsystem extends SubsystemBase {
     return _pieceSensorTrap.get();
   }
 
-  public Command createIntakeWithSensorCommand() {
-    return createDelayedEndCommand(new IntakeCommand(this), () -> this.trapHasPiece(), 1);
+  @Override
+  public void periodic(){
+    _pieceSensorIntake.maintainState();
+    _pieceSensorTrap.maintainState();
+    SmartDashboard.putBoolean("Intake Piece", this.intakeHasPiece());
+    SmartDashboard.putBoolean("Trap Piece", this.trapHasPiece());
   }
-
-  public Command createFeederWithSensorCommand() {
-    return createDelayedEndCommand(new IntakeFeedCommand(this), () -> !this.trapHasPiece(), 1);
-  }
-
-  public Command createTrapIntakeWithSensorCommand() {
-    return createDelayedEndCommand(new TrapIntakeCommand(this), () -> this.trapHasPiece(), 1);
-  }
-
-  public Command createTrapLauncherWithSensorCommand() {
-    return createDelayedEndCommand(new TrapLaunchCommand(this), () -> !this.trapHasPiece(), 1);
-  }
-
-  public Command createDelayedEndCommand(Command command, BooleanSupplier endCondition, double seconds) {
-    var endConditionCommand = new WaitUntilCommand(endCondition);
-
-    return new ParallelRaceGroup(
-        command,
-        new SequentialCommandGroup(endConditionCommand, new WaitCommand(seconds)));
-  }
-
 }

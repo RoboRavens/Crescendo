@@ -94,16 +94,16 @@
                     "isInitialGuess": false,
                     "translationConstrained": true,
                     "headingConstrained": true,
-                    "controlIntervalCount": 6
+                    "controlIntervalCount": 8
                 },
                 {
                     "x": 6.511023044586182,
                     "y": 2.271622896194458,
-                    "heading": 0,
+                    "heading": 0.2980057339805807,
                     "isInitialGuess": false,
                     "translationConstrained": true,
                     "headingConstrained": true,
-                    "controlIntervalCount": 14
+                    "controlIntervalCount": 12
                 },
                 {
                     "x": 7.774142265319824,
@@ -1578,19 +1578,7 @@
                 },
                 {
                     "scope": [
-                        3
-                    ],
-                    "type": "StopPoint"
-                },
-                {
-                    "scope": [
                         5
-                    ],
-                    "type": "StopPoint"
-                },
-                {
-                    "scope": [
-                        7
                     ],
                     "type": "StopPoint"
                 },

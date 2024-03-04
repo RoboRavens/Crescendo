@@ -10,6 +10,7 @@ import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
+import com.revrobotics.CANSparkMax;
 import com.swervedrivespecialties.swervelib.MechanicalConfiguration;
 import com.swervedrivespecialties.swervelib.MkModuleConfiguration;
 // import com.swervedrivespecialties.swervelib.Mk4SwerveModuleBuilder;
@@ -19,8 +20,6 @@ import com.swervedrivespecialties.swervelib.MotorType;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -30,15 +29,10 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.Robot;
-import frc.robot.util.Constants.Constants;
 import frc.robot.util.field.FieldConstants;
 // import frc.robot.commands.drivetrain.RavenSwerveControllerCommand;
 // import frc.robot.shuffleboard.DrivetrainDiagnosticsShuffleboard;
@@ -49,13 +43,9 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import com.revrobotics.CANSparkMax;
-
-import java.awt.geom.Point2D;
-
+// import frc.robot.commands.drivetrain.RavenSwerveControllerCommand;
+// import frc.robot.shuffleboard.DrivetrainDiagnosticsShuffleboard;
 import static frc.robot.RobotMap.*;
-
-import java.util.List;
 
 // Template From: https://github.com/SwerveDriveSpecialties/swerve-template/blob/master/src/main/java/frc/robot/subsystems/DrivetrainSubsystem.java
 public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
@@ -96,9 +86,9 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
    * <p>
    * This is a measure of how fast the robot should be able to drive in a straight line.
    */
-  public static final double MAX_VELOCITY_METERS_PER_SECOND = 6380.0 / 60.0 *
-          SdsModuleConfigurations.MK4_L1.getDriveReduction() *
-          SdsModuleConfigurations.MK4_L1.getWheelDiameter() * Math.PI;
+  public static final double MAX_VELOCITY_METERS_PER_SECOND = 5880 / 60 *
+          SdsModuleConfigurations.MK4I_L2.getDriveReduction() *
+          SdsModuleConfigurations.MK4I_L2.getWheelDiameter() * Math.PI;
   /**
    * The maximum angular velocity of the robot in radians per second.
    * <p>
@@ -175,11 +165,6 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
       .withSteerEncoderPort(BACK_RIGHT_MODULE_STEER_ENCODER)
       .withSteerOffset(BACK_RIGHT_MODULE_STEER_OFFSET)
       .build();
-    
-    SmartDashboard.putNumber("FL encoder", m_frontLeftModule.getSteerEncoder().getAbsoluteAngle());
-    SmartDashboard.putNumber("FR encoder", m_frontRightModule.getSteerEncoder().getAbsoluteAngle());
-    SmartDashboard.putNumber("BL encoder", m_backLeftModule.getSteerEncoder().getAbsoluteAngle());
-    SmartDashboard.putNumber("BR encoder", m_backRightModule.getSteerEncoder().getAbsoluteAngle());
 
     double swerveDriveDelay = 0;
     double swerveRotateDelay = 0.25;
@@ -223,7 +208,7 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
       new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
               new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
               new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
-              0.2, // Max module speed, in m/s
+              MAX_VELOCITY_METERS_PER_SECOND, // Max module speed, in m/s
               0.37, // Drive base radius in meters. Distance from robot center to furthest module.
               new ReplanningConfig() // Default path replanning config. See the API for the options here
       ),
@@ -264,7 +249,7 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
       }, new Pose2d(hardwarePose.getTranslation(), new Rotation2d()));
     // _driveCharacteristics.reset();
 
-    Robot.POSE_ESTIMATOR_SUBSYSTEM.zeroGyroscope();
+    // Robot.POSE_ESTIMATOR_SUBSYSTEM.zeroGyroscope();
   }
 
   public SwerveModulePosition[] getSwerveModulePositions() {
@@ -328,6 +313,11 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
     SmartDashboard.putNumber("Odometry Pose X", getPose().getX());
     SmartDashboard.putNumber("Odometry Pose Y", getPose().getY());
     SmartDashboard.putNumber("Odometry Pose Rotation (Degrees)", getPose().getRotation().getDegrees());
+
+    SmartDashboard.putNumber("FL encoder", Math.toDegrees(m_frontLeftModule.getSteerEncoder().getAbsoluteAngle()));
+    SmartDashboard.putNumber("FR encoder", Math.toDegrees(m_frontRightModule.getSteerEncoder().getAbsoluteAngle()));
+    SmartDashboard.putNumber("BL encoder", Math.toDegrees(m_backLeftModule.getSteerEncoder().getAbsoluteAngle()));
+    SmartDashboard.putNumber("BR encoder", Math.toDegrees(m_backRightModule.getSteerEncoder().getAbsoluteAngle()));
 
     /*_odometryFromKinematics.update(this.getGyroscopeRotation(), new SwerveModulePosition[] {
       m_frontLeftModule.getPosition(),
@@ -482,7 +472,7 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
         m_backRightModule.getPosition()
       }, targetPose);
 
-    Robot.POSE_ESTIMATOR_SUBSYSTEM.resetPosition(targetPose);
+    // Robot.POSE_ESTIMATOR_SUBSYSTEM.resetPosition(targetPose);
   }
 
   // used only by SwerveControllerCommand to follow trajectories
@@ -541,12 +531,10 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
     return new InstantCommand(() -> this.resetOdometry(trajectory.getInitialState().getTargetHolonomicPose()));    
   }
 
-  // @Override
   // public Command CreateFollowTrajectoryCommand(Trajectory trajectory) {
   //   return CreateFollowTrajectoryCommand(trajectory, false);
   // }
 
-  // @Override
   // public Command CreateFollowTrajectoryCommandSwerveOptimized(Trajectory trajectory) {
   //   return CreateFollowTrajectoryCommand(trajectory, true);
   // }
