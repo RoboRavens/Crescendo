@@ -6,6 +6,7 @@ package frc.robot.commands.elbow;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
+import frc.robot.util.Constants.ElbowConstants;
 
 public class ElbowGoToPositionCommand extends Command {
   private double _targetPosition;
@@ -18,7 +19,7 @@ public class ElbowGoToPositionCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    Robot.ELBOW_SUBSYSTEM.setTargetPosition(_targetPosition);
+    System.out.println("ElbowGoToPositionCommand: initialize");
     Robot.ELBOW_SUBSYSTEM.goToPosition(_targetPosition);
   }
 
@@ -30,11 +31,17 @@ public class ElbowGoToPositionCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     Robot.ELBOW_SUBSYSTEM.stopElbowRotation();
+    System.out.println("ElbowGoToPositionCommand: end" + (interrupted ? " interrupted": ""));
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    double elbowDiff = Math.abs(Robot.ELBOW_SUBSYSTEM.getPosition() - _targetPosition);
+    if(elbowDiff <= ElbowConstants.IS_AT_SETPOINT_BUFFER){
+      return true;
+    }
+
     return false;
   }
 }

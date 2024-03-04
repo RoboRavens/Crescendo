@@ -83,7 +83,7 @@ public class ElbowSubsystem extends SubsystemBase {
   }
 
   private void updateStaticFeedfoward() {
-    var angle = this.getRadiansFromPosition(this.getPosition());
+    var angle = this.getRadians();
     var staticFeedForward = this.getStaticFeedforwardFromRadians(angle);
 
     SmartDashboard.putNumber("Elbow Angle Degrees", Math.toDegrees(angle));
@@ -99,7 +99,7 @@ public class ElbowSubsystem extends SubsystemBase {
     return staticFeedForward;
   }
 
-  private double getRadiansFromPosition(double position) {
+  public static double getRadiansFromPosition(double position) {
     double unitsTo90 = ElbowConstants.ENCODER_POSITION_AT_VERTICAL - ElbowConstants.ENCODER_POSITION_AT_HORIZONTAL;
     double distanceFromHorizontal = ((position - ElbowConstants.ENCODER_POSITION_AT_HORIZONTAL) / unitsTo90);
     double angleInRadians = distanceFromHorizontal * (Math.PI / 2);
@@ -107,11 +107,11 @@ public class ElbowSubsystem extends SubsystemBase {
   }
 
   public double getRadians() {
-    double radians = this.getRadiansFromPosition(this.getPosition());
+    double radians = ElbowSubsystem.getRadiansFromPosition(this.getPosition());
     return radians;
   }
 
-  private double getPositionFromRadians(double angleInRadians) {
+  public static double getPositionFromRadians(double angleInRadians) {
     double distanceFromHorizontal =  angleInRadians / (Math.PI / 2);
     double unitsTo90 = ElbowConstants.ENCODER_POSITION_AT_VERTICAL - ElbowConstants.ENCODER_POSITION_AT_HORIZONTAL;
     double position = (distanceFromHorizontal * unitsTo90) + ElbowConstants.ENCODER_POSITION_AT_HORIZONTAL;
@@ -125,6 +125,7 @@ public class ElbowSubsystem extends SubsystemBase {
   public void goToPosition(double setpoint) {
     System.out.println("ElbowSubsystem: goToPosition " + setpoint);
     _elbowRotationMotor.setControl(new MotionMagicVoltage(setpoint));
+    this.setTargetPosition(setpoint);
   }
 
   public void stopElbowRotation() {
@@ -134,8 +135,9 @@ public class ElbowSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     this.updateStaticFeedfoward();
-    SmartDashboard.putNumber("Elbow RotationMotor pos", _elbowRotationMotor.getPosition().getValueAsDouble());
+    SmartDashboard.putNumber("Elbow Motor Position", _elbowRotationMotor.getPosition().getValueAsDouble());
     SmartDashboard.putBoolean("Elbow ForwardLimitSwitch", _forwardLimitSwitch.get());
+    SmartDashboard.putNumber("Elbow Target Position", this.targetPosition);
   }
 
   public double getPosition() {

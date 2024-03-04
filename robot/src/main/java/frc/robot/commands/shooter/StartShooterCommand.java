@@ -4,10 +4,8 @@
 
 package frc.robot.commands.shooter;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
-import frc.robot.util.Constants.ShooterConstants;
 
 public class StartShooterCommand extends Command {
   /** Used in autonomous modes to continuously run the shooter */

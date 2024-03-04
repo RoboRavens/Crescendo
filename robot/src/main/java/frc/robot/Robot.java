@@ -24,8 +24,11 @@ import frc.robot.commands.elbow.ElbowDefaultCommand;
 import frc.robot.commands.elbow.ElbowGoToPositionCommand;
 import frc.robot.commands.elbow.ElbowMoveManuallyCommand;
 import frc.robot.commands.intake.IntakeCommand;
-import frc.robot.commands.intake.IntakeFeedCommand;
+import frc.robot.commands.intake.FeedCommand;
+import frc.robot.commands.intake.FeedWithSensorCommand;
+import frc.robot.commands.intake.IntakeWithSensorCommand;
 import frc.robot.commands.shooter.ShootCommand;
+import frc.robot.commands.shooter.StartShooterCommand;
 import frc.robot.commands.wrist.WristDefaultCommand;
 import frc.robot.commands.wrist.WristGoToPositionCommand;
 import frc.robot.commands.wrist.WristMoveManuallyCommand;
@@ -117,10 +120,6 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("Shooter Rev Target State", SHOOTER_REV_TARGET_STATE.toString());
     SmartDashboard.putString("Climb Position Target State", CLIMB_POSITION_TARGET_STATE.toString());
     setNonButtonDependentOverallStates();
-    // TODO: Create a method that returns the wrist setpoint, and replace the below
-    // wrist rotation setpoints with that method
-    LimbSetpoint.SPEAKER_SCORING = new LimbSetpoint("", 0, 0);
-    LimbSetpoint.DEFENDED_SPEAKER_SCORING = new LimbSetpoint("", 0, 0);
   }
 
   /**
@@ -133,35 +132,42 @@ public class Robot extends TimedRobot {
     DRIVETRAIN_SUBSYSTEM.setDefaultCommand(DRIVETRAIN_DEFAULT_COMMAND);
     ELBOW_SUBSYSTEM.setDefaultCommand(ELBOW_DEFAULT_COMMAND);
     WRIST_SUBSYSTEM.setDefaultCommand(WRIST_DEFAULT_COMMAND);
-    
-    new Trigger(() -> DRIVE_CONTROLLER.getLeftBumper()
-        && (DRIVE_CONTROLLER.getRightBumper())
-        && (DRIVE_CONTROLLER.getYButton()))
-        .onTrue(new InstantCommand(() -> DRIVETRAIN_SUBSYSTEM.zeroGyroscope()));
-    AUTO_CHOOSER.ShowTab();
 
-    new Trigger(() -> SHOOTER_SUBSYSTEM.hasPiece() && DRIVE_CONTROLLER.getLeftBumper()).onTrue(new ShootCommand());
-    
+    SmartDashboard.putData(ELBOW_SUBSYSTEM);
+    SmartDashboard.putData(WRIST_SUBSYSTEM);
+
+    AUTO_CHOOSER.ShowTab();
     
     new Trigger(() -> DRIVE_CONTROLLER.getLeftTriggerAxis() > .1 && Robot.LIMELIGHT_SUBSYSTEM_ONE.getTv() == 1).whileTrue(DRIVETRAIN_AUTO_AIM_COMMAND);
 
     configureDriveControllerBindings();
+    configureAutomatedBehaviorBindings();
     configureButtonBindings();
     configureOverrideBindings();
   }
 
   private void configureDriveControllerBindings() {
-        // If the left trigger is held
+    // If the left trigger is held
     new Trigger(() -> DRIVE_CONTROLLER.getLeftTriggerAxis() > 0)
         .onTrue(new InstantCommand(() -> DRIVETRAIN_STATE = DrivetrainState.ROBOT_ALIGN))
         .onFalse(new InstantCommand(() -> DRIVETRAIN_STATE = DrivetrainState.FREEHAND));
+    
+    new Trigger(() -> DRIVE_CONTROLLER.getLeftBumper()
+        && (DRIVE_CONTROLLER.getRightBumper())
+        && (DRIVE_CONTROLLER.getYButton()))
+        .onTrue(new InstantCommand(() -> DRIVETRAIN_SUBSYSTEM.zeroGyroscope()));
     // If the robot is ready to shoot and we hold A, feed the note into the shooter
     //new Trigger(() -> StateManagement.isRobotReadyToShoot() && DRIVE_CONTROLLER.getAButton())
     //  .onTrue(new IntakeFeedCommand(INTAKE_SUBSYSTEM));
 
-    COMMAND_DRIVE_CONTROLLER.leftBumper().whileTrue(new IntakeCommand(INTAKE_SUBSYSTEM));
-    COMMAND_DRIVE_CONTROLLER.rightBumper().whileTrue(new ShootCommand());
+    COMMAND_DRIVE_CONTROLLER.leftBumper().whileTrue(new IntakeWithSensorCommand());
+    COMMAND_DRIVE_CONTROLLER.rightBumper().whileTrue(new FeedWithSensorCommand());
 	}
+
+  private void configureAutomatedBehaviorBindings() {
+    new Trigger(() -> Robot.SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON)
+      .whileTrue(new StartShooterCommand());
+  }
 
 	/** This function is run once each time the robot enters autonomous mode. */
   @Override
@@ -221,21 +227,21 @@ public class Robot extends TimedRobot {
 
   private void configureButtonBindings() {
     // BUTTON_CODE.getButton(Buttons.GROUND_PICKUP_AND_SPEAKER_SCORING).and(() -> LOAD_STATE == LoadState.EMPTY)
-    //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.GROUND_PICKUP));
+    //     .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.GROUND_PICKUP));
     // BUTTON_CODE.getButton(Buttons.GROUND_PICKUP_AND_SPEAKER_SCORING).and(() -> LOAD_STATE == LoadState.LOADED)
-    //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.SPEAKER_SCORING));
-    // BUTTON_CODE.getButton(Buttons.DEFENDED_SPEAKER_SCORING)
-    //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.DEFENDED_SPEAKER_SCORING));
-    // BUTTON_CODE.getButton(Buttons.AMP_SCORING)
-    //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.AMP_SCORING));
+    //     .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SPEAKER_SCORING));
+    BUTTON_CODE.getButton(Buttons.DEFENDED_SPEAKER_SCORING)
+      .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.DEFENDED_SPEAKER_SCORING));
+    BUTTON_CODE.getButton(Buttons.AMP_SCORING)
+      .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.AMP_SCORING));
     // BUTTON_CODE.getButton(Buttons.TRAP_SCORING)
-    //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.TRAP_SCORING));
-    // BUTTON_CODE.getButton(Buttons.AMP_AND_SPEAKER_SOURCE_INTAKE)
-    //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.AMP_AND_SPEAKER_SOURCE_INTAKE));
+    //     .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.TRAP_SCORING));
+    BUTTON_CODE.getButton(Buttons.AMP_AND_SPEAKER_SOURCE_INTAKE)
+      .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.AMP_AND_SPEAKER_SOURCE_INTAKE));
     // BUTTON_CODE.getButton(Buttons.TRAP_SOURCE_INTAKE)
-    //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.TRAP_SOURCE_INTAKE));
+    //     .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.TRAP_SOURCE_INTAKE));
     BUTTON_CODE.getButton(Buttons.GROUND_PICKUP_AND_SPEAKER_SCORING)
-      .whileTrue(new LimbGoToSetpointCommand(new LimbSetpoint("", -15, 0)));
+      .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.GROUND_PICKUP));
 
     BUTTON_CODE.getButton(Buttons.MOVE_ELBOW_UP)
         .whileTrue(new ElbowMoveManuallyCommand(Constants.MOVE_ELBOW_UP_MANUAL_POWER));

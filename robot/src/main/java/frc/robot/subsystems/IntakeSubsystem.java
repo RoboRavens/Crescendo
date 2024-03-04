@@ -17,7 +17,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private TalonFX _intakeMotor = new TalonFX(RobotMap.INTAKE_MOTOR_CAN_ID);
 
   public void startIntake() {
-    _intakeMotor.set(IntakeConstants.INTAKE_SPARK_MAX_SPEED * -1);
+    _intakeMotor.set(IntakeConstants.INTAKE_MOTOR_SPEED * -1);
   }
 
   public void setPowerManually(double speed) {
@@ -26,15 +26,15 @@ public class IntakeSubsystem extends SubsystemBase {
 
   // Stops all
   public void stop() {
-    _intakeMotor.set(IntakeConstants.INTAKE_SPARK_MAX_STOP);
+    _intakeMotor.set(IntakeConstants.INTAKE_MOTOR_STOP);
   }
 
   public void startTrapIntake() {
-    _intakeMotor.set(IntakeConstants.INTAKE_SPARK_MAX_SPEED);
+    _intakeMotor.set(IntakeConstants.INTAKE_MOTOR_SPEED);
   }
 
   public void startTrapLaunch() {
-    _intakeMotor.set(IntakeConstants.INTAKE_SPARK_MAX_SPEED);
+    _intakeMotor.set(IntakeConstants.INTAKE_MOTOR_SPEED);
   }
 
   public boolean intakeHasPiece() {

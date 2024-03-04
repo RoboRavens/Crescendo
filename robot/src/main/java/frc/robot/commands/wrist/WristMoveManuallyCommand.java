@@ -18,6 +18,7 @@ public class WristMoveManuallyCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    System.out.println("WristMoveManuallyCommand: initialize");
     Robot.WRIST_SUBSYSTEM.setPowerManually(_power);
   }
 
@@ -30,6 +31,7 @@ public class WristMoveManuallyCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    System.out.println("WristMoveManuallyCommand: end");
     Robot.WRIST_SUBSYSTEM.setPowerManually(0);
     Robot.WRIST_SUBSYSTEM.setTargetPosition(Robot.WRIST_SUBSYSTEM.getPosition());
   }

@@ -9,10 +9,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
 import frc.robot.util.Constants.IntakeConstants;
 
-public class FeederWithSensorCommand extends Command {
+public class FeedWithSensorCommand extends Command {
   private Timer _timer = new Timer();
 
-  public FeederWithSensorCommand() {
+  public FeedWithSensorCommand() {
     this.addRequirements(Robot.INTAKE_SUBSYSTEM);
   }
 
@@ -20,6 +20,8 @@ public class FeederWithSensorCommand extends Command {
   @Override
   public void initialize() {
     Robot.INTAKE_SUBSYSTEM.startIntake();
+    _timer.stop();
+    _timer.reset();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -36,14 +38,10 @@ public class FeederWithSensorCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (Robot.INTAKE_SUBSYSTEM.intakeHasPiece() == false) {
+    if (Robot.SHOOTER_SUBSYSTEM.hasPiece() == false) {
       _timer.start();
-      if (_timer.get() >= IntakeConstants.INTAKE_SPARK_DELAY) {
-        _timer.stop();
-        _timer.reset();
-        return true;
-      }
     }
-    return false;
+
+    return _timer.get() >= IntakeConstants.FEEDER_LAUNCH_MOTOR_STOP_BUFFER;
   }
 }
