@@ -32,10 +32,13 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.Robot;
+import frc.robot.util.field.FieldConstants;
 // import frc.robot.commands.drivetrain.RavenSwerveControllerCommand;
 // import frc.robot.shuffleboard.DrivetrainDiagnosticsShuffleboard;
 import frc.util.Deadband;
@@ -491,6 +494,15 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
 
   public double getPitch() {
     return m_navx.getPitch();
+  }
+
+  public double getDistanceFromSpeaker() {
+    if(Robot.allianceColor == Alliance.Blue) {
+      return Math.sqrt(Math.pow((getPoseX()-FieldConstants.BLUE_SPEAKER_X),2)+Math.pow((getPoseY()-FieldConstants.BLUE_SPEAKER_Y),2));
+    }
+    else {
+      return Math.sqrt(Math.pow((getPoseX()-FieldConstants.RED_SPEAKER_X),2)+Math.pow((getPoseY()-FieldConstants.RED_SPEAKER_Y),2));
+    }
   }
 
   // @Override
