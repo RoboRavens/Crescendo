@@ -28,6 +28,7 @@ public class ElbowConstants {
   public static final double RADIANS_SOURCE_LOAD = Math.toRadians(DEGREES_SOURCE_LOAD);
   public static final double RADIANS_TRAP_SCORE = Math.toRadians(DEGREES_TRAP_SCORE);
   public static final double RADIANS_START_CONFIG = Math.toRadians(DEGREES_START_CONFIG);
+  public static final double IS_AT_SETPOINT_BUFFER = 0.5;
 
 
   public static double MOTOR_POWER_FEEDFORWARD_AT_HORIZONTAL = .025;
@@ -35,9 +36,9 @@ public class ElbowConstants {
 
   public static Slot0Configs getSlot0Configs() {
     var slot0Config = new Slot0Configs();
-    slot0Config.kP = Constants.ELBOW_PID.kP;
-    slot0Config.kI = Constants.ELBOW_PID.kI;
-    slot0Config.kD = Constants.ELBOW_PID.kD;
+    slot0Config.kP = 1;
+    slot0Config.kI = 0;
+    slot0Config.kD = 0;
     return slot0Config;
   }
 

@@ -6,6 +6,7 @@ package frc.robot.commands.elbow;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
+import frc.robot.util.Constants.ElbowConstants;
 
 public class ElbowGoToPositionCommand extends Command {
   private double _targetPosition;
@@ -37,7 +38,7 @@ public class ElbowGoToPositionCommand extends Command {
   @Override
   public boolean isFinished() {
     double elbowDiff = Math.abs(Robot.ELBOW_SUBSYSTEM.getPosition() - _targetPosition);
-    if(elbowDiff <= 0.5){
+    if(elbowDiff <= ElbowConstants.IS_AT_SETPOINT_BUFFER){
       return true;
     }
 

@@ -71,7 +71,7 @@ public class ElbowSubsystem extends SubsystemBase {
       _elbowRotationMotor.setPosition(newPosition);
     }, this).ignoringDisable(true);
 
-    // new Trigger(() -> _forwardLimitSwitch.get()).onFalse(resetPositionCommand);
+    new Trigger(() -> _forwardLimitSwitch.get()).onFalse(resetPositionCommand);
   }
 
   public void setTargetPosition(double position) {

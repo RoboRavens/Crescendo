@@ -9,12 +9,13 @@ import java.util.function.BooleanSupplier;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ScheduleCommand;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Robot;
+import frc.robot.commands.elbow.ElbowDefaultCommand;
 import frc.robot.commands.elbow.ElbowGoToPositionCommand;
+import frc.robot.commands.wrist.WristDefaultCommand;
 import frc.robot.commands.wrist.WristGoToPositionCommand;
-import frc.robot.subsystems.ElbowSubsystem;
 import frc.robot.util.Constants.ElbowConstants;
 import frc.robot.util.Constants.WristConstants;
 import frc.robot.util.arm.LimbSetpoint;
@@ -22,7 +23,7 @@ import frc.robot.util.arm.LimbSetpoint;
 public class LimbGoToSetpointCommand extends Command {
   /** Creates a new LimbGoToSetpoint. */
   private LimbSetpoint _targetLimbSetPoint;
-  public LimbGoToSetpointCommand(LimbSetpoint targetLimbSetPoint) {
+  private LimbGoToSetpointCommand(LimbSetpoint targetLimbSetPoint) {
     // Use addRequirements() here to declare subsystem dependencies.
     _targetLimbSetPoint = targetLimbSetPoint;
     addRequirements(Robot.ELBOW_SUBSYSTEM, Robot.WRIST_SUBSYSTEM);
@@ -35,7 +36,7 @@ public class LimbGoToSetpointCommand extends Command {
     Robot.ELBOW_SUBSYSTEM.goToPosition(_targetLimbSetPoint.getElbowRotationPosition());
     Robot.WRIST_SUBSYSTEM.goToPosition(_targetLimbSetPoint.getWristRotationPosition());
     String name = _targetLimbSetPoint.getName();
-    System.out.println(name);
+    System.out.println("--- Limbsetpoint: " + name);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -57,7 +58,7 @@ public class LimbGoToSetpointCommand extends Command {
   public boolean isFinished() {
     double elbowDiff = Math.abs(Robot.ELBOW_SUBSYSTEM.getPosition() - _targetLimbSetPoint.getElbowRotationPosition());
     double wristDiff = Math.abs(Robot.WRIST_SUBSYSTEM.getPosition() - _targetLimbSetPoint.getWristRotationPosition());
-    if(elbowDiff <= 0.1 && wristDiff <= 0.1){
+    if(elbowDiff <= ElbowConstants.IS_AT_SETPOINT_BUFFER && wristDiff <= WristConstants.IS_AT_SETPOINT_BUFFER){
       return true;
     }
     return false;
@@ -70,23 +71,28 @@ public class LimbGoToSetpointCommand extends Command {
       var wristTargetDegrees = targetLimbSetPoint.getWristRotationDegrees();
       var wristCurrentDegrees = Math.toDegrees(Robot.WRIST_SUBSYSTEM.getRadians());
 
-      // going up through the threshold
-      if (elbowTargetDegrees < 0 && elbowCurrentDegrees > 0) {
-        return true;
+      System.out.println("elbowTargetDegrees: " + elbowTargetDegrees);
+      System.out.println("elbowCurrentDegrees: " + elbowCurrentDegrees);
+      System.out.println("wristTargetDegrees: " + wristTargetDegrees);
+      System.out.println("wristCurrentDegrees: " + wristCurrentDegrees);
+
+      // going down through the threshold
+      if (elbowCurrentDegrees > 0 && elbowTargetDegrees < 0) {
+        return wristCurrentDegrees <= 0;
       }
       
-      // going down through the threshold
-      if (elbowTargetDegrees > 0 && elbowCurrentDegrees < 0) {
-        return true;
+      // going up through the threshold
+      if (elbowCurrentDegrees < 0 && elbowTargetDegrees > 0 ) {
+        return wristTargetDegrees <= 0;
       }
       
       return false;
     };
 
     var advancedMovementCommand = new SequentialCommandGroup(
-      new InstantCommand(() -> System.out.println("Running advancedMovementCommand")),
-      new WristGoToPositionCommand(WristConstants.DEGREES_FLOOR_PICKUP),
-      new ElbowGoToPositionCommand(targetLimbSetPoint.getElbowRotationPosition()),
+      new InstantCommand(() -> System.out.println("---Running advancedMovementCommand---")),
+      new ParallelDeadlineGroup(new WristGoToPositionCommand(WristConstants.DEGREES_FLOOR_PICKUP), new ElbowDefaultCommand()),
+      new ParallelDeadlineGroup(new ElbowGoToPositionCommand(targetLimbSetPoint.getElbowRotationPosition()), new WristDefaultCommand()),
       new LimbGoToSetpointCommand(targetLimbSetPoint),
       new InstantCommand(() -> System.out.println("Finished advancedMovementCommand"))
     );

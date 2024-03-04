@@ -24,7 +24,7 @@ public class LimbSetpoint {
     private double _elbowRotationDegrees;
     private double _wristRotationDegrees;
 
-    private LimbSetpoint(String name, double elbowRotationDegrees, double wristRotationDegrees) {
+    public LimbSetpoint(String name, double elbowRotationDegrees, double wristRotationDegrees) {
         _name = name;
         _elbowRotationDegrees = elbowRotationDegrees;
         _wristRotationDegrees = wristRotationDegrees * -1;
@@ -39,7 +39,7 @@ public class LimbSetpoint {
     }
 
     public double getWristRotationDegrees() {
-        return _elbowRotationDegrees;
+        return _wristRotationDegrees;
     }
     
     public double getElbowRotationPosition() {

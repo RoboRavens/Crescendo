@@ -6,6 +6,7 @@ package frc.robot.commands.wrist;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
+import frc.robot.util.Constants.WristConstants;
 
 public class WristGoToPositionCommand extends Command {
   private double _targetPosition;
@@ -37,7 +38,7 @@ public class WristGoToPositionCommand extends Command {
   @Override
   public boolean isFinished() {
     double wristDiff = Math.abs(Robot.WRIST_SUBSYSTEM.getPosition() - _targetPosition);
-    if(wristDiff <= 0.1){
+    if(wristDiff <= WristConstants.IS_AT_SETPOINT_BUFFER){
       return true;
     }
 
