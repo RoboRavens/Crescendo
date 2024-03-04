@@ -106,7 +106,7 @@ public class Robot extends TimedRobot {
 
 
   @Override
-  public void robotPeriodic() { 
+  public void robotPeriodic() {
     SmartDashboard.putString("Alliance Color", allianceColor.name());
     CommandScheduler.getInstance().run();
     setDriverStationData();
@@ -120,8 +120,8 @@ public class Robot extends TimedRobot {
     setNonButtonDependentOverallStates();
     // TODO: Create a method that returns the wrist setpoint, and replace the below
     // wrist rotation setpoints with that method
-    LimbSetpoint.SPEAKER_SCORING = new LimbSetpoint("", 0, (int)Math.round(SHOOTER_SUBSYSTEM.getShooterAngleMapDown(DRIVETRAIN_SUBSYSTEM.getDistanceFromSpeaker())));
-    LimbSetpoint.DEFENDED_SPEAKER_SCORING = new LimbSetpoint("", 0, (int)Math.round(SHOOTER_SUBSYSTEM.getShooterAngleMapUp(DRIVETRAIN_SUBSYSTEM.getDistanceFromSpeaker())));
+    LimbSetpoint.SPEAKER_SCORING = new LimbSetpoint("", 0, 0);
+    LimbSetpoint.DEFENDED_SPEAKER_SCORING = new LimbSetpoint("", 0, 0);
   }
 
   /**
