@@ -14,7 +14,7 @@ public class SixNotePathPlannerAutoCommand extends Command {
   public static Command getAutoMode() {
     Pose2d startingPose = PathPlannerAuto.getStaringPoseFromAutoFile("SixNoteTest2");
     Robot.DRIVETRAIN_SUBSYSTEM.resetOdometry(startingPose);
-    return new PathPlannerAuto("SixNoteTest2");
+    return new PathPlannerAuto("6 Note Path");
 
     // PathPlannerPath[] paths = new PathPlannerPath[]{
     //   PathPlannerPath.fromPathFile("6Note1"),
