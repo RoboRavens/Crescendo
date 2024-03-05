@@ -4,12 +4,11 @@
 
 package frc.robot.util.field;
 
-/** Add your docs here. */
 public enum Alliance {
     /** Red alliance. */
     Red,
     /** Blue alliance. */
     Blue,
     Neither
-    }
+}
 
