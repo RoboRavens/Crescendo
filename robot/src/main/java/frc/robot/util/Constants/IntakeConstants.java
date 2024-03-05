@@ -8,8 +8,11 @@ package frc.robot.util.Constants;
 public class IntakeConstants {
 
     public static final double INTAKE_MOTOR_SPEED = .5;
+    public static final double INTAKE_FEEDER_SPEED = 1;
     public static final double INTAKE_MOTOR_STOP = 0;
     public static final double FEEDER_LAUNCH_MOTOR_STOP_BUFFER = .5;
     public static final double TRAP_INTAKE_MOTOR_STOP_BUFFER = .5;
     public static final double TRAP_LAUNCH_MOTOR_STOP_BUFFER = .5;
+    public static final double MIN_INTAKE_RPM = 6000;
+    public static final double MAX_INTAKE_RPM = 8000;
 }

@@ -20,6 +20,10 @@ public class IntakeSubsystem extends SubsystemBase {
     _intakeMotor.set(IntakeConstants.INTAKE_MOTOR_SPEED * -1);
   }
 
+  public void startIntakeFeeder() {
+    _intakeMotor.set(IntakeConstants.INTAKE_FEEDER_SPEED * -1);
+  }
+
   public void setPowerManually(double speed) {
     _intakeMotor.set(speed);
 }

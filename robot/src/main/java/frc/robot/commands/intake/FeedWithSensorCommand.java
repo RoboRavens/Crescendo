@@ -19,7 +19,7 @@ public class FeedWithSensorCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    Robot.INTAKE_SUBSYSTEM.startIntake();
+    Robot.INTAKE_SUBSYSTEM.startIntakeFeeder();
     _timer.stop();
     _timer.reset();
   }

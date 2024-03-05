@@ -34,7 +34,8 @@ public class ButtonCode {
 
 	// "toggle" is in place for switch
 	public enum Toggle {
-		ARM_UP(1);
+		ARM_UP(1),
+		START_SHOOTER(2);
 
 		private final int toggle;
 

@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.controls.ButtonCode;
 import frc.controls.ButtonCode.Buttons;
+import frc.controls.ButtonCode.Toggle;
 import frc.robot.commands.compound.LimbGoToSetpointCommand;
 import frc.robot.commands.elbow.ElbowMoveManuallyCommand;
 import frc.robot.commands.drivetrain.DrivetrainAutoAimCommand;
@@ -36,6 +37,7 @@ import frc.robot.subsystems.AutoChooserSubsystemReact;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.ElbowSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LEDsSubsystem24;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.PoseEstimatorSubsystem;
 import frc.robot.subsystems.ReactDashSubsystem;
@@ -75,7 +77,7 @@ public class Robot extends TimedRobot {
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_THREE = new LimelightSubsystem("limelight-three");
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_FOUR = new LimelightSubsystem("limelight-four");
   public static final DrivetrainSubsystem DRIVETRAIN_SUBSYSTEM = new DrivetrainSubsystem();
-  // public static final PoseEstimatorSubsystem POSE_ESTIMATOR_SUBSYSTEM = new PoseEstimatorSubsystem();
+  public static final PoseEstimatorSubsystem POSE_ESTIMATOR_SUBSYSTEM = new PoseEstimatorSubsystem();
   public static final CommandXboxController COMMAND_DRIVE_CONTROLLER = new CommandXboxController(0);
   public static final XboxController DRIVE_CONTROLLER = COMMAND_DRIVE_CONTROLLER.getHID();
   public static DriverStation.Alliance allianceColor = Alliance.Blue;
@@ -88,6 +90,8 @@ public class Robot extends TimedRobot {
   public static final ShooterSubsystem SHOOTER_SUBSYSTEM = new ShooterSubsystem();
   public static final ElbowSubsystem ELBOW_SUBSYSTEM = new ElbowSubsystem();
   public static final WristSubsystem WRIST_SUBSYSTEM = new WristSubsystem();
+
+  public LEDsSubsystem24 ledsSubsystem24 = new LEDsSubsystem24();
 
   // DEFAULT COMMANDS
   public static final DrivetrainDefaultCommand DRIVETRAIN_DEFAULT_COMMAND = new DrivetrainDefaultCommand();
@@ -120,6 +124,9 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("Shooter Rev Target State", SHOOTER_REV_TARGET_STATE.toString());
     SmartDashboard.putString("Climb Position Target State", CLIMB_POSITION_TARGET_STATE.toString());
     setNonButtonDependentOverallStates();
+
+//    ledsSubsystem24.setColor(127, 127, 0);
+    ledsSubsystem24.rainbowLeds();
   }
 
   /**
@@ -167,6 +174,9 @@ public class Robot extends TimedRobot {
   private void configureAutomatedBehaviorBindings() {
     new Trigger(() -> Robot.SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON)
       .whileTrue(new StartShooterCommand());
+
+    // new Trigger(() -> Robot.LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.AMP_SIGNAL)
+    //   .whileTrue(new )
   }
 
 	/** This function is run once each time the robot enters autonomous mode. */
@@ -252,6 +262,8 @@ public class Robot extends TimedRobot {
     BUTTON_CODE.getButton(Buttons.MOVE_WRIST_DOWN)
         .whileTrue(new WristMoveManuallyCommand(Constants.MOVE_WRIST_DOWN_MANUAL_POWER));
 
+    BUTTON_CODE.getSwitch(Toggle.START_SHOOTER)
+      .whileTrue(new StartShooterCommand());
   }
 
   private void setNonButtonDependentOverallStates() {
