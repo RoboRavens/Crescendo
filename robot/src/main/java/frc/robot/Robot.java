@@ -125,7 +125,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("Climb Position Target State", CLIMB_POSITION_TARGET_STATE.toString());
     setNonButtonDependentOverallStates();
 
-//    ledsSubsystem24.setColor(127, 127, 0);
+//  ledsSubsystem24.setColor(127, 127, 0);
     ledsSubsystem24.rainbowLeds();
   }
 
