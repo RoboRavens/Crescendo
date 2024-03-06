@@ -8,31 +8,27 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
 import frc.robot.subsystems.WristSubsystem;
 
-public class WristDefaultCommand extends Command {
-  /** Creates a new WristDefaultCommand. */
-  public WristDefaultCommand() {
+public class WristGoToSpeakerAngleCommand extends Command {
+  /** Creates a new WristGoToSpeakerAngleCommand. */
+  public WristGoToSpeakerAngleCommand() {
+    // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(Robot.WRIST_SUBSYSTEM);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    System.out.println("WristDefaultCommand initialize");
-    // var positionToHold = Robot.WRIST_SUBSYSTEM.getPosition();
-    // Robot.WRIST_SUBSYSTEM.goToPosition(positionToHold);
-    Robot.WRIST_SUBSYSTEM.goToPosition(Robot.WRIST_SUBSYSTEM.getTargetPosition());
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    
+    double shooterAngleRadians = Math.toRadians(Robot.SHOOTER_SUBSYSTEM.getShooterAngleMapDown(Robot.DRIVETRAIN_SUBSYSTEM.getDistanceFromSpeaker()));
+    Robot.WRIST_SUBSYSTEM.goToPosition(WristSubsystem.getPositionFromRadians(shooterAngleRadians));
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    System.out.println("WristDefaultCommand end");
     Robot.WRIST_SUBSYSTEM.setPowerManually(0);
   }
 

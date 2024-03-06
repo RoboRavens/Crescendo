@@ -35,7 +35,8 @@ public class ButtonCode {
 	// "toggle" is in place for switch
 	public enum Toggle {
 		ARM_UP(1),
-		START_SHOOTER(2);
+		START_SHOOTER(2), 
+		SHOOTER_ANGLE_FROM_DISTANCE(3);
 
 		private final int toggle;
 

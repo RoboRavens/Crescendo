@@ -5,6 +5,7 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -97,11 +98,11 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         }
 
         updateOdometry();
-        var pose = getCurrentPose();
-        _field.setRobotPose(pose);
-        SmartDashboard.putNumber("PoseEstimator X", pose.getX());
-        SmartDashboard.putNumber("PoseEstimator Y", pose.getY());
-        SmartDashboard.putNumber("PoseEstimator Rotation (Degrees)", pose.getRotation().getDegrees());
+        // var pose = getCurrentPose();
+        // _field.setRobotPose(pose);
+        // SmartDashboard.putNumber("PoseEstimator X", pose.getX());
+        // SmartDashboard.putNumber("PoseEstimator Y", pose.getY());
+        // SmartDashboard.putNumber("PoseEstimator Rotation (Degrees)", pose.getRotation().getDegrees());
         SmartDashboard.putString("Limelight 1 Pose", Robot.LIMELIGHT_SUBSYSTEM_ONE.getPureLimelightRobotPose().toString());
         SmartDashboard.putString("Limelight 2 Pose", Robot.LIMELIGHT_SUBSYSTEM_TWO.getPureLimelightRobotPose().toString());
         SmartDashboard.putString("Limelight 3 Pose", Robot.LIMELIGHT_SUBSYSTEM_THREE.getPureLimelightRobotPose().toString());
@@ -140,7 +141,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         Robot.DRIVETRAIN_SUBSYSTEM.m_kinematics,
         Robot.DRIVETRAIN_SUBSYSTEM.getGyroscopeRotation(),
         Robot.DRIVETRAIN_SUBSYSTEM.getSwerveModulePositions(),
-        Robot.DRIVETRAIN_SUBSYSTEM.getPose(),
+        new Pose2d(new Translation2d(0, 0), new Rotation2d(0)),
         _stateStdDevs,
         _visionStdDevs);
 

@@ -32,6 +32,7 @@ import frc.robot.commands.shooter.ShootCommand;
 import frc.robot.commands.shooter.StartShooterCommand;
 import frc.robot.commands.wrist.WristDefaultCommand;
 import frc.robot.commands.wrist.WristGoToPositionCommand;
+import frc.robot.commands.wrist.WristGoToSpeakerAngleCommand;
 import frc.robot.commands.wrist.WristMoveManuallyCommand;
 import frc.robot.subsystems.AutoChooserSubsystemReact;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -39,6 +40,7 @@ import frc.robot.subsystems.ElbowSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LEDsSubsystem24;
 import frc.robot.subsystems.LimelightSubsystem;
+import frc.robot.subsystems.PathPlannerConfigurator;
 import frc.robot.subsystems.PoseEstimatorSubsystem;
 import frc.robot.subsystems.ReactDashSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -71,13 +73,14 @@ import frc.util.StateManagement.TrapSourceLaneTargetState;
  * directory.
  */
 public class Robot extends TimedRobot {
-  public static final LimelightHelpers LIMELIGHT_HELPERS = new LimelightHelpers();
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_ONE = new LimelightSubsystem("limelight-pick");
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_TWO = new LimelightSubsystem("limelight-front");
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_THREE = new LimelightSubsystem("limelight-backl");
   public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_FOUR = new LimelightSubsystem("limelight-backr");
   public static final DrivetrainSubsystem DRIVETRAIN_SUBSYSTEM = new DrivetrainSubsystem();
   public static final PoseEstimatorSubsystem POSE_ESTIMATOR_SUBSYSTEM = new PoseEstimatorSubsystem();
+  public static final LimelightHelpers LIMELIGHT_HELPERS = new LimelightHelpers();
+
   public static final CommandXboxController COMMAND_DRIVE_CONTROLLER = new CommandXboxController(0);
   public static final XboxController DRIVE_CONTROLLER = COMMAND_DRIVE_CONTROLLER.getHID();
   public static DriverStation.Alliance allianceColor = Alliance.Blue;
@@ -90,8 +93,8 @@ public class Robot extends TimedRobot {
   public static final ShooterSubsystem SHOOTER_SUBSYSTEM = new ShooterSubsystem();
   public static final ElbowSubsystem ELBOW_SUBSYSTEM = new ElbowSubsystem();
   public static final WristSubsystem WRIST_SUBSYSTEM = new WristSubsystem();
-
-  public LEDsSubsystem24 ledsSubsystem24 = new LEDsSubsystem24();
+  public static final LEDsSubsystem24 ledsSubsystem24 = new LEDsSubsystem24();
+  public static final PathPlannerConfigurator PATH_PLANNER_CONFIGURATOR = new PathPlannerConfigurator();
 
   // DEFAULT COMMANDS
   public static final DrivetrainDefaultCommand DRIVETRAIN_DEFAULT_COMMAND = new DrivetrainDefaultCommand();
@@ -123,6 +126,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("Arm Up Target State", ARM_UP_TARGET_STATE.toString());
     SmartDashboard.putString("Shooter Rev Target State", SHOOTER_REV_TARGET_STATE.toString());
     SmartDashboard.putString("Climb Position Target State", CLIMB_POSITION_TARGET_STATE.toString());
+    SmartDashboard.putNumber("Distance from Speaker", Robot.DRIVETRAIN_SUBSYSTEM.getDistanceFromSpeaker());
     setNonButtonDependentOverallStates();
 
 //  ledsSubsystem24.setColor(127, 127, 0);
@@ -175,8 +179,19 @@ public class Robot extends TimedRobot {
     new Trigger(() -> Robot.SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON)
       .whileTrue(new StartShooterCommand());
 
-    /*new Trigger(() -> Robot.LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.AMP_SIGNAL)
-      .whileTrue(new )*/
+    // Blue
+    new Trigger(() -> Robot.LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.AMP_SIGNAL)
+      .whileTrue(new InstantCommand(() -> ledsSubsystem24.setColor(37, 94, 186)));
+
+    // Orange
+    new Trigger(() -> Robot.LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.CO_OP_SIGNAL)
+      .whileTrue(new InstantCommand(() -> ledsSubsystem24.setColor(230, 151, 16)));
+
+    // Green
+    new Trigger(() -> 
+      Robot.SHOOTER_SUBSYSTEM.hasPiece()
+      && Robot.LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.NONE)
+      .whileTrue(new InstantCommand(() -> ledsSubsystem24.setColor(50, 168, 82)));
   }
 
 	/** This function is run once each time the robot enters autonomous mode. */
@@ -264,6 +279,9 @@ public class Robot extends TimedRobot {
 
     BUTTON_CODE.getSwitch(Toggle.START_SHOOTER)
       .whileTrue(new StartShooterCommand());
+
+    BUTTON_CODE.getSwitch(Toggle.SHOOTER_ANGLE_FROM_DISTANCE)
+      .whileTrue(new WristGoToSpeakerAngleCommand());
   }
 
   private void setNonButtonDependentOverallStates() {

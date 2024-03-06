@@ -26,7 +26,7 @@ public class IntakeWithSensorCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    Robot.INTAKE_SUBSYSTEM.stopMotorWithPID();
+    Robot.INTAKE_SUBSYSTEM.stop();
   }
 
   // Returns true when the command should end.

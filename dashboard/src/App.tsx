@@ -407,6 +407,7 @@ class App extends React.Component<{}, {
 
   handleSignalSelection(type: string) {
     const currentSelectedButton = window.document.getElementById(type);
+    console.log(currentSelectedButton)
     if (currentSelectedButton != null) currentSelectedButton.style.backgroundColor = "#43a5ff";
     const previouslySelectedButton = window.document.getElementById(this.state.signalSelection)
     if (previouslySelectedButton != null) {
