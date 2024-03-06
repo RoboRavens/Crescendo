@@ -102,6 +102,9 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("PoseEstimator X", pose.getX());
         SmartDashboard.putNumber("PoseEstimator Y", pose.getY());
         SmartDashboard.putNumber("PoseEstimator Rotation (Degrees)", pose.getRotation().getDegrees());
+        SmartDashboard.putString("Limelight 1 Pose", Robot.LIMELIGHT_SUBSYSTEM_ONE.getPureLimelightRobotPose().toString());
+        SmartDashboard.putString("Limelight 2 Pose", Robot.LIMELIGHT_SUBSYSTEM_TWO.getPureLimelightRobotPose().toString());
+        SmartDashboard.putString("Limelight 3 Pose", Robot.LIMELIGHT_SUBSYSTEM_THREE.getPureLimelightRobotPose().toString());
     }
 
     private static Matrix<N3, N1> GetVisionStdDevs(double ta) {

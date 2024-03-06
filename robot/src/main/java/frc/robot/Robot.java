@@ -72,10 +72,10 @@ import frc.util.StateManagement.TrapSourceLaneTargetState;
  */
 public class Robot extends TimedRobot {
   public static final LimelightHelpers LIMELIGHT_HELPERS = new LimelightHelpers();
-  public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_ONE = new LimelightSubsystem("limelight");
-  public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_TWO = new LimelightSubsystem("limelight-two");
-  public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_THREE = new LimelightSubsystem("limelight-three");
-  public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_FOUR = new LimelightSubsystem("limelight-four");
+  public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_ONE = new LimelightSubsystem("limelight-pick");
+  public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_TWO = new LimelightSubsystem("limelight-front");
+  public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_THREE = new LimelightSubsystem("limelight-backl");
+  public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_FOUR = new LimelightSubsystem("limelight-backr");
   public static final DrivetrainSubsystem DRIVETRAIN_SUBSYSTEM = new DrivetrainSubsystem();
   public static final PoseEstimatorSubsystem POSE_ESTIMATOR_SUBSYSTEM = new PoseEstimatorSubsystem();
   public static final CommandXboxController COMMAND_DRIVE_CONTROLLER = new CommandXboxController(0);
@@ -175,8 +175,8 @@ public class Robot extends TimedRobot {
     new Trigger(() -> Robot.SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON)
       .whileTrue(new StartShooterCommand());
 
-    // new Trigger(() -> Robot.LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.AMP_SIGNAL)
-    //   .whileTrue(new )
+    /*new Trigger(() -> Robot.LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.AMP_SIGNAL)
+      .whileTrue(new )*/
   }
 
 	/** This function is run once each time the robot enters autonomous mode. */
@@ -292,17 +292,17 @@ public class Robot extends TimedRobot {
     // // set our arm position to the ground setpoint
     // new Trigger(() -> OVERALL_STATE == OverallState.SEEKING_NOTE
     //     && INTAKE_TARGET_STATE == IntakeTargetState.GROUND)
-    //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.GROUND_PICKUP));
+    //     .whileTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.GROUND_PICKUP));
     // // If we are seeking a note and intend to intake a regular note from the source,
     // // set our arm position to the source setpoint
     // new Trigger(() -> OVERALL_STATE == OverallState.SEEKING_NOTE
     //     && INTAKE_TARGET_STATE == IntakeTargetState.SOURCE)
-    //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.AMP_AND_SPEAKER_SOURCE_INTAKE));
+    //     .whileTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.AMP_AND_SPEAKER_SOURCE_INTAKE));
     // // If we are seeking a note and intend to intake a note from the source to score
     // // in the trap, set our arm position to the source trap setpoint
     // new Trigger(() -> OVERALL_STATE == OverallState.SEEKING_NOTE
     //     && INTAKE_TARGET_STATE == IntakeTargetState.TRAP_SOURCE)
-    //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.TRAP_SOURCE_INTAKE));
+    //     .whileTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.TRAP_SOURCE_INTAKE));
     // // If the robot's overall state is loading the note, flash our
     // // LEDs and start the intake
     // new Trigger(() -> OVERALL_STATE == OverallState.LOADING)
@@ -313,23 +313,23 @@ public class Robot extends TimedRobot {
     // // set our arm position to the amp setpoint
     // new Trigger(() -> OVERALL_STATE == OverallState.LOADED_TRANSIT 
     //     && SCORING_TARGET_STATE == ScoringTargetState.AMP)
-    //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.AMP_SCORING));
+    //     .whileTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.AMP_SCORING));
     // // If the robot is loaded with a note and we intend to score in the trap,
     // // set our arm position to the trap setpoint
     // new Trigger(() -> OVERALL_STATE == OverallState.LOADED_TRANSIT
     //     && SCORING_TARGET_STATE == ScoringTargetState.TRAP)
-    //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.TRAP_SCORING));
+    //     .whileTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.TRAP_SCORING));
     // // If the robot is loaded with a note and we intend to score in the speaker,
     // // set our arm position to the speaker setpoint
     // new Trigger(() -> OVERALL_STATE == OverallState.LOADED_TRANSIT
     //     && SCORING_TARGET_STATE == ScoringTargetState.SPEAKER
     //     && ARM_UP_TARGET_STATE == ArmUpTargetState.FREE)
-    //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.SPEAKER_SCORING));
+    //     .whileTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SPEAKER_SCORING));
     // // Otherwise, if the arm-up toggle is on,
     // // set our arm position to the "up configuration"
     // new Trigger(() -> OVERALL_STATE == OverallState.LOADED_TRANSIT
     //     && SCORING_TARGET_STATE == ScoringTargetState.SPEAKER
     //     && ARM_UP_TARGET_STATE == ArmUpTargetState.UP)
-    //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.SPEAKER_SCORING_ARM_UP));
+    //     .whileTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SPEAKER_SCORING_ARM_UP));
   }
 }

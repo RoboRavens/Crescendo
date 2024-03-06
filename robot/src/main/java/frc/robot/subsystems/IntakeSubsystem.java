@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -7,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.ravenhardware.BufferedDigitalInput;
 import frc.robot.RobotMap;
 import frc.robot.util.Constants.IntakeConstants;
+import frc.robot.util.Constants.ShooterConstants;
 
 public class IntakeSubsystem extends SubsystemBase {
 
@@ -15,7 +18,14 @@ public class IntakeSubsystem extends SubsystemBase {
   private BufferedDigitalInput _pieceSensorTrap = new BufferedDigitalInput(RobotMap.INTAKE_TRAP_SENSOR_DIO_PORT, 3, false,
       false);
   private TalonFX _intakeMotor = new TalonFX(RobotMap.INTAKE_MOTOR_CAN_ID);
+  final VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
 
+  public IntakeSubsystem() {
+    var leftSlot0Configs = new Slot0Configs();
+        leftSlot0Configs.kP = 2;
+    _intakeMotor.getConfigurator().apply(leftSlot0Configs);
+  }
+  
   public void startIntake() {
     _intakeMotor.set(IntakeConstants.INTAKE_MOTOR_SPEED * -1);
   }
@@ -27,6 +37,10 @@ public class IntakeSubsystem extends SubsystemBase {
   public void setPowerManually(double speed) {
     _intakeMotor.set(speed);
 }
+
+  public void stopMotorWithPID() {
+    _intakeMotor.setControl(m_request.withVelocity(0));
+  }
 
   // Stops all
   public void stop() {

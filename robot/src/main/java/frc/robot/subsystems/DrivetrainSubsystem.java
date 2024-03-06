@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.Robot;
 // import frc.robot.commands.drivetrain.RavenSwerveControllerCommand;
 // import frc.robot.shuffleboard.DrivetrainDiagnosticsShuffleboard;
 import frc.util.Deadband;
@@ -244,7 +245,7 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
       }, new Pose2d(hardwarePose.getTranslation(), new Rotation2d()));
     // _driveCharacteristics.reset();
 
-    // Robot.POSE_ESTIMATOR_SUBSYSTEM.zeroGyroscope();
+    Robot.POSE_ESTIMATOR_SUBSYSTEM.zeroGyroscope();
   }
 
   public SwerveModulePosition[] getSwerveModulePositions() {
@@ -417,7 +418,7 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
   // }
 
   public Pose2d getPose() {
-    return _odometryFromHardware.getPoseMeters();
+    return Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose();
   }
 
   public double getPoseX() {
@@ -467,7 +468,7 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
         m_backRightModule.getPosition()
       }, targetPose);
 
-    // Robot.POSE_ESTIMATOR_SUBSYSTEM.resetPosition(targetPose);
+    Robot.POSE_ESTIMATOR_SUBSYSTEM.resetPosition(targetPose);
   }
 
   // used only by SwerveControllerCommand to follow trajectories
