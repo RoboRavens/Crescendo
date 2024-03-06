@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
@@ -12,10 +13,18 @@ import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
+import frc.robot.commands.intake.FeedWithSensorCommand;
+import frc.robot.commands.intake.IntakeWithSensorCommand;
+import frc.robot.commands.shooter.StartShooterCommand;ilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 
 public class PathPlannerConfigurator extends SubsystemBase {
   /** Creates a new PathPlannerConfigurator. */
   public PathPlannerConfigurator() {
+    NamedCommands.registerCommand("StartShooterCommand", new StartShooterCommand());
+    NamedCommands.registerCommand("IntakeNoteCommand", new IntakeWithSensorCommand());
+    NamedCommands.registerCommand("FeedNoteCommand", new FeedWithSensorCommand());
+    
     // Configure AutoBuilder last
     AutoBuilder.configureHolonomic(
       Robot.DRIVETRAIN_SUBSYSTEM::getPose, // Robot pose supplier
