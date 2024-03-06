@@ -25,13 +25,14 @@ public class ElbowMoveManuallyCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    
+    Robot.ELBOW_SUBSYSTEM.setTargetPosition(Robot.ELBOW_SUBSYSTEM.getPosition());
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     Robot.ELBOW_SUBSYSTEM.setPowerManually(0);
+    Robot.ELBOW_SUBSYSTEM.setTargetPosition(Robot.ELBOW_SUBSYSTEM.getPosition());
   }
 
   // Returns true when the command should end.

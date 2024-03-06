@@ -1,11 +1,9 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -24,25 +22,28 @@ public class ShooterSubsystem extends SubsystemBase {
     private double _leftTargetSpeed;
     private double _rightTargetSpeed;
     final VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
-    boolean isOn = false;
 
 
     public ShooterSubsystem() {
-        
         var leftSlot0Configs = new Slot0Configs();
-        leftSlot0Configs.kS = ShooterConstants.lkS;
-        leftSlot0Configs.kV = ShooterConstants.lkV;
         leftSlot0Configs.kP = ShooterConstants.lkP;
         leftSlot0Configs.kI = ShooterConstants.lkI;
         leftSlot0Configs.kD = ShooterConstants.lkD;
         _leftTalonFX.getConfigurator().apply(leftSlot0Configs);
 
         var rightSlot0Configs = new Slot0Configs();
-        rightSlot0Configs.kS = ShooterConstants.rkS;
-        rightSlot0Configs.kV = ShooterConstants.rkV;
         rightSlot0Configs.kP = ShooterConstants.rkP;
         rightSlot0Configs.kI = ShooterConstants.rkI;
         rightSlot0Configs.kD = ShooterConstants.rkD;
+        _rightTalonFX.getConfigurator().apply(rightSlot0Configs);
+
+        var talonFXConfiguration = new TalonFXConfiguration();
+        talonFXConfiguration.Feedback.SensorToMechanismRatio = 1.0 / 3.0;
+
+        _leftTalonFX.getConfigurator().apply(talonFXConfiguration);
+        _rightTalonFX.getConfigurator().apply(talonFXConfiguration);
+
+        _leftTalonFX.getConfigurator().apply(leftSlot0Configs);
         _rightTalonFX.getConfigurator().apply(rightSlot0Configs);
         
         populateShooterAngleMapUp();
@@ -50,13 +51,12 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void runShooterAtTargetSpeed() {
-        if(isOn == false){
-            stopShooting();
-        }
-        else{
-            _leftTalonFX.setControl(m_request.withVelocity(_leftTargetSpeed).withFeedForward(ShooterConstants.LEFT_FEED_FORWARD));
-            _rightTalonFX.setControl(m_request.withVelocity(_rightTargetSpeed).withFeedForward(ShooterConstants.RIGHT_FEED_FORWARD));
-        } 
+        _leftTalonFX.setControl(m_request
+            .withVelocity(ShooterConstants.lmaxRPM * ShooterConstants.lShooterVelocityPercentage)
+            .withFeedForward(ShooterConstants.lShooterVelocityPercentage));
+        _rightTalonFX.setControl(m_request
+            .withVelocity(ShooterConstants.rmaxRPM * ShooterConstants.rShooterVelocityPercentage)
+            .withFeedForward(ShooterConstants.rShooterVelocityPercentage));
     }
 
     public void setPowerManually(double speed) {
@@ -111,14 +111,6 @@ public class ShooterSubsystem extends SubsystemBase {
         this._rightTargetSpeed = _rightTargetSpeed;
     }
 
-    public boolean getIsOn(){
-        return isOn;
-    }
-
-    public void setIsOn(boolean isOn){
-        this.isOn = isOn;
-    }
-
     public double getShootingAngleFormula(double distance, double shooterHeightMeters) {
         double denumerator = 2 * ShooterConstants.GRAVITY_ACCELERATION * Math.pow(distance, 2);
         double numerator1 = 2 * Math.pow(ShooterConstants.INITIAL_NOTE_SPEED, 2) * distance;
@@ -130,9 +122,23 @@ public class ShooterSubsystem extends SubsystemBase {
         return shootingAngle;
     }
 
-      @Override
+    private double _maxLeftSpeed;
+    private double _maxRightSpeed;
+
+  @Override
   public void periodic(){
     _shooterPieceSensor.maintainState();
     SmartDashboard.putBoolean("Shooter Piece", this.hasPiece());
+
+    _maxLeftSpeed = Math.max(_maxLeftSpeed, Math.abs(_leftTalonFX.getVelocity().getValueAsDouble()));
+    _maxRightSpeed = Math.max(_maxRightSpeed, Math.abs(_rightTalonFX.getVelocity().getValueAsDouble()));
+    SmartDashboard.putNumber("Shooter Max Left Speed", _maxLeftSpeed);
+    SmartDashboard.putNumber("Shooter Max Right Speed", _maxRightSpeed);
+
+
+    double currentLeftSpeed = _leftTalonFX.getVelocity().getValueAsDouble();
+    double currentRightSpeed = _rightTalonFX.getVelocity().getValueAsDouble();
+    SmartDashboard.putNumber("Shooter Current Left Speed", currentLeftSpeed);
+    SmartDashboard.putNumber("Shooter Current Right Speed", currentRightSpeed);
   }
 }

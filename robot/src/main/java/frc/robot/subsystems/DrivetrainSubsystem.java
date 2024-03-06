@@ -10,6 +10,7 @@ import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
+import com.revrobotics.CANSparkMax;
 import com.swervedrivespecialties.swervelib.MechanicalConfiguration;
 import com.swervedrivespecialties.swervelib.MkModuleConfiguration;
 // import com.swervedrivespecialties.swervelib.Mk4SwerveModuleBuilder;
@@ -19,8 +20,6 @@ import com.swervedrivespecialties.swervelib.MotorType;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -30,30 +29,21 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.Robot;
-import frc.robot.util.Constants.Constants;
+import frc.robot.util.field.FieldConstants;
 // import frc.robot.commands.drivetrain.RavenSwerveControllerCommand;
 // import frc.robot.shuffleboard.DrivetrainDiagnosticsShuffleboard;
 import frc.util.Deadband;
 import frc.util.SwerveModuleConverter;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import com.revrobotics.CANSparkMax;
-
-import java.awt.geom.Point2D;
-
 import static frc.robot.RobotMap.*;
-
-import java.util.List;
 
 // Template From: https://github.com/SwerveDriveSpecialties/swerve-template/blob/master/src/main/java/frc/robot/subsystems/DrivetrainSubsystem.java
 public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
@@ -94,9 +84,9 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
    * <p>
    * This is a measure of how fast the robot should be able to drive in a straight line.
    */
-  public static final double MAX_VELOCITY_METERS_PER_SECOND = 6380.0 / 60.0 *
-          SdsModuleConfigurations.MK4_L1.getDriveReduction() *
-          SdsModuleConfigurations.MK4_L1.getWheelDiameter() * Math.PI;
+  public static final double MAX_VELOCITY_METERS_PER_SECOND = 5880 / 60 *
+          SdsModuleConfigurations.MK4I_L2.getDriveReduction() *
+          SdsModuleConfigurations.MK4I_L2.getWheelDiameter() * Math.PI;
   /**
    * The maximum angular velocity of the robot in radians per second.
    * <p>
@@ -173,11 +163,6 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
       .withSteerEncoderPort(BACK_RIGHT_MODULE_STEER_ENCODER)
       .withSteerOffset(BACK_RIGHT_MODULE_STEER_OFFSET)
       .build();
-    
-    SmartDashboard.putNumber("FL encoder", m_frontLeftModule.getSteerEncoder().getAbsoluteAngle());
-    SmartDashboard.putNumber("FR encoder", m_frontRightModule.getSteerEncoder().getAbsoluteAngle());
-    SmartDashboard.putNumber("BL encoder", m_backLeftModule.getSteerEncoder().getAbsoluteAngle());
-    SmartDashboard.putNumber("BR encoder", m_backRightModule.getSteerEncoder().getAbsoluteAngle());
 
     double swerveDriveDelay = 0;
     double swerveRotateDelay = 0.25;
@@ -211,32 +196,6 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
     // _driveCharacteristics = new DriveCharacteristics();
 
     SmartDashboard.putData("HardwareOdometry Field", _field2d);
-
-    // Configure AutoBuilder last
-    AutoBuilder.configureHolonomic(
-      this::getPose, // Robot pose supplier
-      this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
-      this::getSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-      this::drive, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
-      new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-              new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-              new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
-              0.2, // Max module speed, in m/s
-              0.37, // Drive base radius in meters. Distance from robot center to furthest module.
-              new ReplanningConfig() // Default path replanning config. See the API for the options here
-      ),
-      () -> {
-        // Boolean supplier that controls when the path will be mirrored for the red alliance
-        // This will flip the path being followed to the red side of the field.
-        // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-        var alliance = DriverStation.getAlliance();
-        if (alliance.isPresent()) {
-          return alliance.get() == DriverStation.Alliance.Red;
-        }
-        return false;
-      },
-      this // Reference to this subsystem to set requirements
-    );
   }
 
   public ChassisSpeeds getSpeeds() {
@@ -326,6 +285,11 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
     SmartDashboard.putNumber("Odometry Pose X", getPose().getX());
     SmartDashboard.putNumber("Odometry Pose Y", getPose().getY());
     SmartDashboard.putNumber("Odometry Pose Rotation (Degrees)", getPose().getRotation().getDegrees());
+
+    SmartDashboard.putNumber("FL encoder", Math.toDegrees(m_frontLeftModule.getSteerEncoder().getAbsoluteAngle()));
+    SmartDashboard.putNumber("FR encoder", Math.toDegrees(m_frontRightModule.getSteerEncoder().getAbsoluteAngle()));
+    SmartDashboard.putNumber("BL encoder", Math.toDegrees(m_backLeftModule.getSteerEncoder().getAbsoluteAngle()));
+    SmartDashboard.putNumber("BR encoder", Math.toDegrees(m_backRightModule.getSteerEncoder().getAbsoluteAngle()));
 
     /*_odometryFromKinematics.update(this.getGyroscopeRotation(), new SwerveModulePosition[] {
       m_frontLeftModule.getPosition(),
@@ -430,7 +394,7 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
   // }
 
   public Pose2d getPose() {
-    return _odometryFromHardware.getPoseMeters();
+    return Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose();
   }
 
   public double getPoseX() {
@@ -506,6 +470,15 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
     return m_navx.getPitch();
   }
 
+  public double getDistanceFromSpeaker() {
+    if(Robot.allianceColor == Alliance.Blue) {
+      return Math.sqrt(Math.pow((getPoseX()-FieldConstants.BLUE_SPEAKER_X),2)+Math.pow((getPoseY()-FieldConstants.BLUE_SPEAKER_Y),2));
+    }
+    else {
+      return Math.sqrt(Math.pow((getPoseX()-FieldConstants.RED_SPEAKER_X),2)+Math.pow((getPoseY()-FieldConstants.RED_SPEAKER_Y),2));
+    }
+  }
+
   // @Override
   // public TrajectoryConfig GetTrajectoryConfig() {
   //   // Create config for trajectory
@@ -530,12 +503,10 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
     return new InstantCommand(() -> this.resetOdometry(trajectory.getInitialState().getTargetHolonomicPose()));    
   }
 
-  // @Override
   // public Command CreateFollowTrajectoryCommand(Trajectory trajectory) {
   //   return CreateFollowTrajectoryCommand(trajectory, false);
   // }
 
-  // @Override
   // public Command CreateFollowTrajectoryCommandSwerveOptimized(Trajectory trajectory) {
   //   return CreateFollowTrajectoryCommand(trajectory, true);
   // }

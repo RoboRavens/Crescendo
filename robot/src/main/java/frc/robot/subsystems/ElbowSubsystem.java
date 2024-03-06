@@ -12,7 +12,6 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -28,6 +27,8 @@ public class ElbowSubsystem extends SubsystemBase {
 
   private Slot0Configs _pidConfig = ElbowConstants.getSlot0Configs();
 
+  private double targetPosition = 0;
+
   public ElbowSubsystem() {
     var talonFXConfiguration = new TalonFXConfiguration();
     talonFXConfiguration.MotionMagic.MotionMagicAcceleration = 100;
@@ -38,6 +39,16 @@ public class ElbowSubsystem extends SubsystemBase {
     talonFXConfiguration.Audio.BeepOnConfig = false;
 
     talonFXConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+    // low stator limit will prevent breaking static friction
+    talonFXConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
+    talonFXConfiguration.CurrentLimits.StatorCurrentLimit = 25;
+
+    // low supply limit will cap motor velocity
+    talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 10;
+    talonFXConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
+    talonFXConfiguration.CurrentLimits.SupplyCurrentThreshold = 10;
+    talonFXConfiguration.CurrentLimits.SupplyTimeThreshold = 0;
 
     //talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     //talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 5;
@@ -63,8 +74,16 @@ public class ElbowSubsystem extends SubsystemBase {
     new Trigger(() -> _forwardLimitSwitch.get()).onFalse(resetPositionCommand);
   }
 
+  public void setTargetPosition(double position) {
+    this.targetPosition = position;
+  }
+
+  public double getTargetPosition() {
+    return this.targetPosition;
+  }
+
   private void updateStaticFeedfoward() {
-    var angle = this.getRadiansFromPosition(this.getPosition());
+    var angle = this.getRadians();
     var staticFeedForward = this.getStaticFeedforwardFromRadians(angle);
 
     SmartDashboard.putNumber("Elbow Angle Degrees", Math.toDegrees(angle));
@@ -80,7 +99,7 @@ public class ElbowSubsystem extends SubsystemBase {
     return staticFeedForward;
   }
 
-  private double getRadiansFromPosition(double position) {
+  public static double getRadiansFromPosition(double position) {
     double unitsTo90 = ElbowConstants.ENCODER_POSITION_AT_VERTICAL - ElbowConstants.ENCODER_POSITION_AT_HORIZONTAL;
     double distanceFromHorizontal = ((position - ElbowConstants.ENCODER_POSITION_AT_HORIZONTAL) / unitsTo90);
     double angleInRadians = distanceFromHorizontal * (Math.PI / 2);
@@ -88,11 +107,11 @@ public class ElbowSubsystem extends SubsystemBase {
   }
 
   public double getRadians() {
-    double radians = this.getRadiansFromPosition(this.getPosition());
+    double radians = ElbowSubsystem.getRadiansFromPosition(this.getPosition());
     return radians;
   }
 
-  private double getPositionFromRadians(double angleInRadians) {
+  public static double getPositionFromRadians(double angleInRadians) {
     double distanceFromHorizontal =  angleInRadians / (Math.PI / 2);
     double unitsTo90 = ElbowConstants.ENCODER_POSITION_AT_VERTICAL - ElbowConstants.ENCODER_POSITION_AT_HORIZONTAL;
     double position = (distanceFromHorizontal * unitsTo90) + ElbowConstants.ENCODER_POSITION_AT_HORIZONTAL;
@@ -106,6 +125,7 @@ public class ElbowSubsystem extends SubsystemBase {
   public void goToPosition(double setpoint) {
     System.out.println("ElbowSubsystem: goToPosition " + setpoint);
     _elbowRotationMotor.setControl(new MotionMagicVoltage(setpoint));
+    this.setTargetPosition(setpoint);
   }
 
   public void stopElbowRotation() {
@@ -115,8 +135,9 @@ public class ElbowSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     this.updateStaticFeedfoward();
-    SmartDashboard.putNumber("Elbow RotationMotor pos", _elbowRotationMotor.getPosition().getValueAsDouble());
+    SmartDashboard.putNumber("Elbow Motor Position", _elbowRotationMotor.getPosition().getValueAsDouble());
     SmartDashboard.putBoolean("Elbow ForwardLimitSwitch", _forwardLimitSwitch.get());
+    SmartDashboard.putNumber("Elbow Target Position", this.targetPosition);
   }
 
   public double getPosition() {

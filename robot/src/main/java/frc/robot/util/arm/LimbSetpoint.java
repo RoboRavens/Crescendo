@@ -4,36 +4,49 @@
 
 package frc.robot.util.arm;
 
+import frc.robot.subsystems.ElbowSubsystem;
+import frc.robot.subsystems.WristSubsystem;
+import frc.robot.util.Constants.ElbowConstants;
+import frc.robot.util.Constants.WristConstants;
+
 public class LimbSetpoint {
-    public static LimbSetpoint GROUND_PICKUP = new LimbSetpoint("Ground Pickup", 0, 0);
-    public static LimbSetpoint SPEAKER_SCORING = new LimbSetpoint("Speaker Scoring", 0, 0);
-    public static LimbSetpoint SPEAKER_SCORING_ARM_UP = new LimbSetpoint("Speaker Scoring", 0, 0);
-    public static LimbSetpoint DEFENDED_SPEAKER_SCORING = new LimbSetpoint("Defended Speaker Scoring", 0, 0);
-    public static LimbSetpoint AMP_SCORING = new LimbSetpoint("Amp Scoring", 0, 0);
-    public static LimbSetpoint TRAP_SCORING = new LimbSetpoint("Trap Scoring", 0, 0);
-    public static LimbSetpoint AMP_AND_SPEAKER_SOURCE_INTAKE = new LimbSetpoint("DualSource Intake", 0, 0);
-    public static LimbSetpoint TRAP_SOURCE_INTAKE = new LimbSetpoint("TrapSource Intake", 0, 0);
+    public static LimbSetpoint GROUND_PICKUP = new LimbSetpoint("Ground Pickup", ElbowConstants.DEGREES_FLOOR_PICKUP, WristConstants.DEGREES_FLOOR_PICKUP);
+    public static LimbSetpoint SPEAKER_SCORING = new LimbSetpoint("Speaker Scoring", ElbowConstants.DEGREES_FLOOR_PICKUP, WristConstants.DEGREES_FLOOR_PICKUP);
+    public static LimbSetpoint SPEAKER_SCORING_ARM_UP = new LimbSetpoint("Speaker Scoring", ElbowConstants.DEGREES_FLOOR_PICKUP, WristConstants.DEGREES_FLOOR_PICKUP);
+    public static LimbSetpoint DEFENDED_SPEAKER_SCORING = new LimbSetpoint("Defended Speaker Scoring", ElbowConstants.DEGREES_START_CONFIG, WristConstants.DEGREES_START_CONFIG);
+    public static LimbSetpoint AMP_SCORING = new LimbSetpoint("Amp Scoring", ElbowConstants.DEGREES_AMP_SCORE, WristConstants.DEGREES_AMP_SCORE);
+    public static LimbSetpoint TRAP_SCORING = new LimbSetpoint("Trap Scoring", ElbowConstants.DEGREES_TRAP_SCORE, WristConstants.DEGREES_TRAP_SCORE);
+    public static LimbSetpoint AMP_AND_SPEAKER_SOURCE_INTAKE = new LimbSetpoint("DualSource Intake", ElbowConstants.DEGREES_SOURCE_LOAD, WristConstants.DEGREES_SOURCE_LOAD);
+    public static LimbSetpoint TRAP_SOURCE_INTAKE = new LimbSetpoint("TrapSource Intake", ElbowConstants.DEGREES_TRAP_LOAD_FROM_SOURCE, WristConstants.DEGREES_TRAP_LOAD_FROM_SOURCE);
 
 
     private String _name;
-    private int _elbowRotationPosition;
-    private int _wristRotationPosition;
+    private double _elbowRotationDegrees;
+    private double _wristRotationDegrees;
 
-    public LimbSetpoint(String name, int elbowRotationSetpoint, int wristRotationPosition) {
+    public LimbSetpoint(String name, double elbowRotationDegrees, double wristRotationDegrees) {
         _name = name;
-        _elbowRotationPosition = elbowRotationSetpoint;
-        _wristRotationPosition = wristRotationPosition;
+        _elbowRotationDegrees = elbowRotationDegrees;
+        _wristRotationDegrees = wristRotationDegrees * -1;
     }
 
     public String getName() {
         return _name;
     }
+
+    public double getElbowRotationDegrees() {
+        return _elbowRotationDegrees;
+    }
+
+    public double getWristRotationDegrees() {
+        return _wristRotationDegrees;
+    }
     
     public double getElbowRotationPosition() {
-        return _elbowRotationPosition;
+        return ElbowSubsystem.getPositionFromRadians(Math.toRadians(_elbowRotationDegrees));
     }
 
     public double getWristRotationPosition() {
-        return _wristRotationPosition;
+        return WristSubsystem.getPositionFromRadians(Math.toRadians(_wristRotationDegrees));
     }
 }

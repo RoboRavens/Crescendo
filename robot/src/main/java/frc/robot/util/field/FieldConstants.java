@@ -97,5 +97,9 @@ public class FieldConstants {
     public static final double CLIMBING_POINT_9_ROTATION_RADIAN = -1.05;
         
     public static final double FIELD_WIDTH_METERS = 16.54;
+    public static final double BLUE_SPEAKER_X = 0.68;
+    public static final double BLUE_SPEAKER_Y = 5.55;
+    public static final double RED_SPEAKER_X = 15.85;
+    public static final double RED_SPEAKER_Y = 5.55;
 
 }

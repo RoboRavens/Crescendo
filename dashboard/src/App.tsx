@@ -98,8 +98,6 @@ class App extends React.Component<{}, {
   selectedClimbPosition: string,
   armUp: boolean,
   armUpToggle: boolean,
-  defenseModeEnabled: boolean,
-  activeDefenseToggled: boolean,
   selectedSourceLane: string,
   signalSelection: string,
   startShooter: boolean
@@ -123,8 +121,6 @@ class App extends React.Component<{}, {
       selectedClimbPosition: "LEFT_CLOSE",
       armUp: false,
       armUpToggle: false,
-      defenseModeEnabled: false,
-      activeDefenseToggled: false,
       selectedSourceLane: "CENTER",
       signalSelection: "NONE",
       startShooter: false
@@ -286,7 +282,7 @@ class App extends React.Component<{}, {
 
     topics.selectedAutoPub = NT_CORE.createTopic<string>('/ReactDash/Autonomous/dpub/selectedAuto', NetworkTablesTypeInfos.kString, "No Auto");
     topics.selectedAutoPub.publish({retained: true}); // make us the publisher for this topic and tell the server retain the value if we disconnect
-    topics.selectedScoreTypePub = NT_CORE.createTopic<string>('/ReactDash/Teleop/dpub/selectedScoreType', NetworkTablesTypeInfos.kString, "None");
+    topics.selectedScoreTypePub = NT_CORE.createTopic<string>('/ReactDash/Teleop/dpub/selectedScoreType', NetworkTablesTypeInfos.kString, "SPEAKER");
     topics.selectedScoreTypePub.publish({retained: true});
     topics.armUpPub = NT_CORE.createTopic<boolean>('/ReactDash/Teleop/dpub/armUp', NetworkTablesTypeInfos.kBoolean, false);
     topics.armUpPub.publish({retained: true});
@@ -302,7 +298,11 @@ class App extends React.Component<{}, {
     topics.startShooterPub.publish({retained: true});
 
     NT_CORE.createTopic<string>('/ReactDash/Teleop/rpub/selectedScoreType', NetworkTablesTypeInfos.kString)
-    .subscribe((value: string | null) => this.handleScoreSelection(value ?? this.state.selectedScoreType), true);
+    .subscribe((value: string | null) => 
+      {
+        console.log("rpub: " + value ?? this.state.selectedScoreType);
+        this.handleScoreSelection(value ?? this.state.selectedScoreType);
+      }, true);
     NT_CORE.createTopic<boolean>('/ReactDash/Teleop/rpub/armUp', NetworkTablesTypeInfos.kString)
     .subscribe((value: boolean | null) => this.handleArmUpSelection(value ?? this.state.armUp), true);
     NT_CORE.createTopic<string>('/ReactDash/Teleop/rpub/selectedIntakeType', NetworkTablesTypeInfos.kString)
@@ -318,6 +318,7 @@ class App extends React.Component<{}, {
     
     NT_CORE.createTopic<string>('/ReactDash/Autonomous/rpub/selectedAuto', NetworkTablesTypeInfos.kString, "No Auto")
       .subscribe((value: string | null) => { this.setSelectedAutoFromRobot(value); }, true);
+
   }
 
   componentWillUnmount() {
@@ -340,11 +341,14 @@ class App extends React.Component<{}, {
       }
     }
     const currentSelectedButton = window.document.getElementById(type)
+    console.log("selected: " + currentSelectedButton?.id)
     if (currentSelectedButton != null) currentSelectedButton.style.backgroundColor = "#43a5ff"
     const previouslySelectedButton = window.document.getElementById(this.state.selectedScoreType)
+    console.log("previous: " + previouslySelectedButton?.id)
     if (previouslySelectedButton != null && previouslySelectedButton.id != type) {
-      window.document.getElementById(this.state.selectedScoreType)!.style.backgroundColor = "#262b32";
+      previouslySelectedButton.style.backgroundColor = "#262b32";
     }
+    console.log(type)
     topics.selectedScoreTypePub?.setValue(type);
     this.setState({
       selectedScoreType: type
@@ -410,7 +414,16 @@ class App extends React.Component<{}, {
   }
 
   handleSignalSelection(type: string) {
+    const deselectedButton : boolean = type == this.state.signalSelection
     const currentSelectedButton = window.document.getElementById(type);
+    if (deselectedButton) {
+      if (currentSelectedButton != null) currentSelectedButton.style.backgroundColor = "#262b32";
+      topics.signalSelectionPub?.setValue("NONE");
+      this.setState({
+        signalSelection: "NONE"
+      });
+      return;
+    }
     if (currentSelectedButton != null) currentSelectedButton.style.backgroundColor = "#43a5ff";
     const previouslySelectedButton = window.document.getElementById(this.state.signalSelection)
     if (previouslySelectedButton != null) {
@@ -433,6 +446,7 @@ class App extends React.Component<{}, {
         break;
       default:
     }
+
     return (
       <ThemeProvider theme={darkTheme}>
         <CssBaseline />

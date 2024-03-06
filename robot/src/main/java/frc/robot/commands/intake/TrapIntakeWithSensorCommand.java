@@ -38,7 +38,7 @@ public class TrapIntakeWithSensorCommand extends Command {
   public boolean isFinished() {
     if (Robot.INTAKE_SUBSYSTEM.intakeHasPiece() == true) {
       _timer.start();
-      if (_timer.get() >= IntakeConstants.INTAKE_SPARK_DELAY) {
+      if (_timer.get() >= IntakeConstants.TRAP_INTAKE_MOTOR_STOP_BUFFER) {
         _timer.stop();
         _timer.reset();
         return true;
