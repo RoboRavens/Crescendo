@@ -196,32 +196,6 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
     // _driveCharacteristics = new DriveCharacteristics();
 
     SmartDashboard.putData("HardwareOdometry Field", _field2d);
-
-    // Configure AutoBuilder last
-    AutoBuilder.configureHolonomic(
-      this::getPose, // Robot pose supplier
-      this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
-      this::getSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-      this::drive, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
-      new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-              new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-              new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
-              MAX_VELOCITY_METERS_PER_SECOND, // Max module speed, in m/s
-              0.37, // Drive base radius in meters. Distance from robot center to furthest module.
-              new ReplanningConfig() // Default path replanning config. See the API for the options here
-      ),
-      () -> {
-        // Boolean supplier that controls when the path will be mirrored for the red alliance
-        // This will flip the path being followed to the red side of the field.
-        // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-        var alliance = DriverStation.getAlliance();
-        if (alliance.isPresent()) {
-          return alliance.get() == DriverStation.Alliance.Red;
-        }
-        return false;
-      },
-      this // Reference to this subsystem to set requirements
-    );
   }
 
   public ChassisSpeeds getSpeeds() {
@@ -247,7 +221,7 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
       }, new Pose2d(hardwarePose.getTranslation(), new Rotation2d()));
     // _driveCharacteristics.reset();
 
-    // Robot.POSE_ESTIMATOR_SUBSYSTEM.zeroGyroscope();
+    Robot.POSE_ESTIMATOR_SUBSYSTEM.zeroGyroscope();
   }
 
   public SwerveModulePosition[] getSwerveModulePositions() {
@@ -420,7 +394,7 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
   // }
 
   public Pose2d getPose() {
-    return _odometryFromHardware.getPoseMeters();
+    return Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose();
   }
 
   public double getPoseX() {
@@ -470,7 +444,7 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
         m_backRightModule.getPosition()
       }, targetPose);
 
-    // Robot.POSE_ESTIMATOR_SUBSYSTEM.resetPosition(targetPose);
+    Robot.POSE_ESTIMATOR_SUBSYSTEM.resetPosition(targetPose);
   }
 
   // used only by SwerveControllerCommand to follow trajectories

@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.controls.ButtonCode;
 import frc.controls.ButtonCode.Buttons;
+import frc.controls.ButtonCode.Toggle;
 import frc.robot.commands.compound.LimbGoToSetpointCommand;
 import frc.robot.commands.elbow.ElbowMoveManuallyCommand;
 import frc.robot.commands.drivetrain.DrivetrainAutoAimCommand;
@@ -31,12 +32,15 @@ import frc.robot.commands.shooter.ShootCommand;
 import frc.robot.commands.shooter.StartShooterCommand;
 import frc.robot.commands.wrist.WristDefaultCommand;
 import frc.robot.commands.wrist.WristGoToPositionCommand;
+import frc.robot.commands.wrist.WristGoToSpeakerAngleCommand;
 import frc.robot.commands.wrist.WristMoveManuallyCommand;
 import frc.robot.subsystems.AutoChooserSubsystemReact;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.ElbowSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LEDsSubsystem24;
 import frc.robot.subsystems.LimelightSubsystem;
+import frc.robot.subsystems.PathPlannerConfigurator;
 import frc.robot.subsystems.PoseEstimatorSubsystem;
 import frc.robot.subsystems.ReactDashSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -69,13 +73,14 @@ import frc.util.StateManagement.TrapSourceLaneTargetState;
  * directory.
  */
 public class Robot extends TimedRobot {
-  public static final LimelightHelpers LIMELIGHT_HELPERS = new LimelightHelpers();
-  public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_ONE = new LimelightSubsystem("limelight");
-  public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_TWO = new LimelightSubsystem("limelight-two");
-  public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_THREE = new LimelightSubsystem("limelight-three");
-  public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_FOUR = new LimelightSubsystem("limelight-four");
+  public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_ONE = new LimelightSubsystem("limelight-pick");
+  public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_TWO = new LimelightSubsystem("limelight-front");
+  public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_THREE = new LimelightSubsystem("limelight-backl");
+  public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_FOUR = new LimelightSubsystem("limelight-backr");
   public static final DrivetrainSubsystem DRIVETRAIN_SUBSYSTEM = new DrivetrainSubsystem();
-  // public static final PoseEstimatorSubsystem POSE_ESTIMATOR_SUBSYSTEM = new PoseEstimatorSubsystem();
+  public static final PoseEstimatorSubsystem POSE_ESTIMATOR_SUBSYSTEM = new PoseEstimatorSubsystem();
+  public static final LimelightHelpers LIMELIGHT_HELPERS = new LimelightHelpers();
+
   public static final CommandXboxController COMMAND_DRIVE_CONTROLLER = new CommandXboxController(0);
   public static final XboxController DRIVE_CONTROLLER = COMMAND_DRIVE_CONTROLLER.getHID();
   public static DriverStation.Alliance allianceColor = Alliance.Blue;
@@ -88,6 +93,8 @@ public class Robot extends TimedRobot {
   public static final ShooterSubsystem SHOOTER_SUBSYSTEM = new ShooterSubsystem();
   public static final ElbowSubsystem ELBOW_SUBSYSTEM = new ElbowSubsystem();
   public static final WristSubsystem WRIST_SUBSYSTEM = new WristSubsystem();
+  public static final LEDsSubsystem24 ledsSubsystem24 = new LEDsSubsystem24();
+  public static final PathPlannerConfigurator PATH_PLANNER_CONFIGURATOR = new PathPlannerConfigurator();
 
   // DEFAULT COMMANDS
   public static final DrivetrainDefaultCommand DRIVETRAIN_DEFAULT_COMMAND = new DrivetrainDefaultCommand();
@@ -119,7 +126,11 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("Arm Up Target State", ARM_UP_TARGET_STATE.toString());
     SmartDashboard.putString("Shooter Rev Target State", SHOOTER_REV_TARGET_STATE.toString());
     SmartDashboard.putString("Climb Position Target State", CLIMB_POSITION_TARGET_STATE.toString());
+    SmartDashboard.putNumber("Distance from Speaker", Robot.DRIVETRAIN_SUBSYSTEM.getDistanceFromSpeaker());
     setNonButtonDependentOverallStates();
+
+//  ledsSubsystem24.setColor(127, 127, 0);
+    ledsSubsystem24.rainbowLeds();
   }
 
   /**
@@ -167,6 +178,20 @@ public class Robot extends TimedRobot {
   private void configureAutomatedBehaviorBindings() {
     new Trigger(() -> Robot.SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON)
       .whileTrue(new StartShooterCommand());
+
+    // Blue
+    new Trigger(() -> Robot.LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.AMP_SIGNAL)
+      .whileTrue(new InstantCommand(() -> ledsSubsystem24.setColor(37, 94, 186)));
+
+    // Orange
+    new Trigger(() -> Robot.LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.CO_OP_SIGNAL)
+      .whileTrue(new InstantCommand(() -> ledsSubsystem24.setColor(230, 151, 16)));
+
+    // Green
+    new Trigger(() -> 
+      Robot.SHOOTER_SUBSYSTEM.hasPiece()
+      && Robot.LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.NONE)
+      .whileTrue(new InstantCommand(() -> ledsSubsystem24.setColor(50, 168, 82)));
   }
 
 	/** This function is run once each time the robot enters autonomous mode. */
@@ -252,6 +277,11 @@ public class Robot extends TimedRobot {
     BUTTON_CODE.getButton(Buttons.MOVE_WRIST_DOWN)
         .whileTrue(new WristMoveManuallyCommand(Constants.MOVE_WRIST_DOWN_MANUAL_POWER));
 
+    BUTTON_CODE.getSwitch(Toggle.START_SHOOTER)
+      .whileTrue(new StartShooterCommand());
+
+    BUTTON_CODE.getSwitch(Toggle.SHOOTER_ANGLE_FROM_DISTANCE)
+      .whileTrue(new WristGoToSpeakerAngleCommand());
   }
 
   private void setNonButtonDependentOverallStates() {
@@ -280,17 +310,17 @@ public class Robot extends TimedRobot {
     // // set our arm position to the ground setpoint
     // new Trigger(() -> OVERALL_STATE == OverallState.SEEKING_NOTE
     //     && INTAKE_TARGET_STATE == IntakeTargetState.GROUND)
-    //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.GROUND_PICKUP));
+    //     .whileTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.GROUND_PICKUP));
     // // If we are seeking a note and intend to intake a regular note from the source,
     // // set our arm position to the source setpoint
     // new Trigger(() -> OVERALL_STATE == OverallState.SEEKING_NOTE
     //     && INTAKE_TARGET_STATE == IntakeTargetState.SOURCE)
-    //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.AMP_AND_SPEAKER_SOURCE_INTAKE));
+    //     .whileTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.AMP_AND_SPEAKER_SOURCE_INTAKE));
     // // If we are seeking a note and intend to intake a note from the source to score
     // // in the trap, set our arm position to the source trap setpoint
     // new Trigger(() -> OVERALL_STATE == OverallState.SEEKING_NOTE
     //     && INTAKE_TARGET_STATE == IntakeTargetState.TRAP_SOURCE)
-    //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.TRAP_SOURCE_INTAKE));
+    //     .whileTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.TRAP_SOURCE_INTAKE));
     // // If the robot's overall state is loading the note, flash our
     // // LEDs and start the intake
     // new Trigger(() -> OVERALL_STATE == OverallState.LOADING)
@@ -301,23 +331,23 @@ public class Robot extends TimedRobot {
     // // set our arm position to the amp setpoint
     // new Trigger(() -> OVERALL_STATE == OverallState.LOADED_TRANSIT 
     //     && SCORING_TARGET_STATE == ScoringTargetState.AMP)
-    //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.AMP_SCORING));
+    //     .whileTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.AMP_SCORING));
     // // If the robot is loaded with a note and we intend to score in the trap,
     // // set our arm position to the trap setpoint
     // new Trigger(() -> OVERALL_STATE == OverallState.LOADED_TRANSIT
     //     && SCORING_TARGET_STATE == ScoringTargetState.TRAP)
-    //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.TRAP_SCORING));
+    //     .whileTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.TRAP_SCORING));
     // // If the robot is loaded with a note and we intend to score in the speaker,
     // // set our arm position to the speaker setpoint
     // new Trigger(() -> OVERALL_STATE == OverallState.LOADED_TRANSIT
     //     && SCORING_TARGET_STATE == ScoringTargetState.SPEAKER
     //     && ARM_UP_TARGET_STATE == ArmUpTargetState.FREE)
-    //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.SPEAKER_SCORING));
+    //     .whileTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SPEAKER_SCORING));
     // // Otherwise, if the arm-up toggle is on,
     // // set our arm position to the "up configuration"
     // new Trigger(() -> OVERALL_STATE == OverallState.LOADED_TRANSIT
     //     && SCORING_TARGET_STATE == ScoringTargetState.SPEAKER
     //     && ARM_UP_TARGET_STATE == ArmUpTargetState.UP)
-    //     .whileTrue(new LimbGoToSetpointCommand(LimbSetpoint.SPEAKER_SCORING_ARM_UP));
+    //     .whileTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SPEAKER_SCORING_ARM_UP));
   }
 }
