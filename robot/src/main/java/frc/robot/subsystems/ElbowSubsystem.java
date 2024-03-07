@@ -55,6 +55,7 @@ public class ElbowSubsystem extends SubsystemBase {
     //talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     //talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -5;
 
+    this.setTargetPosition(ElbowConstants.ENCODER_POSITION_AT_STARTUP);
     _elbowRotationMotor.getConfigurator().setPosition(ElbowConstants.ENCODER_POSITION_AT_STARTUP);
     _elbowRotationMotor.getConfigurator().apply(talonFXConfiguration);
     this.updateStaticFeedfoward();
