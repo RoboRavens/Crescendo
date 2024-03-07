@@ -34,7 +34,13 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "LimbGoToPreloadNoteScorePositionCommand"
+                        "name": "LimbStartConfigUpCommand"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "LimbGoToArmUpShotCommand"
                       }
                     },
                     {

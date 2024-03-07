@@ -32,6 +32,8 @@ public class PathPlannerConfigurator extends SubsystemBase {
     NamedCommands.registerCommand("LimbGoToGN1and2ScorePositionCommand", LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SIX_NOTE_AUTO_GN_1_AND_2_SCORING_SETPOINT));
     NamedCommands.registerCommand("LimbGoToGN3ScorePositionCommand", LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SIX_NOTE_AUTO_GN_3_SCORING_SETPOINT));
     NamedCommands.registerCommand("LimbGoToGN4And5ScorePositionCommand", LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SIX_NOTE_AUTO_GN_4_and_5_SCORING_SETPOINT));
+    NamedCommands.registerCommand("LimbStartConfigUpCommand", LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.START_CONFIG_UP));
+    NamedCommands.registerCommand("LimbGoToArmUpShotCommand", LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.DEFENDED_SPEAKER_SCORING));
     
     // Configure AutoBuilder last
     AutoBuilder.configureHolonomic(

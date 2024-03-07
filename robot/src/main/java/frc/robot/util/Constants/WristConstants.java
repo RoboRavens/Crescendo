@@ -9,7 +9,7 @@ public class WristConstants {
     
     public static final double ENCODER_POSITION_AT_FLOOR_PICKUP = 0;
     public static final double ENCODER_POSITION_45_FROM_FLOOR_PICKUP = -3.049348;
-    public static final double ENCODER_POSITION_AT_STARTUP = 2.715332;
+    public static final double ENCODER_POSITION_AT_STARTUP = 3.858398;
 
     public static final double IS_AT_SETPOINT_BUFFER = .2;
 
