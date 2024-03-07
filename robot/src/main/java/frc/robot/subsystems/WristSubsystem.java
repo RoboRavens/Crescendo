@@ -49,7 +49,7 @@ public class WristSubsystem extends SubsystemBase {
     //talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     //talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -5;
 
-    _wristRotationMotor.getConfigurator().setPosition(0);
+    _wristRotationMotor.getConfigurator().setPosition(WristConstants.ENCODER_POSITION_AT_START);
     _wristRotationMotor.getConfigurator().apply(talonFXConfiguration);
     this.updateStaticFeedfoward();
   }
@@ -80,8 +80,8 @@ public class WristSubsystem extends SubsystemBase {
   }
 
   public static double getRadiansFromPosition(double position) {
-    double unitsTo90 = WristConstants.ENCODER_POSITION_45_FROM_ROBOT_START - WristConstants.ENCODER_POSITION_AT_ROBOT_START;
-    double distanceFromHorizontal = ((position - WristConstants.ENCODER_POSITION_AT_ROBOT_START) / unitsTo90);
+    double unitsTo90 = WristConstants.ENCODER_POSITION_45_FROM_FLOOR_PICKUP - WristConstants.ENCODER_POSITION_AT_FLOOR_PICKUP;
+    double distanceFromHorizontal = ((position - WristConstants.ENCODER_POSITION_AT_FLOOR_PICKUP) / unitsTo90);
     double angleInRadians = distanceFromHorizontal * (Math.PI / 4);
     return angleInRadians;
   }
@@ -93,8 +93,8 @@ public class WristSubsystem extends SubsystemBase {
 
   public static double getPositionFromRadians(double angleInRadians) {
     double distanceFromHorizontal =  angleInRadians / (Math.PI / 4);
-    double unitsTo90 = WristConstants.ENCODER_POSITION_45_FROM_ROBOT_START - WristConstants.ENCODER_POSITION_AT_ROBOT_START;
-    double position = (distanceFromHorizontal * unitsTo90) + WristConstants.ENCODER_POSITION_AT_ROBOT_START;
+    double unitsTo90 = WristConstants.ENCODER_POSITION_45_FROM_FLOOR_PICKUP - WristConstants.ENCODER_POSITION_AT_FLOOR_PICKUP;
+    double position = (distanceFromHorizontal * unitsTo90) + WristConstants.ENCODER_POSITION_AT_FLOOR_PICKUP;
     return position;
   }
 
