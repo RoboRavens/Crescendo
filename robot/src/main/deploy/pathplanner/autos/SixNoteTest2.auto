@@ -190,9 +190,22 @@
                       }
                     },
                     {
-                      "type": "named",
+                      "type": "deadline",
                       "data": {
-                        "name": "LimbGoToGN3ScorePositionCommand"
+                        "commands": [
+                          {
+                            "type": "path",
+                            "data": {
+                              "pathName": "6Note5.5"
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "LimbGoToPreloadNoteScorePositionCommand"
+                            }
+                          }
+                        ]
                       }
                     },
                     {
