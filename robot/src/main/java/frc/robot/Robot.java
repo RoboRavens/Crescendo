@@ -6,12 +6,14 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.controls.ButtonCode;
@@ -113,6 +115,7 @@ public class Robot extends TimedRobot {
   public static LoadState LOAD_STATE = LoadState.EMPTY;
   public static DrivetrainState DRIVETRAIN_STATE = DrivetrainState.FREEHAND;
   public static LimelightDetectsNoteState LIMELIGHT_DETECTS_NOTE_STATE = LimelightDetectsNoteState.NO_NOTE;
+  public static boolean cutPower = false;
 
   @Override
   public void robotPeriodic() {
@@ -128,6 +131,23 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("Climb Position Target State", CLIMB_POSITION_TARGET_STATE.toString());
     SmartDashboard.putNumber("Distance from Speaker", Robot.DRIVETRAIN_SUBSYSTEM.getDistanceFromSpeaker());
     setNonButtonDependentOverallStates();
+
+    SmartDashboard.putData("Drivetrain Command", DRIVETRAIN_SUBSYSTEM);
+    SmartDashboard.putData("Wrist Command", WRIST_SUBSYSTEM);
+    SmartDashboard.putData("Arm Command", ELBOW_SUBSYSTEM);
+    SmartDashboard.putData("Intake Command", INTAKE_SUBSYSTEM);
+    SmartDashboard.putData("Shooter Command", SHOOTER_SUBSYSTEM);
+
+
+
+    if (SHOOTER_SUBSYSTEM.hasPiece()) {
+      LIMELIGHT_SUBSYSTEM_ONE.turnLedOn();
+      ledsSubsystem24.setColor(50, 168, 82);
+    }
+    else {
+      LIMELIGHT_SUBSYSTEM_ONE.turnLedOff();
+      ledsSubsystem24.setColor(0, 0, 0);
+    }
 
 //  ledsSubsystem24.setColor(127, 127, 0);
     ledsSubsystem24.rainbowLeds();
@@ -173,6 +193,19 @@ public class Robot extends TimedRobot {
 
     COMMAND_DRIVE_CONTROLLER.leftBumper().whileTrue(new IntakeWithSensorCommand());
     COMMAND_DRIVE_CONTROLLER.rightBumper().whileTrue(new FeedWithSensorCommand());
+
+    new Trigger(() -> SHOOTER_SUBSYSTEM.hasPiece()).onTrue(
+      new InstantCommand(() -> {
+        System.out.println("rumble");
+        DRIVE_CONTROLLER.setRumble(RumbleType.kLeftRumble, 0.5);
+      })
+      .andThen(new WaitCommand(0.25))
+      .andThen(new InstantCommand(() -> DRIVE_CONTROLLER.setRumble(RumbleType.kLeftRumble, 0)))
+    );
+
+    new Trigger(() -> DRIVE_CONTROLLER.getRightTriggerAxis() > 0.1)
+      .onTrue(new InstantCommand(() -> cutPower = true))
+      .onFalse(new InstantCommand(() -> cutPower = false));
 	}
 
   private void configureAutomatedBehaviorBindings() {
@@ -192,6 +225,7 @@ public class Robot extends TimedRobot {
       Robot.SHOOTER_SUBSYSTEM.hasPiece()
       && Robot.LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.NONE)
       .whileTrue(new InstantCommand(() -> ledsSubsystem24.setColor(50, 168, 82)));
+
   }
 
 	/** This function is run once each time the robot enters autonomous mode. */
@@ -282,6 +316,27 @@ public class Robot extends TimedRobot {
 
     BUTTON_CODE.getSwitch(Toggle.SHOOTER_ANGLE_FROM_DISTANCE)
       .whileTrue(new WristGoToSpeakerAngleCommand());
+
+    BUTTON_CODE.getButton(Buttons.SPEAKER_CLOSE_SHOT)
+      .whileTrue(new InstantCommand(() -> 
+      {
+        double shooterAngleRadians = Math.toRadians(Robot.SHOOTER_SUBSYSTEM.getShooterAngleMapDown(0.9144));
+        WRIST_SUBSYSTEM.setTargetPosition(WristSubsystem.getPositionFromRadians(shooterAngleRadians));
+      }));
+
+    BUTTON_CODE.getButton(Buttons.SPEAKER_MID_SHOT)
+      .whileTrue(new InstantCommand(() -> 
+      {
+        double shooterAngleRadians = Math.toRadians(Robot.SHOOTER_SUBSYSTEM.getShooterAngleMapDown(2.032));
+        WRIST_SUBSYSTEM.setTargetPosition(WristSubsystem.getPositionFromRadians(shooterAngleRadians));
+      }));
+
+    BUTTON_CODE.getButton(Buttons.SPEAKER_FAR_SHOT)
+      .whileTrue(new InstantCommand(() -> 
+      {
+        double shooterAngleRadians = Math.toRadians(Robot.SHOOTER_SUBSYSTEM.getShooterAngleMapDown(2.3368));
+        WRIST_SUBSYSTEM.setTargetPosition(WristSubsystem.getPositionFromRadians(shooterAngleRadians));
+      }));
   }
 
   private void setNonButtonDependentOverallStates() {

@@ -13,9 +13,12 @@ import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
+import frc.robot.commands.compound.LimbGoToSetpointCommand;
 import frc.robot.commands.intake.FeedWithSensorCommand;
 import frc.robot.commands.intake.IntakeWithSensorCommand;
-import frc.robot.commands.shooter.StartShooterCommand;ilibj2.command.SubsystemBase;
+import frc.robot.commands.shooter.StartShooterCommand;
+import frc.robot.commands.wrist.WristGoToPositionCommand;
+import frc.robot.util.arm.LimbSetpoint;
 import frc.robot.Robot;
 
 public class PathPlannerConfigurator extends SubsystemBase {
@@ -24,6 +27,11 @@ public class PathPlannerConfigurator extends SubsystemBase {
     NamedCommands.registerCommand("StartShooterCommand", new StartShooterCommand());
     NamedCommands.registerCommand("IntakeNoteCommand", new IntakeWithSensorCommand());
     NamedCommands.registerCommand("FeedNoteCommand", new FeedWithSensorCommand());
+    NamedCommands.registerCommand("LimbGoToGroundSetpointCommand", LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.GROUND_PICKUP));
+    NamedCommands.registerCommand("LimbGoToPreloadNoteScorePositionCommand", LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SIX_NOTE_AUTO_PRELOAD_SCORING_SETPOINT));
+    NamedCommands.registerCommand("LimbGoToGN1and2ScorePositionCommand", LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SIX_NOTE_AUTO_GN_1_AND_2_SCORING_SETPOINT));
+    NamedCommands.registerCommand("LimbGoToGN3ScorePositionCommand", LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SIX_NOTE_AUTO_GN_3_SCORING_SETPOINT));
+    NamedCommands.registerCommand("LimbGoToGN4And5ScorePositionCommand", LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SIX_NOTE_AUTO_GN_4_and_5_SCORING_SETPOINT));
     
     // Configure AutoBuilder last
     AutoBuilder.configureHolonomic(
@@ -48,7 +56,7 @@ public class PathPlannerConfigurator extends SubsystemBase {
         }
         return false;
       },
-      this // Reference to this subsystem to set requirements
+      Robot.DRIVETRAIN_SUBSYSTEM // Reference to this subsystem to set requirements
     );
   }
 

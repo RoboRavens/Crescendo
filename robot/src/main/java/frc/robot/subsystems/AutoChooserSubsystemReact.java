@@ -43,62 +43,22 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
     
     // BLUE SIDE
     this.addBlueDefault(
-      new AutoMode("B1: Six Note Path",
-      () -> new PathPlannerAuto("SixNoteBlue"))
+      new AutoMode("B1: 6 Note Path",
+      () -> new PathPlannerAuto("6 Note Path"))
     );
     this.addOption(
-      new AutoMode("B2: North Midfield Path",
-      () -> new PathPlannerAuto("NorthMidfieldBlue"))
-    );
-    this.addOption(
-      new AutoMode("B3: South Midfield Path",
-      () -> new PathPlannerAuto("SouthMidfieldBlue"))
-    );
-    this.addOption(
-      new AutoMode("B4: Six Note Auto",
-      () -> SixNoteAutoCommand.getAutoMode())
-    );
-    this.addOption(
-      new AutoMode("B5: North Midfield Auto",
-      () -> NorthMidfieldAutoCommand.getAutoMode())
-    );
-    this.addOption(
-      new AutoMode("B6: South Midfield Auto",
-      () -> SouthMidfieldAutoCommand.getAutoMode())
-    );
-    this.addOption(
-      new AutoMode("B7: Six Note PathPlanner Auto",
-      () -> SixNotePathPlannerAutoCommand.getAutoMode())
+      new AutoMode("B2: 6 Note Auto",
+      () -> new PathPlannerAuto("SixNoteTest2"))
     );
 
     // RED SIDE
     this.addRedDefault(
-      new AutoMode("R1: Six Note Path",
-      () -> new PathPlannerAuto("SixNoteBlue"))
+      new AutoMode("R1: 6 Note Path",
+      () -> new PathPlannerAuto("6 Note Path"))
     );
     this.addOption(
-      new AutoMode("R2: North Midfield Path",
-      () -> new PathPlannerAuto("NorthMidfieldBlue"))
-    );
-    this.addOption(
-      new AutoMode("R3: South Midfield Path",
-      () -> new PathPlannerAuto("SouthMidfieldBlue"))
-    );
-    this.addOption(
-      new AutoMode("R4: Six Note Auto",
-      () -> SixNoteAutoCommand.getAutoMode())
-    );
-    this.addOption(
-      new AutoMode("R5: North Midfield Auto",
-      () -> NorthMidfieldAutoCommand.getAutoMode())
-    );
-    this.addOption(
-      new AutoMode("R6: South Midfield Auto",
+      new AutoMode("R2: 6 Note Auto",
       () -> new PathPlannerAuto("SixNoteTest2"))
-    );
-    this.addOption(
-      new AutoMode("R7: Six Note PathPlanner Auto",
-      () -> SixNotePathPlannerAutoCommand.getAutoMode())
     );
   }
 

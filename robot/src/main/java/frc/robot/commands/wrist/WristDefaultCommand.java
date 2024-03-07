@@ -26,7 +26,7 @@ public class WristDefaultCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    
+        Robot.WRIST_SUBSYSTEM.goToPosition(Robot.WRIST_SUBSYSTEM.getTargetPosition());
   }
 
   // Called once the command ends or is interrupted.
