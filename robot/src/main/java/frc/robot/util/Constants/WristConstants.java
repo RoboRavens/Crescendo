@@ -23,10 +23,10 @@ public class WristConstants {
     public static double DEGREES_TRAP_SCORE = -40;
     public static double DEGREES_START_CONFIG = 46;
     // TODO: Update these target values
-    public static double DEGREES_SIX_NOTE_AUTO_GN_1_AND_2 = 0;
-    public static double DEGREES_SIX_NOTE_AUTO_GN_3 = 0;
-    public static double DEGREES_SIX_NOTE_AUTO_GN_4_AND_5 = 0;
-    public static double DEGREES_SIX_NOTE_PRELOAD = 0;
+    public static double DEGREES_SIX_NOTE_AUTO_GN_1_AND_2 = 19.7;
+    public static double DEGREES_SIX_NOTE_AUTO_GN_3 = 31.4;
+    public static double DEGREES_SIX_NOTE_AUTO_GN_4_AND_5 = 35;
+    public static double DEGREES_SIX_NOTE_PRELOAD = 6;
 
 
     public static Slot0Configs getSlot0Configs() {
