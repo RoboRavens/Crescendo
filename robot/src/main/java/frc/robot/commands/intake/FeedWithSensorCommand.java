@@ -19,6 +19,7 @@ public class FeedWithSensorCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    System.out.println("FeedWithSensorCommand: Init");
     Robot.INTAKE_SUBSYSTEM.startIntakeFeeder();
     _timer.stop();
     _timer.reset();
@@ -33,6 +34,7 @@ public class FeedWithSensorCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     Robot.INTAKE_SUBSYSTEM.stop();
+    System.out.println("FeedWithSensorCommand: End");
   }
 
   // Returns true when the command should end.

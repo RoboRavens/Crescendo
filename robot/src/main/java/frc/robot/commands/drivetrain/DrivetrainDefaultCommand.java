@@ -45,6 +45,13 @@ public class DrivetrainDefaultCommand extends Command {
         double x = Robot.DRIVE_CONTROLLER.getLeftY() * controllerDirection;
         double y = Robot.DRIVE_CONTROLLER.getLeftX() * controllerDirection;
         double r = Robot.DRIVE_CONTROLLER.getRightX() * -1;
+
+        if (Robot.cutPower) {
+            x *= 0.5;
+            y *= 0.5;
+            r *= 0.5;
+        }
+        
         Rotation2d a = Robot.DRIVETRAIN_SUBSYSTEM.getOdometryRotation(); // The angle of the robot as measured by a gyroscope. The robot's angle is considered to be zero when it is facing directly away from your alliance station wall.        
         
         if (Robot.DRIVETRAIN_STATE == DrivetrainState.FREEHAND) {

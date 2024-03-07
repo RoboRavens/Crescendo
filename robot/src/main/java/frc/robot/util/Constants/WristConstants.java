@@ -7,8 +7,9 @@ public class WristConstants {
     public static final double MOTOR_POWER_FEEDFORWARD_AT_HORIZONTAL = -.16;
     public static final double MOTOR_POWER_DIRECTION_TO_GO_UP_FROM_HORIZONTAL = 0;
     
-    public static final double ENCODER_POSITION_AT_ROBOT_START = 0;
-    public static final double ENCODER_POSITION_45_FROM_ROBOT_START = -3.049348;
+    public static final double ENCODER_POSITION_AT_FLOOR_PICKUP = 0;
+    public static final double ENCODER_POSITION_45_FROM_FLOOR_PICKUP = -3.049348;
+    public static final double ENCODER_POSITION_AT_STARTUP = 2.715332;
 
     public static final double IS_AT_SETPOINT_BUFFER = .2;
 
@@ -22,10 +23,16 @@ public class WristConstants {
     public static double DEGREES_SOURCE_LOAD = -54.979414;
     public static double DEGREES_TRAP_SCORE = -40;
     public static double DEGREES_START_CONFIG = 46;
+    // TODO: Update these target values
+    public static double DEGREES_SIX_NOTE_AUTO_GN_1_AND_2 = 19.7;
+    public static double DEGREES_SIX_NOTE_AUTO_GN_3 = 31.4;
+    public static double DEGREES_SIX_NOTE_AUTO_GN_4_AND_5 = 35;
+    public static double DEGREES_SIX_NOTE_PRELOAD = 6;
+
 
     public static Slot0Configs getSlot0Configs() {
         var slot0Config = new Slot0Configs();
-        slot0Config.kP = 4;
+        slot0Config.kP = 5;
         slot0Config.kI = 0;
         slot0Config.kD = 0;
         return slot0Config;

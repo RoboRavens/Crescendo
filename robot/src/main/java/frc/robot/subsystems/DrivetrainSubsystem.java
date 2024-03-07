@@ -394,7 +394,7 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
   // }
 
   public Pose2d getPose() {
-    return Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose();
+    return _odometryFromHardware.getPoseMeters();
   }
 
   public double getPoseX() {

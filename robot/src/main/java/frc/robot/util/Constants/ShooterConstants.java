@@ -28,9 +28,10 @@ public class ShooterConstants {
     };
 
     public static final double[][] SHOOTER_ANGLE_PAIRS_DOWN ={
-        {0.9144, 0},
+        {0.9144, 6},
+        {1.181, 19.7},
         {2.032, 25.7},
-        {2.3368, 29.5},
+        {2.3368, 31.4},
     };
 
     public static final double SHOOTER_STOP_DELAY = 1;

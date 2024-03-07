@@ -15,6 +15,7 @@ public class IntakeWithSensorCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    System.out.println("IntakeWithSensorCommand: Init");
     Robot.INTAKE_SUBSYSTEM.startIntake();
   }
 
@@ -27,6 +28,7 @@ public class IntakeWithSensorCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     Robot.INTAKE_SUBSYSTEM.stop();
+    System.out.println("IntakeWithSensorCommand: End");
   }
 
   // Returns true when the command should end.
