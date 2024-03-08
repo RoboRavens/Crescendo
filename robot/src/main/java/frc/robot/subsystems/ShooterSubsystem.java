@@ -129,16 +129,22 @@ public class ShooterSubsystem extends SubsystemBase {
   public void periodic(){
     _shooterPieceSensor.maintainState();
     SmartDashboard.putBoolean("Shooter Piece", this.hasPiece());
-
+    /*
     _maxLeftSpeed = Math.max(_maxLeftSpeed, Math.abs(_leftTalonFX.getVelocity().getValueAsDouble()));
     _maxRightSpeed = Math.max(_maxRightSpeed, Math.abs(_rightTalonFX.getVelocity().getValueAsDouble()));
     SmartDashboard.putNumber("Shooter Max Left Speed", _maxLeftSpeed);
     SmartDashboard.putNumber("Shooter Max Right Speed", _maxRightSpeed);
+    */
 
+    SmartDashboard.putNumber("Shooter Target Left Speed", _leftTargetSpeed);
+    SmartDashboard.putNumber("Shooter Target Right Speed", _rightTargetSpeed);
 
     double currentLeftSpeed = _leftTalonFX.getVelocity().getValueAsDouble();
     double currentRightSpeed = _rightTalonFX.getVelocity().getValueAsDouble();
     SmartDashboard.putNumber("Shooter Current Left Speed", currentLeftSpeed);
     SmartDashboard.putNumber("Shooter Current Right Speed", currentRightSpeed);
+    
+    SmartDashboard.putNumber("Shooter Target Left Diff", _leftTargetSpeed - currentLeftSpeed);
+    SmartDashboard.putNumber("Shooter Target Right Diff", _rightTargetSpeed - currentRightSpeed);
   }
 }

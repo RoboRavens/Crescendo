@@ -21,8 +21,9 @@ public class ButtonCode {
 		MOVE_WRIST_UP(6),
 		MOVE_WRIST_DOWN(11),
 		SPEAKER_CLOSE_SHOT(12),
-		SPEAKER_MID_SHOT(5),
+		// SPEAKER_MID_SHOT(5),
 		SPEAKER_FAR_SHOT(4),
+		SHOOTER_REV(5),
 		ARM_RELEASE_SNAPPER(9);
 
 		private final int button;
