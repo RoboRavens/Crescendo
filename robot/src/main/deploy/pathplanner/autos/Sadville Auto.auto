@@ -28,6 +28,12 @@
                     {
                       "type": "named",
                       "data": {
+                        "name": "LimbStartConfigUpCommand"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
                         "name": "LimbGoToPreloadNoteScorePositionCommand"
                       }
                     },

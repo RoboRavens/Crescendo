@@ -55,6 +55,14 @@ public class WristSubsystem extends SubsystemBase {
     this.updateStaticFeedfoward();
   }
 
+  public void offsetByDegrees(double degrees) {
+    double offsetPosition = (WristConstants.ENCODER_POSITION_45_FROM_FLOOR_PICKUP / 45) * degrees;
+    System.out.print("Changing wrist motor position from " + getPosition());
+    double newPosition = getPosition() + offsetPosition;
+    System.out.println(" to " + newPosition);
+    _wristRotationMotor.getConfigurator().setPosition(newPosition);
+  } 
+
   public void setTargetPosition(double position) {
     this.targetPosition = position;
   }

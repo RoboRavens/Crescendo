@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -12,6 +14,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -21,6 +24,7 @@ import frc.controls.ButtonCode.Buttons;
 import frc.controls.ButtonCode.Toggle;
 import frc.robot.commands.compound.LimbGoToSetpointCommand;
 import frc.robot.commands.elbow.ElbowMoveManuallyCommand;
+import frc.robot.commands.elbow.ElbowOffsetCommand;
 import frc.robot.commands.drivetrain.DrivetrainAutoAimCommand;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
 import frc.robot.commands.elbow.ElbowDefaultCommand;
@@ -36,6 +40,7 @@ import frc.robot.commands.wrist.WristDefaultCommand;
 import frc.robot.commands.wrist.WristGoToPositionCommand;
 import frc.robot.commands.wrist.WristGoToSpeakerAngleCommand;
 import frc.robot.commands.wrist.WristMoveManuallyCommand;
+import frc.robot.commands.wrist.WristOffsetCommand;
 import frc.robot.subsystems.AutoChooserSubsystemReact;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.ElbowSubsystem;
@@ -302,14 +307,20 @@ public class Robot extends TimedRobot {
     BUTTON_CODE.getButton(Buttons.GROUND_PICKUP_AND_SPEAKER_SCORING)
       .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.GROUND_PICKUP));
 
-    BUTTON_CODE.getButton(Buttons.MOVE_ELBOW_UP)
-        .whileTrue(new ElbowMoveManuallyCommand(Constants.MOVE_ELBOW_UP_MANUAL_POWER));
+    BooleanSupplier manualOverride = () -> BUTTON_CODE.getSwitch(Toggle.MOVE_WITH_MANUAL_POWER).getAsBoolean() == false;
+    var elbowUpCommand = new ConditionalCommand(new ElbowMoveManuallyCommand(Constants.MOVE_ELBOW_UP_MANUAL_POWER), new ElbowOffsetCommand(0.5), manualOverride);
+    var elbowDownCommand = new ConditionalCommand(new ElbowMoveManuallyCommand(Constants.MOVE_ELBOW_DOWN_MANUAL_POWER), new ElbowOffsetCommand(-0.5), manualOverride);
+    var wristUpCommand = new ConditionalCommand(new WristMoveManuallyCommand(Constants.MOVE_WRIST_UP_MANUAL_POWER), new WristOffsetCommand(0.5), manualOverride);
+    var wristDownCommand = new ConditionalCommand(new WristMoveManuallyCommand(Constants.MOVE_WRIST_DOWN_MANUAL_POWER), new WristOffsetCommand(-0.5), manualOverride);
+
+    BUTTON_CODE.getButton(Buttons.MOVE_ELBOW_UP).and(BUTTON_CODE.getSwitch(Toggle.MOVE_WITH_MANUAL_POWER))
+        .whileTrue(elbowUpCommand);
     BUTTON_CODE.getButton(Buttons.MOVE_ELBOW_DOWN)
-        .whileTrue(new ElbowMoveManuallyCommand(Constants.MOVE_ELBOW_DOWN_MANUAL_POWER));
+        .whileTrue(elbowDownCommand);
     BUTTON_CODE.getButton(Buttons.MOVE_WRIST_UP)
-        .whileTrue(new WristMoveManuallyCommand(Constants.MOVE_WRIST_UP_MANUAL_POWER));
+        .whileTrue(wristUpCommand);
     BUTTON_CODE.getButton(Buttons.MOVE_WRIST_DOWN)
-        .whileTrue(new WristMoveManuallyCommand(Constants.MOVE_WRIST_DOWN_MANUAL_POWER));
+        .whileTrue(wristDownCommand);
 
     BUTTON_CODE.getSwitch(Toggle.START_SHOOTER)
       .whileTrue(new StartShooterCommand());

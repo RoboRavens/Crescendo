@@ -32,7 +32,7 @@ public class ReactDashSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    _locationPub.set(DriverStation.getLocation().getAsInt());
+    _locationPub.set(DriverStation.getLocation().orElse(0));
     
     _joystick0Pub.set(DriverStation.getStickButtonCount(0) > 0);
     _joystick2Pub.set(DriverStation.getStickButtonCount(2) > 0);

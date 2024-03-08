@@ -11,7 +11,7 @@ public class ElbowConstants {
   public static final double ENCODER_POSITION_AT_HORIZONTAL = -5.27;
   public static final double ENCODER_POSITION_AT_VERTICAL = -35.51;
   public static final double ENCODER_LIMIT_RESET_BUFFER = .5;
-  public static final double ENCODER_POSITION_AT_STARTUP = -22.348145;
+  public static final double ENCODER_POSITION_AT_STARTUP = -24.952637;
   
   // DEGREES_FLOOR_PICKUP in onshape is 0, but -15.684524 in below table
   // all other values from onshape table have been reduced by 15 degrees
@@ -22,7 +22,7 @@ public class ElbowConstants {
   public static final double DEGREES_SOURCE_LOAD = 35;
   public static final double DEGREES_TRAP_SCORE = 75;
   public static final double DEGREES_START_CONFIG = 53;
-  public static final double DEGREES_START_CONFIG_UP = 68;
+  public static final double DEGREES_START_CONFIG_UP = 75;
 
   public static final double RADIANS_FLOOR_PICKUP = Math.toRadians(DEGREES_FLOOR_PICKUP);
   public static final double RADIANS_AMP_SCORE = Math.toRadians(DEGREES_AMP_SCORE);

@@ -34,6 +34,12 @@
                     {
                       "type": "named",
                       "data": {
+                        "name": "LimbStartConfigUpCommand"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
                         "name": "LimbGoToPreloadNoteScorePositionCommand"
                       }
                     },
@@ -264,71 +270,71 @@
                           }
                         ]
                       }
-                    }
-                  ]
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "FeedNoteCommand"
-                }
-              },
-              {
-                "type": "deadline",
-                "data": {
-                  "commands": [
+                    },
                     {
-                      "type": "parallel",
+                      "type": "named",
+                      "data": {
+                        "name": "FeedNoteCommand"
+                      }
+                    },
+                    {
+                      "type": "deadline",
                       "data": {
                         "commands": [
                           {
-                            "type": "named",
+                            "type": "parallel",
                             "data": {
-                              "name": "LimbGoToGroundSetpointCommand"
+                              "commands": [
+                                {
+                                  "type": "named",
+                                  "data": {
+                                    "name": "LimbGoToGroundSetpointCommand"
+                                  }
+                                },
+                                {
+                                  "type": "named",
+                                  "data": {
+                                    "name": "IntakeNoteCommand"
+                                  }
+                                }
+                              ]
                             }
                           },
                           {
-                            "type": "named",
+                            "type": "path",
                             "data": {
-                              "name": "IntakeNoteCommand"
+                              "pathName": "6Note1"
                             }
                           }
                         ]
                       }
                     },
                     {
-                      "type": "path",
+                      "type": "deadline",
                       "data": {
-                        "pathName": "6Note1"
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                "type": "deadline",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "6Note2"
+                        "commands": [
+                          {
+                            "type": "path",
+                            "data": {
+                              "pathName": "6Note2"
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "LimbGoToPreloadNoteScorePositionCommand"
+                            }
+                          }
+                        ]
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "LimbGoToPreloadNoteScorePositionCommand"
+                        "name": "FeedNoteCommand"
                       }
                     }
                   ]
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "FeedNoteCommand"
                 }
               }
             ]

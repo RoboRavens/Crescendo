@@ -39,7 +39,8 @@ public class ButtonCode {
 	public enum Toggle {
 		ARM_UP(1),
 		START_SHOOTER(2), 
-		SHOOTER_ANGLE_FROM_DISTANCE(3);
+		SHOOTER_ANGLE_FROM_DISTANCE(3),
+		MOVE_WITH_MANUAL_POWER(4);
 
 		private final int toggle;
 

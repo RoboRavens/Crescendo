@@ -22,7 +22,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public IntakeSubsystem() {
     var leftSlot0Configs = new Slot0Configs();
-        leftSlot0Configs.kP = 2;
+        leftSlot0Configs.kP = 0.15;
     _intakeMotor.getConfigurator().apply(leftSlot0Configs);
   }
   
