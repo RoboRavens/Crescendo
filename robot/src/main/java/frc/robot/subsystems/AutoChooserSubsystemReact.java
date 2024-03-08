@@ -142,7 +142,7 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
   }
 
   private AutoMode GetDefaultAuto() {
-    return DriverStation.getAlliance().get() == Alliance.Blue ? _blueDefault: _redDefault;
+    return DriverStation.getAlliance().orElseGet(() -> Alliance.Blue) == Alliance.Blue ? _blueDefault: _redDefault;
   }
 
   private void UpdateAlliance(Alliance alliance) {
@@ -154,7 +154,7 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
 
   @Override
   public void periodic() {
-    var alliance = DriverStation.getAlliance().get();
+    var alliance = DriverStation.getAlliance().orElseGet(() -> Alliance.Blue);
     if (_currentAlliance != alliance) {
       this.UpdateAlliance(alliance);
     }
@@ -162,6 +162,6 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
     _selectedAutoRobotPub.set(this.GetAuto().getText());
 
     _matchTimePub.set(Timer.getMatchTime());
-    _alliancePub.set(DriverStation.getAlliance().get().name());
+    _alliancePub.set(alliance.name());
   }
 }

@@ -30,6 +30,10 @@ public class IntakeSubsystem extends SubsystemBase {
     _intakeMotor.set(IntakeConstants.INTAKE_MOTOR_SPEED * -1);
   }
 
+  public void reverseIntake() {
+    _intakeMotor.set(IntakeConstants.INTAKE_MOTOR_SPEED);
+  }
+
   public void startIntakeFeeder() {
     _intakeMotor.set(IntakeConstants.INTAKE_FEEDER_SPEED * -1);
   }

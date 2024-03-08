@@ -40,7 +40,7 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "LimbGoToArmUpShotCommand"
+                        "name": "SouthCenterLimbGoToPreloadSetpointCommand"
                       }
                     },
                     {
@@ -53,6 +53,12 @@
                       "type": "deadline",
                       "data": {
                         "commands": [
+                          {
+                            "type": "path",
+                            "data": {
+                              "pathName": "SouthCenter1"
+                            }
+                          },
                           {
                             "type": "parallel",
                             "data": {
@@ -70,12 +76,6 @@
                                   }
                                 }
                               ]
-                            }
-                          },
-                          {
-                            "type": "path",
-                            "data": {
-                              "pathName": "SouthCenter1"
                             }
                           }
                         ]
@@ -111,6 +111,12 @@
                       "data": {
                         "commands": [
                           {
+                            "type": "path",
+                            "data": {
+                              "pathName": "SouthCenter3"
+                            }
+                          },
+                          {
                             "type": "parallel",
                             "data": {
                               "commands": [
@@ -127,12 +133,6 @@
                                   }
                                 }
                               ]
-                            }
-                          },
-                          {
-                            "type": "path",
-                            "data": {
-                              "pathName": "SouthCenter3"
                             }
                           }
                         ]

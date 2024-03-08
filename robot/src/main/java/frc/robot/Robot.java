@@ -31,6 +31,7 @@ import frc.robot.commands.elbow.ElbowDefaultCommand;
 import frc.robot.commands.elbow.ElbowGoToPositionCommand;
 import frc.robot.commands.elbow.ElbowMoveManuallyCommand;
 import frc.robot.commands.intake.IntakeCommand;
+import frc.robot.commands.intake.IntakeReverseCommand;
 import frc.robot.commands.intake.FeedCommand;
 import frc.robot.commands.intake.FeedWithSensorCommand;
 import frc.robot.commands.intake.IntakeWithSensorCommand;
@@ -144,7 +145,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Shooter Command", SHOOTER_SUBSYSTEM);
 
 
-
+    /*
     if (SHOOTER_SUBSYSTEM.hasPiece()) {
       LIMELIGHT_SUBSYSTEM_ONE.turnLedOn();
       ledsSubsystem24.setColor(50, 168, 82);
@@ -153,9 +154,7 @@ public class Robot extends TimedRobot {
       LIMELIGHT_SUBSYSTEM_ONE.turnLedOff();
       ledsSubsystem24.setColor(0, 0, 0);
     }
-
-//  ledsSubsystem24.setColor(127, 127, 0);
-    ledsSubsystem24.rainbowLeds();
+    */
   }
 
   /**
@@ -211,6 +210,9 @@ public class Robot extends TimedRobot {
     new Trigger(() -> DRIVE_CONTROLLER.getRightTriggerAxis() > 0.1)
       .onTrue(new InstantCommand(() -> cutPower = true))
       .onFalse(new InstantCommand(() -> cutPower = false));
+
+    new Trigger(() -> DRIVE_CONTROLLER.getXButton())
+      .whileTrue(new IntakeReverseCommand());
 	}
 
   private void configureAutomatedBehaviorBindings() {
@@ -219,17 +221,20 @@ public class Robot extends TimedRobot {
 
     // Blue
     new Trigger(() -> Robot.LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.AMP_SIGNAL)
-      .whileTrue(new InstantCommand(() -> ledsSubsystem24.setColor(37, 94, 186)));
+      .whileTrue(new InstantCommand(() -> ledsSubsystem24.setColor(37, 94, 186)))
+      .whileFalse(new InstantCommand(() -> ledsSubsystem24.setColor(0, 0, 0)));
 
     // Orange
     new Trigger(() -> Robot.LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.CO_OP_SIGNAL)
-      .whileTrue(new InstantCommand(() -> ledsSubsystem24.setColor(230, 151, 16)));
+      .whileTrue(new InstantCommand(() -> ledsSubsystem24.setColor(230, 151, 16)))
+      .whileFalse(new InstantCommand(() -> ledsSubsystem24.setColor(0, 0, 0)));
 
     // Green
     new Trigger(() -> 
       Robot.SHOOTER_SUBSYSTEM.hasPiece()
       && Robot.LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.NONE)
-      .whileTrue(new InstantCommand(() -> ledsSubsystem24.setColor(50, 168, 82)));
+      .whileTrue(new InstantCommand(() -> ledsSubsystem24.setColor(50, 168, 82)))
+      .whileFalse(new InstantCommand(() -> ledsSubsystem24.setColor(0, 0, 0)));
 
   }
 
@@ -285,7 +290,7 @@ public class Robot extends TimedRobot {
   // this method needs to called both periodically AND in the auto/tele init
   // methods.
   private void setDriverStationData() {
-    allianceColor = DriverStation.getAlliance().get();
+    allianceColor = DriverStation.getAlliance().orElseGet(() -> Alliance.Blue);
     AUTO_CHOOSER.BuildAutoChooser(allianceColor);
   }
 
@@ -306,6 +311,9 @@ public class Robot extends TimedRobot {
     //     .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.TRAP_SOURCE_INTAKE));
     BUTTON_CODE.getButton(Buttons.GROUND_PICKUP_AND_SPEAKER_SCORING)
       .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.GROUND_PICKUP));
+
+    BUTTON_CODE.getButton(Buttons.ARM_RELEASE_SNAPPER)
+      .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.START_CONFIG_UP));
 
     BooleanSupplier manualOverride = () -> BUTTON_CODE.getSwitch(Toggle.MOVE_WITH_MANUAL_POWER).getAsBoolean() == false;
     var elbowUpCommand = new ConditionalCommand(new ElbowMoveManuallyCommand(Constants.MOVE_ELBOW_UP_MANUAL_POWER), new ElbowOffsetCommand(0.5), manualOverride);

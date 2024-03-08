@@ -22,7 +22,8 @@ public class ElbowConstants {
   public static final double DEGREES_SOURCE_LOAD = 35;
   public static final double DEGREES_TRAP_SCORE = 75;
   public static final double DEGREES_START_CONFIG = 53;
-  public static final double DEGREES_START_CONFIG_UP = 75;
+  public static final double DEGREES_SOUTH_CENTER_PRELOAD = 58;
+  public static final double DEGREES_START_CONFIG_UP = 85;
 
   public static final double RADIANS_FLOOR_PICKUP = Math.toRadians(DEGREES_FLOOR_PICKUP);
   public static final double RADIANS_AMP_SCORE = Math.toRadians(DEGREES_AMP_SCORE);
