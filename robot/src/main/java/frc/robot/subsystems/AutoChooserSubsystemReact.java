@@ -54,8 +54,8 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
       () -> new PathPlannerAuto("South Center Path"))
     );
     this.addOption(
-      new AutoMode("B4: 3 Note South Center AUTO",
-      () -> new PathPlannerAuto("South Center Auto"))
+      new AutoMode("B4: 3 Note South Center AUTO BLUE",
+      () -> new PathPlannerAuto("South Center Auto Blue"))
     );
     this.addOption(
       new AutoMode("B5: North Center Then Wing Notes PATH",
@@ -68,6 +68,10 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
     this.addOption(
       new AutoMode("B7: Sadville Auto",
       () -> new PathPlannerAuto("Sadville Auto"))
+    );
+    this.addOption(
+      new AutoMode("B8: 3 Note South Center AUTO RED",
+      () -> new PathPlannerAuto("South Center Auto Red"))
     );
 
     // RED SIDE
@@ -84,8 +88,8 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
       () -> new PathPlannerAuto("South Center Path"))
     );
     this.addOption(
-      new AutoMode("R4: 3 Note South Center AUTO",
-      () -> new PathPlannerAuto("South Center Auto"))
+      new AutoMode("R4: 3 Note South Center AUTO BLUE",
+      () -> new PathPlannerAuto("South Center Auto Blue"))
     );
     this.addOption(
       new AutoMode("R5: North Center Then Wing Notes PATH",
@@ -98,6 +102,10 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
     this.addOption(
       new AutoMode("R7: Sadville Auto",
       () -> new PathPlannerAuto("Sadville Auto"))
+    );
+    this.addOption(
+      new AutoMode("R8: 3 Note South Center AUTO RED",
+      () -> new PathPlannerAuto("South Center Auto Red"))
     );
   }
 
