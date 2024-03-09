@@ -226,21 +226,27 @@ public class Robot extends TimedRobot {
     new Trigger(() -> Robot.SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON)
       .whileTrue(new StartShooterCommand());
 
-    var amp = new ConditionalCommand(new LEDsBlinkCommand(37, 94, 186), new LEDsSolidColorNewCommand(37, 94, 186), BUTTON_CODE.getSwitch(Toggle.START_SHOOTER));
-    var coOp = new ConditionalCommand(new LEDsBlinkCommand(230, 151, 16), new LEDsSolidColorNewCommand(230, 151, 16), BUTTON_CODE.getSwitch(Toggle.START_SHOOTER));
-    var piece = new ConditionalCommand(new LEDsBlinkCommand(50, 168, 82), new LEDsSolidColorNewCommand(50, 168, 82), BUTTON_CODE.getSwitch(Toggle.START_SHOOTER));
+    new Trigger(() -> Robot.SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON)
+      .whileTrue(new LEDsSolidColorCommand(ledsSubsystem24, Color.kBlue));
+
+    var amp = new ConditionalCommand(new LEDsBlinkCommand(37, 94, 186), new LEDsSolidColorNewCommand(37, 94, 186), () -> Robot.SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON);
+    var coOp = new ConditionalCommand(new LEDsBlinkCommand(230, 151, 16), new LEDsSolidColorNewCommand(230, 151, 16), () -> Robot.SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON);
+    var piece = new ConditionalCommand(new LEDsBlinkCommand(50, 168, 82), new LEDsSolidColorNewCommand(50, 168, 82), () -> Robot.SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON);
 
     // Blue
-    new Trigger(() -> Robot.LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.AMP_SIGNAL)
+    new Trigger(() -> Robot.LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.AMP_SIGNAL
+      && SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.OFF)
       .whileTrue(amp);
 
     // Orange
-    new Trigger(() -> Robot.LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.CO_OP_SIGNAL)
+    new Trigger(() -> Robot.LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.CO_OP_SIGNAL
+      && SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.OFF)
       .whileTrue(coOp);
 
     // Green
     new Trigger(() -> 
       Robot.SHOOTER_SUBSYSTEM.hasPiece()
+      && Robot.SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.OFF
       && Robot.LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.NONE)
       .whileTrue(piece);
 

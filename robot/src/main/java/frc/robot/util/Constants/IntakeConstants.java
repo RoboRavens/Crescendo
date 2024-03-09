@@ -7,7 +7,7 @@ package frc.robot.util.Constants;
 /** Add your docs here. */
 public class IntakeConstants {
 
-    public static final double INTAKE_MOTOR_SPEED = .4;
+    public static final double INTAKE_MOTOR_SPEED = .35;
     public static final double INTAKE_FEEDER_SPEED = 1;
     public static final double INTAKE_MOTOR_STOP = 0;
     public static final double FEEDER_LAUNCH_MOTOR_STOP_BUFFER = .5;
