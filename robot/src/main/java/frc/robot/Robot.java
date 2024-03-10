@@ -32,10 +32,12 @@ import frc.robot.commands.elbow.ElbowDefaultCommand;
 import frc.robot.commands.elbow.ElbowGoToPositionCommand;
 import frc.robot.commands.elbow.ElbowMoveManuallyCommand;
 import frc.robot.commands.intake.IntakeCommand;
+import frc.robot.commands.intake.IntakePreShooterRevCommand;
 import frc.robot.commands.intake.IntakeReverseCommand;
 import frc.robot.commands.intake.FeedCommand;
 import frc.robot.commands.intake.FeedWithSensorCommand;
 import frc.robot.commands.intake.IntakeWithSensorCommand;
+import frc.robot.commands.intake.IntakeWithSensorTeleopCommand;
 import frc.robot.commands.leds.LEDsBlinkCommand;
 import frc.robot.commands.leds.LEDsDefaultCommand;
 import frc.robot.commands.leds.LEDsSolidColorCommand;
@@ -180,7 +182,7 @@ public class Robot extends TimedRobot {
 
     AUTO_CHOOSER.ShowTab();
     
-    new Trigger(() -> DRIVE_CONTROLLER.getLeftTriggerAxis() > .1 && Robot.LIMELIGHT_SUBSYSTEM_ONE.getTv() == 1).whileTrue(DRIVETRAIN_AUTO_AIM_COMMAND);
+    //new Trigger(() -> DRIVE_CONTROLLER.getLeftTriggerAxis() > .1 && Robot.LIMELIGHT_SUBSYSTEM_ONE.getTv() == 1).whileTrue(DRIVETRAIN_AUTO_AIM_COMMAND);
 
     configureDriveControllerBindings();
     configureAutomatedBehaviorBindings();
@@ -202,7 +204,7 @@ public class Robot extends TimedRobot {
     //new Trigger(() -> StateManagement.isRobotReadyToShoot() && DRIVE_CONTROLLER.getAButton())
     //  .onTrue(new IntakeFeedCommand(INTAKE_SUBSYSTEM));
 
-    COMMAND_DRIVE_CONTROLLER.leftBumper().whileTrue(new IntakeWithSensorCommand());
+    COMMAND_DRIVE_CONTROLLER.leftBumper().whileTrue(new IntakeWithSensorTeleopCommand());
     COMMAND_DRIVE_CONTROLLER.rightBumper().whileTrue(new FeedWithSensorCommand());
 
     new Trigger(() -> SHOOTER_SUBSYSTEM.hasPiece()).onTrue(
@@ -346,6 +348,9 @@ public class Robot extends TimedRobot {
 
     BUTTON_CODE.getButton(Buttons.SHOOTER_REV)
       .whileTrue(new StartShooterCommand());
+      // .whileTrue(new IntakePreShooterRevCommand().andThen(new StartShooterCommand()));
+
+    BUTTON_CODE.getButton(Buttons.SHOOTER_REV).whileTrue(new LEDsSolidColorCommand(ledsSubsystem24, new Color(255, 0, 0)));
 
     BUTTON_CODE.getSwitch(Toggle.SHOOTER_ANGLE_FROM_DISTANCE)
       .whileTrue(new WristGoToSpeakerAngleCommand());
