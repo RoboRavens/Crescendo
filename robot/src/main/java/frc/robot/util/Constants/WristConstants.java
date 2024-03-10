@@ -9,7 +9,7 @@ public class WristConstants {
     
     public static final double ENCODER_POSITION_AT_FLOOR_PICKUP = 0;
     public static final double ENCODER_POSITION_45_FROM_FLOOR_PICKUP = -3.049348;
-    public static final double ENCODER_POSITION_AT_STARTUP = 2.715332;
+    public static final double ENCODER_POSITION_AT_STARTUP = 4.085938;
 
     public static final double IS_AT_SETPOINT_BUFFER = .2;
 
@@ -18,7 +18,7 @@ public class WristConstants {
     // be careful, these match onshape signs, the sign shown on the dashboard is inverted
     // if dashboard shows 35, then put -35 here
     public static double DEGREES_FLOOR_PICKUP = 0.0;
-    public static double DEGREES_AMP_SCORE = -7.580386;
+    public static double DEGREES_AMP_SCORE = -3;
     public static double DEGREES_TRAP_LOAD_FROM_SOURCE = -20;
     public static double DEGREES_SOURCE_LOAD = -54.979414;
     public static double DEGREES_TRAP_SCORE = -40;

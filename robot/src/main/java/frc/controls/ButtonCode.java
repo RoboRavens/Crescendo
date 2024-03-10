@@ -15,14 +15,16 @@ public class ButtonCode {
 		AMP_SCORING(3),
 		// TRAP_SCORING(4),
 		AMP_AND_SPEAKER_SOURCE_INTAKE(8),
-		TRAP_SOURCE_INTAKE(9),
+		// TRAP_SOURCE_INTAKE(9),
 		MOVE_ELBOW_UP(7),
 		MOVE_ELBOW_DOWN(10),
 		MOVE_WRIST_UP(6),
 		MOVE_WRIST_DOWN(11),
 		SPEAKER_CLOSE_SHOT(12),
-		SPEAKER_MID_SHOT(5),
-		SPEAKER_FAR_SHOT(4);
+		// SPEAKER_MID_SHOT(5),
+		SPEAKER_FAR_SHOT(4),
+		SHOOTER_REV(5),
+		ARM_RELEASE_SNAPPER(9);
 
 		private final int button;
 
@@ -39,7 +41,8 @@ public class ButtonCode {
 	public enum Toggle {
 		ARM_UP(1),
 		START_SHOOTER(2), 
-		SHOOTER_ANGLE_FROM_DISTANCE(3);
+		SHOOTER_ANGLE_FROM_DISTANCE(3),
+		MOVE_WITH_MANUAL_POWER(4);
 
 		private final int toggle;
 

@@ -119,6 +119,14 @@ public class ElbowSubsystem extends SubsystemBase {
     return position;
   }
 
+  public void offsetByDegrees(double degrees) {
+    double offsetPosition = ((ElbowConstants.ENCODER_POSITION_AT_VERTICAL - ElbowConstants.ENCODER_POSITION_AT_HORIZONTAL) / 90) * degrees;
+    System.out.print("Changing elbow motor position from " + getPosition());
+    double newPosition = getPosition() + offsetPosition;
+    System.out.println(" to " + newPosition);
+    _elbowRotationMotor.getConfigurator().setPosition(newPosition);
+  } 
+
   public void setPowerManually(double power){
     _elbowRotationMotor.set(power);
   }

@@ -4,14 +4,18 @@
 
 package frc.robot;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -21,21 +25,30 @@ import frc.controls.ButtonCode.Buttons;
 import frc.controls.ButtonCode.Toggle;
 import frc.robot.commands.compound.LimbGoToSetpointCommand;
 import frc.robot.commands.elbow.ElbowMoveManuallyCommand;
+import frc.robot.commands.elbow.ElbowOffsetCommand;
 import frc.robot.commands.drivetrain.DrivetrainAutoAimCommand;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
 import frc.robot.commands.elbow.ElbowDefaultCommand;
 import frc.robot.commands.elbow.ElbowGoToPositionCommand;
 import frc.robot.commands.elbow.ElbowMoveManuallyCommand;
 import frc.robot.commands.intake.IntakeCommand;
+import frc.robot.commands.intake.IntakePreShooterRevCommand;
+import frc.robot.commands.intake.IntakeReverseCommand;
 import frc.robot.commands.intake.FeedCommand;
 import frc.robot.commands.intake.FeedWithSensorCommand;
 import frc.robot.commands.intake.IntakeWithSensorCommand;
+import frc.robot.commands.intake.IntakeWithSensorTeleopCommand;
+import frc.robot.commands.leds.LEDsBlinkCommand;
+import frc.robot.commands.leds.LEDsDefaultCommand;
+import frc.robot.commands.leds.LEDsSolidColorCommand;
+import frc.robot.commands.leds.LEDsSolidColorNewCommand;
 import frc.robot.commands.shooter.ShootCommand;
 import frc.robot.commands.shooter.StartShooterCommand;
 import frc.robot.commands.wrist.WristDefaultCommand;
 import frc.robot.commands.wrist.WristGoToPositionCommand;
 import frc.robot.commands.wrist.WristGoToSpeakerAngleCommand;
 import frc.robot.commands.wrist.WristMoveManuallyCommand;
+import frc.robot.commands.wrist.WristOffsetCommand;
 import frc.robot.subsystems.AutoChooserSubsystemReact;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.ElbowSubsystem;
@@ -97,6 +110,7 @@ public class Robot extends TimedRobot {
   public static final WristSubsystem WRIST_SUBSYSTEM = new WristSubsystem();
   public static final LEDsSubsystem24 ledsSubsystem24 = new LEDsSubsystem24();
   public static final PathPlannerConfigurator PATH_PLANNER_CONFIGURATOR = new PathPlannerConfigurator();
+  public static final LEDsDefaultCommand LEDS_DEFAULT_COMMAND = new LEDsDefaultCommand();
 
   // DEFAULT COMMANDS
   public static final DrivetrainDefaultCommand DRIVETRAIN_DEFAULT_COMMAND = new DrivetrainDefaultCommand();
@@ -139,7 +153,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Shooter Command", SHOOTER_SUBSYSTEM);
 
 
-
+    /*
     if (SHOOTER_SUBSYSTEM.hasPiece()) {
       LIMELIGHT_SUBSYSTEM_ONE.turnLedOn();
       ledsSubsystem24.setColor(50, 168, 82);
@@ -148,9 +162,7 @@ public class Robot extends TimedRobot {
       LIMELIGHT_SUBSYSTEM_ONE.turnLedOff();
       ledsSubsystem24.setColor(0, 0, 0);
     }
-
-//  ledsSubsystem24.setColor(127, 127, 0);
-    ledsSubsystem24.rainbowLeds();
+    */
   }
 
   /**
@@ -163,13 +175,14 @@ public class Robot extends TimedRobot {
     DRIVETRAIN_SUBSYSTEM.setDefaultCommand(DRIVETRAIN_DEFAULT_COMMAND);
     ELBOW_SUBSYSTEM.setDefaultCommand(ELBOW_DEFAULT_COMMAND);
     WRIST_SUBSYSTEM.setDefaultCommand(WRIST_DEFAULT_COMMAND);
+    ledsSubsystem24.setDefaultCommand(LEDS_DEFAULT_COMMAND.ignoringDisable(true));
 
     SmartDashboard.putData(ELBOW_SUBSYSTEM);
     SmartDashboard.putData(WRIST_SUBSYSTEM);
 
     AUTO_CHOOSER.ShowTab();
     
-    new Trigger(() -> DRIVE_CONTROLLER.getLeftTriggerAxis() > .1 && Robot.LIMELIGHT_SUBSYSTEM_ONE.getTv() == 1).whileTrue(DRIVETRAIN_AUTO_AIM_COMMAND);
+    //new Trigger(() -> DRIVE_CONTROLLER.getLeftTriggerAxis() > .1 && Robot.LIMELIGHT_SUBSYSTEM_ONE.getTv() == 1).whileTrue(DRIVETRAIN_AUTO_AIM_COMMAND);
 
     configureDriveControllerBindings();
     configureAutomatedBehaviorBindings();
@@ -191,7 +204,7 @@ public class Robot extends TimedRobot {
     //new Trigger(() -> StateManagement.isRobotReadyToShoot() && DRIVE_CONTROLLER.getAButton())
     //  .onTrue(new IntakeFeedCommand(INTAKE_SUBSYSTEM));
 
-    COMMAND_DRIVE_CONTROLLER.leftBumper().whileTrue(new IntakeWithSensorCommand());
+    COMMAND_DRIVE_CONTROLLER.leftBumper().whileTrue(new IntakeWithSensorTeleopCommand());
     COMMAND_DRIVE_CONTROLLER.rightBumper().whileTrue(new FeedWithSensorCommand());
 
     new Trigger(() -> SHOOTER_SUBSYSTEM.hasPiece()).onTrue(
@@ -206,25 +219,38 @@ public class Robot extends TimedRobot {
     new Trigger(() -> DRIVE_CONTROLLER.getRightTriggerAxis() > 0.1)
       .onTrue(new InstantCommand(() -> cutPower = true))
       .onFalse(new InstantCommand(() -> cutPower = false));
+
+    new Trigger(() -> DRIVE_CONTROLLER.getXButton())
+      .whileTrue(new IntakeReverseCommand());
 	}
 
   private void configureAutomatedBehaviorBindings() {
     new Trigger(() -> Robot.SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON)
       .whileTrue(new StartShooterCommand());
 
+    new Trigger(() -> Robot.SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON)
+      .whileTrue(new LEDsSolidColorCommand(ledsSubsystem24, Color.kBlue));
+
+    var amp = new ConditionalCommand(new LEDsBlinkCommand(37, 94, 186), new LEDsSolidColorNewCommand(37, 94, 186), () -> Robot.SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON);
+    var coOp = new ConditionalCommand(new LEDsBlinkCommand(230, 151, 16), new LEDsSolidColorNewCommand(230, 151, 16), () -> Robot.SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON);
+    var piece = new ConditionalCommand(new LEDsBlinkCommand(50, 168, 82), new LEDsSolidColorNewCommand(50, 168, 82), () -> Robot.SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON);
+
     // Blue
-    new Trigger(() -> Robot.LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.AMP_SIGNAL)
-      .whileTrue(new InstantCommand(() -> ledsSubsystem24.setColor(37, 94, 186)));
+    new Trigger(() -> Robot.LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.AMP_SIGNAL
+      && SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.OFF)
+      .whileTrue(amp);
 
     // Orange
-    new Trigger(() -> Robot.LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.CO_OP_SIGNAL)
-      .whileTrue(new InstantCommand(() -> ledsSubsystem24.setColor(230, 151, 16)));
+    new Trigger(() -> Robot.LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.CO_OP_SIGNAL
+      && SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.OFF)
+      .whileTrue(coOp);
 
     // Green
     new Trigger(() -> 
       Robot.SHOOTER_SUBSYSTEM.hasPiece()
+      && Robot.SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.OFF
       && Robot.LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.NONE)
-      .whileTrue(new InstantCommand(() -> ledsSubsystem24.setColor(50, 168, 82)));
+      .whileTrue(piece);
 
   }
 
@@ -280,7 +306,7 @@ public class Robot extends TimedRobot {
   // this method needs to called both periodically AND in the auto/tele init
   // methods.
   private void setDriverStationData() {
-    allianceColor = DriverStation.getAlliance().get();
+    allianceColor = DriverStation.getAlliance().orElseGet(() -> Alliance.Blue);
     AUTO_CHOOSER.BuildAutoChooser(allianceColor);
   }
 
@@ -302,17 +328,29 @@ public class Robot extends TimedRobot {
     BUTTON_CODE.getButton(Buttons.GROUND_PICKUP_AND_SPEAKER_SCORING)
       .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.GROUND_PICKUP));
 
-    BUTTON_CODE.getButton(Buttons.MOVE_ELBOW_UP)
-        .whileTrue(new ElbowMoveManuallyCommand(Constants.MOVE_ELBOW_UP_MANUAL_POWER));
-    BUTTON_CODE.getButton(Buttons.MOVE_ELBOW_DOWN)
-        .whileTrue(new ElbowMoveManuallyCommand(Constants.MOVE_ELBOW_DOWN_MANUAL_POWER));
-    BUTTON_CODE.getButton(Buttons.MOVE_WRIST_UP)
-        .whileTrue(new WristMoveManuallyCommand(Constants.MOVE_WRIST_UP_MANUAL_POWER));
-    BUTTON_CODE.getButton(Buttons.MOVE_WRIST_DOWN)
-        .whileTrue(new WristMoveManuallyCommand(Constants.MOVE_WRIST_DOWN_MANUAL_POWER));
+    BUTTON_CODE.getButton(Buttons.ARM_RELEASE_SNAPPER)
+      .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.START_CONFIG_UP));
 
-    BUTTON_CODE.getSwitch(Toggle.START_SHOOTER)
+    BooleanSupplier manualOverride = () -> BUTTON_CODE.getSwitch(Toggle.MOVE_WITH_MANUAL_POWER).getAsBoolean() == false;
+    var elbowUpCommand = new ConditionalCommand(new ElbowMoveManuallyCommand(Constants.MOVE_ELBOW_UP_MANUAL_POWER), new ElbowOffsetCommand(0.5), manualOverride);
+    var elbowDownCommand = new ConditionalCommand(new ElbowMoveManuallyCommand(Constants.MOVE_ELBOW_DOWN_MANUAL_POWER), new ElbowOffsetCommand(-0.5), manualOverride);
+    var wristUpCommand = new ConditionalCommand(new WristMoveManuallyCommand(Constants.MOVE_WRIST_UP_MANUAL_POWER), new WristOffsetCommand(0.5), manualOverride);
+    var wristDownCommand = new ConditionalCommand(new WristMoveManuallyCommand(Constants.MOVE_WRIST_DOWN_MANUAL_POWER), new WristOffsetCommand(-0.5), manualOverride);
+
+    BUTTON_CODE.getButton(Buttons.MOVE_ELBOW_UP).and(BUTTON_CODE.getSwitch(Toggle.MOVE_WITH_MANUAL_POWER))
+        .whileTrue(elbowUpCommand);
+    BUTTON_CODE.getButton(Buttons.MOVE_ELBOW_DOWN)
+        .whileTrue(elbowDownCommand);
+    BUTTON_CODE.getButton(Buttons.MOVE_WRIST_UP)
+        .whileTrue(wristUpCommand);
+    BUTTON_CODE.getButton(Buttons.MOVE_WRIST_DOWN)
+        .whileTrue(wristDownCommand);
+
+    BUTTON_CODE.getButton(Buttons.SHOOTER_REV)
       .whileTrue(new StartShooterCommand());
+      // .whileTrue(new IntakePreShooterRevCommand().andThen(new StartShooterCommand()));
+
+    BUTTON_CODE.getButton(Buttons.SHOOTER_REV).whileTrue(new LEDsSolidColorCommand(ledsSubsystem24, new Color(255, 0, 0)));
 
     BUTTON_CODE.getSwitch(Toggle.SHOOTER_ANGLE_FROM_DISTANCE)
       .whileTrue(new WristGoToSpeakerAngleCommand());
@@ -324,12 +362,12 @@ public class Robot extends TimedRobot {
         WRIST_SUBSYSTEM.setTargetPosition(WristSubsystem.getPositionFromRadians(shooterAngleRadians));
       }));
 
-    BUTTON_CODE.getButton(Buttons.SPEAKER_MID_SHOT)
-      .whileTrue(new InstantCommand(() -> 
-      {
-        double shooterAngleRadians = Math.toRadians(Robot.SHOOTER_SUBSYSTEM.getShooterAngleMapDown(2.032));
-        WRIST_SUBSYSTEM.setTargetPosition(WristSubsystem.getPositionFromRadians(shooterAngleRadians));
-      }));
+    // BUTTON_CODE.getButton(Buttons.SPEAKER_MID_SHOT)
+    //   .whileTrue(new InstantCommand(() -> 
+    //   {
+    //     double shooterAngleRadians = Math.toRadians(Robot.SHOOTER_SUBSYSTEM.getShooterAngleMapDown(2.032));
+    //     WRIST_SUBSYSTEM.setTargetPosition(WristSubsystem.getPositionFromRadians(shooterAngleRadians));
+    //   }));
 
     BUTTON_CODE.getButton(Buttons.SPEAKER_FAR_SHOT)
       .whileTrue(new InstantCommand(() -> 

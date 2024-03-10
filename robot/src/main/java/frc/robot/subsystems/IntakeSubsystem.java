@@ -1,8 +1,10 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -22,12 +24,17 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public IntakeSubsystem() {
     var leftSlot0Configs = new Slot0Configs();
-        leftSlot0Configs.kP = 2;
+        leftSlot0Configs.kP = 0.15;
     _intakeMotor.getConfigurator().apply(leftSlot0Configs);
+    _intakeMotor.setNeutralMode(NeutralModeValue.Brake);
   }
   
   public void startIntake() {
     _intakeMotor.set(IntakeConstants.INTAKE_MOTOR_SPEED * -1);
+  }
+
+  public void reverseIntake() {
+    _intakeMotor.set(IntakeConstants.INTAKE_MOTOR_SPEED);
   }
 
   public void startIntakeFeeder() {
@@ -39,7 +46,8 @@ public class IntakeSubsystem extends SubsystemBase {
 }
 
   public void stopMotorWithPID() {
-    _intakeMotor.setControl(m_request.withVelocity(0));
+    // _intakeMotor.setControl(m_request.withVelocity(0));
+    _intakeMotor.set(0);
   }
 
   // Stops all
