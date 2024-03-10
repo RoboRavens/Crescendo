@@ -30,7 +30,8 @@ public class StateManagement {
     }
     public enum ArmUpTargetState {
         FREE,
-        UP
+        UP,
+        DOWN
     }
     public enum ShooterRevTargetState {
         ON,
