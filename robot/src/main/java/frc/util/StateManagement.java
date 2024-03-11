@@ -89,4 +89,13 @@ public class StateManagement {
         // This should consider if the robot has a note, if we are aligned with the scoring target, if we are in our alliance wing, and if the shooter is up to speed
         return false;
     }
+    public enum SelectedShotTargetState {
+        SUBWOOFER_SHOT,
+        STARTING_LINE_SHOT,
+        PODIUM_SHOT
+    }
+    public enum LimelightOverrideState {
+        OVERRIDE_ON,
+        OVERRIDE_OFF
+    }
 }

@@ -29,7 +29,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
 import TextField from '@mui/material/TextField';
 import Stack from '@mui/material/Stack';
-import { VideoLabel, Link, VolumeUp, Highlight, Speaker, ToggleOn, Translate, ShowChart, TripOrigin, Timer, Handshake, KeyboardDoubleArrowUp, MusicNote, MusicOff } from '@mui/icons-material';
+import { VideoLabel, Link, VolumeUp, Highlight, Speaker, ToggleOn, Translate, ShowChart, TripOrigin, Timer, Handshake, KeyboardDoubleArrowUp, MusicNote, MusicOff, NoPhotography } from '@mui/icons-material';
 import { SvgIcon, Switch } from '@mui/material';
 import { Audio, Puff } from 'react-loader-spinner';
 
@@ -57,29 +57,29 @@ const OTHER_HIGLIGHT = '#35afea';
 interface Topics {
   tabPub?: NetworkTablesTopic<string>;
   selectedAutoPub?: NetworkTablesTopic<string>;
-  selectedScoreTypePub?: NetworkTablesTopic<string>;
   armUpPub?: NetworkTablesTopic<boolean>;
   selectedIntakePub?: NetworkTablesTopic<string>;
-  selectedClimbPositionPub?: NetworkTablesTopic<string>;
   selectedSourceLanePub?: NetworkTablesTopic<string>;
   signalSelectionPub?: NetworkTablesTopic<string>;
   startShooterPub?: NetworkTablesTopic<boolean>;
+  selectedShotTypePub?: NetworkTablesTopic<string>;
+  limelightOverridePub?: NetworkTablesTopic<boolean>;
 }
 
 const topics: Topics = {
   tabPub: undefined,
   selectedAutoPub: undefined,
-  selectedScoreTypePub: undefined,
   armUpPub: undefined,
   selectedIntakePub: undefined,
-  selectedClimbPositionPub: undefined,
   selectedSourceLanePub: undefined,
   signalSelectionPub: undefined,
-  startShooterPub: undefined
+  startShooterPub: undefined,
+  selectedShotTypePub: undefined,
+  limelightOverridePub: undefined
 };
 
-const NT_CORE = NetworkTables.getInstanceByTeam(1188);
-// const NT_CORE = NetworkTables.getInstanceByURI("localhost");
+// const NT_CORE = NetworkTables.getInstanceByTeam(1188);
+const NT_CORE = NetworkTables.getInstanceByURI("localhost");
 
 class App extends React.Component<{}, {
   connected: boolean,
@@ -93,14 +93,14 @@ class App extends React.Component<{}, {
   selectedAuto: string,
   selectedAutoFromRobot: string,
   autoOptions: Array<string>,
-  selectedScoreType: string,
   selectedIntakeType: string,
-  selectedClimbPosition: string,
   armUp: boolean,
   armUpToggle: boolean,
   selectedSourceLane: string,
   signalSelection: string,
-  startShooter: boolean
+  startShooter: boolean,
+  selectedShotType: string,
+  limelightOverride: boolean
 }> {
   constructor(props: {}) {
     super(props);
@@ -116,14 +116,14 @@ class App extends React.Component<{}, {
       selectedAuto: "NONE",
       selectedAutoFromRobot: "NONE",
       autoOptions: [],
-      selectedScoreType: "SPEAKER",
       selectedIntakeType: "GROUND",
-      selectedClimbPosition: "LEFT_CLOSE",
       armUp: false,
       armUpToggle: false,
       selectedSourceLane: "CENTER",
       signalSelection: "NONE",
-      startShooter: false
+      startShooter: false,
+      selectedShotType: "SUBWOOFER_SHOT",
+      limelightOverride: false
     };
   }
 
@@ -282,39 +282,35 @@ class App extends React.Component<{}, {
 
     topics.selectedAutoPub = NT_CORE.createTopic<string>('/ReactDash/Autonomous/dpub/selectedAuto', NetworkTablesTypeInfos.kString, "No Auto");
     topics.selectedAutoPub.publish({retained: true}); // make us the publisher for this topic and tell the server retain the value if we disconnect
-    topics.selectedScoreTypePub = NT_CORE.createTopic<string>('/ReactDash/Teleop/dpub/selectedScoreType', NetworkTablesTypeInfos.kString, "SPEAKER");
-    topics.selectedScoreTypePub.publish({retained: true});
     topics.armUpPub = NT_CORE.createTopic<boolean>('/ReactDash/Teleop/dpub/armUp', NetworkTablesTypeInfos.kBoolean, false);
     topics.armUpPub.publish({retained: true});
     topics.selectedIntakePub = NT_CORE.createTopic<string>('/ReactDash/Teleop/dpub/selectedIntakeType', NetworkTablesTypeInfos.kString, "None");
     topics.selectedIntakePub.publish({retained: true});
-    topics.selectedClimbPositionPub = NT_CORE.createTopic<string>('/ReactDash/Teleop/dpub/selectedClimbPosition', NetworkTablesTypeInfos.kString, "None");
-    topics.selectedClimbPositionPub.publish({retained: true});
     topics.selectedSourceLanePub = NT_CORE.createTopic<string>('/ReactDash/Teleop/dpub/selectedSourceLane', NetworkTablesTypeInfos.kString, "None");
     topics.selectedSourceLanePub.publish({retained: true});
     topics.signalSelectionPub = NT_CORE.createTopic<string>('/ReactDash/Teleop/dpub/signalSelection', NetworkTablesTypeInfos.kString, "NONE");
     topics.signalSelectionPub.publish({retained: true});
     topics.startShooterPub = NT_CORE.createTopic<boolean>('/ReactDash/Teleop/dpub/startShooter', NetworkTablesTypeInfos.kBoolean, false);
     topics.startShooterPub.publish({retained: true});
+    topics.selectedShotTypePub = NT_CORE.createTopic<string>('/ReactDash/Teleop/dpub/selectedShotType', NetworkTablesTypeInfos.kString, "None");
+    topics.selectedShotTypePub.publish({retained: true});
+    topics.limelightOverridePub = NT_CORE.createTopic<boolean>('/ReactDash/Teleop/dpub/limelightOverride', NetworkTablesTypeInfos.kBoolean, false);
+    topics.limelightOverridePub.publish({retained: true});
 
-    NT_CORE.createTopic<string>('/ReactDash/Teleop/rpub/selectedScoreType', NetworkTablesTypeInfos.kString)
-    .subscribe((value: string | null) => 
-      {
-        console.log("rpub: " + value ?? this.state.selectedScoreType);
-        this.handleScoreSelection(value ?? this.state.selectedScoreType);
-      }, true);
     NT_CORE.createTopic<boolean>('/ReactDash/Teleop/rpub/armUp', NetworkTablesTypeInfos.kString)
     .subscribe((value: boolean | null) => this.handleArmUpSelection(value ?? this.state.armUp), true);
     NT_CORE.createTopic<string>('/ReactDash/Teleop/rpub/selectedIntakeType', NetworkTablesTypeInfos.kString)
     .subscribe((value: string | null) => this.handleIntakeSelection(value ?? this.state.selectedIntakeType), true);
-    NT_CORE.createTopic<string>('/ReactDash/Teleop/rpub/selectedClimbPosition', NetworkTablesTypeInfos.kString)
-    .subscribe((value: string | null) => this.handleClimbSelection(value ?? this.state.selectedClimbPosition), true);
     NT_CORE.createTopic<string>('/ReactDash/Teleop/rpub/selectedSourceLane', NetworkTablesTypeInfos.kString)
     .subscribe((value: string | null) => this.handleSourceSelection(value ?? this.state.selectedSourceLane), true);
     NT_CORE.createTopic<string>('/ReactDash/Teleop/rpub/signalSelection', NetworkTablesTypeInfos.kString)
     .subscribe((value: string | null) => this.handleSignalSelection(value ?? this.state.signalSelection), true);
     NT_CORE.createTopic<boolean>('/ReactDash/Teleop/rpub/startShooter', NetworkTablesTypeInfos.kString)
     .subscribe((value: boolean | null) => this.handleStartShooterToggle(value ?? this.state.startShooter), true);
+    NT_CORE.createTopic<string>('/ReactDash/Teleop/rpub/selectedShotType', NetworkTablesTypeInfos.kString)
+    .subscribe((value: string | null) => this.handleShotSelection(value ?? this.state.selectedShotType), true);
+    NT_CORE.createTopic<boolean>('/ReactDash/Teleop/rpub/limelightOverride', NetworkTablesTypeInfos.kString)
+    .subscribe((value: boolean | null) => this.handleLLOverride(value ?? this.state.limelightOverride), true);
     
     NT_CORE.createTopic<string>('/ReactDash/Autonomous/rpub/selectedAuto', NetworkTablesTypeInfos.kString, "No Auto")
       .subscribe((value: string | null) => { this.setSelectedAutoFromRobot(value); }, true);
@@ -324,35 +320,6 @@ class App extends React.Component<{}, {
   componentWillUnmount() {
     NT_CORE.client.cleanup();
     console.log("componentWillUnmount");
-  }
-
-  handleScoreSelection(type: string) {
-    // If the current climbing option is NOT a middle location, and we select trap as the scoring option, the climbing option should change to the middle climbing location on the selected chain
-    if (type == "TRAP") {
-      const selectedClimbPosition = this.state.selectedClimbPosition
-      if (selectedClimbPosition == "OPPOSITE_RIGHT" || selectedClimbPosition == "OPPOSITE_LEFT") {
-        this.handleClimbSelection("OPPOSITE_CENTER");
-      }
-      else if (selectedClimbPosition == "RIGHT_CLOSE" || selectedClimbPosition == "RIGHT_FAR") {
-        this.handleClimbSelection("RIGHT_CENTER");
-      }
-      else if (selectedClimbPosition == "LEFT_CLOSE" || selectedClimbPosition == "LEFT_FAR") {
-        this.handleClimbSelection("LEFT_CENTER");
-      }
-    }
-    const currentSelectedButton = window.document.getElementById(type)
-    console.log("selected: " + currentSelectedButton?.id)
-    if (currentSelectedButton != null) currentSelectedButton.style.backgroundColor = "#43a5ff"
-    const previouslySelectedButton = window.document.getElementById(this.state.selectedScoreType)
-    console.log("previous: " + previouslySelectedButton?.id)
-    if (previouslySelectedButton != null && previouslySelectedButton.id != type) {
-      previouslySelectedButton.style.backgroundColor = "#262b32";
-    }
-    console.log(type)
-    topics.selectedScoreTypePub?.setValue(type);
-    this.setState({
-      selectedScoreType: type
-    });
   }
 
   handleSourceSelection(type: string) {
@@ -381,38 +348,6 @@ class App extends React.Component<{}, {
     });
   }
 
-  generateClimbSelections() {
-    const elements = [];
-    const positions = ["LEFT_FAR", "LEFT_CENTER", "LEFT_CLOSE", "RIGHT_CLOSE", "RIGHT_CENTER", "RIGHT_FAR", "OPPOSITE_RIGHT", "OPPOSITE_CENTER", "OPPOSITE_LEFT"]
-    const xOffsets = [112, 148, 190, 283, 326, 362, 321, 238, 155]
-    const yOffsets = [113, 177, 250, 250, 177, 113, 30, 30, 30]
-    for (let i = 0; i < 9; i++) {
-      elements.push(<Radio 
-        sx={{
-          '& .MuiSvgIcon-root': {
-            fontSize: this.state.selectedClimbPosition == positions[i] ? 60 : null,
-            transform: this.state.selectedClimbPosition == positions[i] ? 'translate(-15px, -15px)' : null
-          },
-        }}
-        id={positions[i]} 
-        checked={this.state.selectedClimbPosition == positions[i]} 
-        onChange={
-          (e) => this.handleClimbSelection(e.currentTarget.id)
-        } 
-        style={{position: "absolute", left: xOffsets[i], top: yOffsets[i]}}/>);
-    }
-    return elements.map((element) => element)
-  }
-
-  handleClimbSelection(selection: string) {
-    // If a non-trap (non-middle) climbing option is selected, and trap is the scoring target, change the scoring target to climb
-    if (selection != "LEFT_CENTER" && selection != "RIGHT_CENTER" && selection != "OPPOSITE_CENTER" && this.state.selectedScoreType == "TRAP") {
-      this.handleScoreSelection("CLIMB");
-    }
-    topics.selectedClimbPositionPub?.setValue(selection);
-    this.setState({selectedClimbPosition: selection})
-  }
-
   handleSignalSelection(type: string) {
     const deselectedButton : boolean = type == this.state.signalSelection
     const currentSelectedButton = window.document.getElementById(type);
@@ -432,6 +367,27 @@ class App extends React.Component<{}, {
     topics.signalSelectionPub?.setValue(type);
     this.setState({
       signalSelection: type
+    });
+  }
+  
+  handleShotSelection(type: string) {
+    const currentSelectedButton = window.document.getElementById(type)
+    if (currentSelectedButton != null) currentSelectedButton.style.backgroundColor = "#43a5ff"
+    const previouslySelectedButton = window.document.getElementById(this.state.selectedShotType)
+    if (previouslySelectedButton != null && previouslySelectedButton.id != type) {
+      previouslySelectedButton.style.backgroundColor = "#262b32";
+    }
+    console.log(type)
+    topics.selectedShotTypePub?.setValue(type);
+    this.setState({
+      selectedShotType: type
+    });
+  }
+
+  handleLLOverride(override: boolean) {
+    topics.limelightOverridePub?.setValue(override);
+    this.setState({
+      limelightOverride: override
     });
   }
   
@@ -464,13 +420,6 @@ class App extends React.Component<{}, {
                 <SportsEsportsOutlinedIcon />
               </ListItemIcon>
               <ListItemText primary="Teleop" />
-            </ListItemButton>
-            <Divider sx={{ my: 1 }} />
-            <ListItemButton selected={this.state.selectedTab == "Overrides"} onClick={() => this.handleTabClick("Overrides")}>
-              <ListItemIcon>
-                <ToggleOn />
-              </ListItemIcon>
-              <ListItemText primary="Overrides" />
             </ListItemButton>
             <Divider sx={{ my: 1 }} />
             <ListItemButton onClick={() => this.resetDashboard()}>
@@ -539,29 +488,28 @@ class App extends React.Component<{}, {
               }
               {this.state.selectedTab == "Teleop" &&
                 <React.Fragment>
-                  <Grid container spacing={2} columns={3}>
+                  <Grid container spacing={2} columns={4}>
+                    <Grid item>
+                      <Stack direction={'column'} marginTop={2} marginLeft={2} >
+                          <p style={{marginBottom: 0}}>Shooter Rev</p>
+                          <Stack direction={'row'} marginTop={2}>
+                            <Item style={{backgroundColor: this.state.startShooter ? "#43a5ff" : "#262b32"}} id="shooter-rev" onClick={(e) => this.handleStartShooterToggle(!this.state.startShooter)}><p>Shooter Rev</p>{this.state.startShooter ? <MusicNote style={{fontSize: 80}}/> : <MusicOff style={{fontSize: 80}}/>}</Item>
+                          </Stack>
+                        </Stack>  
+                    </Grid>
                     <Grid item>
                       <Stack marginTop={2} marginLeft={2}>
-                        <p style={{marginBottom: 0}}>Scoring Selection</p>    
-                      </Stack>              
+                        <p style={{marginBottom: 0}}>Shot Selection</p>    
+                      </Stack>            
                       <Stack height={'100'} direction={'row'} spacing={2} marginTop={2} marginLeft={2} width={"100%"}>
                         <Stack>
-                          <Item id="SPEAKER" style={{backgroundColor: "#43a5ff"}} onClick={(e) => this.handleScoreSelection("SPEAKER")}><p>Speaker</p><img width="90" src="./speaker.png"/></Item>
+                          <Item id="SUBWOOFER_SHOT" style={{backgroundColor: "#43a5ff"}} onClick={() => this.handleShotSelection("SUBWOOFER_SHOT")}><p>Subwoofer</p></Item>
                         </Stack>
                         <Stack>
-                          <Item id="AMP" onClick={(e) => this.handleScoreSelection("AMP")}><p>Amp</p><KeyboardDoubleArrowUp style={{fontSize: 80}}/></Item>
-                        </Stack>
-                        <Stack >
-                          <Item id="TRAP" onClick={(e) => this.handleScoreSelection("TRAP")}><p>Trap</p><VideoLabel style={{fontSize: 80}}/></Item>
+                          <Item id="STARTING_LINE_SHOT" onClick={() => this.handleShotSelection("STARTING_LINE_SHOT")}><p>Starting Line</p></Item>
                         </Stack>
                         <Stack>
-                          <Item id="CLIMB" onClick={(e) => this.handleScoreSelection("CLIMB")}><p>Climb</p><Link style={{fontSize: 80}}/></Item>
-                        </Stack>
-                      </Stack>
-                      <Stack position="relative">
-                        <Stack marginTop={4} alignItems={"center"}>
-                          {this.generateClimbSelections()}
-                          <img width={350} src={this.state.alliance == "Red" ? "./stage_red.png" : "./stage_blue.png"}></img>
+                          <Item id="PODIUM_SHOT" onClick={() => this.handleShotSelection("PODIUM_SHOT")}><p>Podium</p></Item>
                         </Stack>
                       </Stack>
                     </Grid>
@@ -576,23 +524,22 @@ class App extends React.Component<{}, {
                         <Stack>
                           <Item id="SOURCE" onClick={() => this.handleIntakeSelection("SOURCE")}><p>Source</p><ShowChart style={{fontSize: 80}}/></Item>
                         </Stack>
-                        <Stack>
-                          <Item id="TRAP_SOURCE" onClick={() => this.handleIntakeSelection("TRAP_SOURCE")}><p>Trap Source</p><VideoLabel style={{fontSize: 80}}/></Item>
-                        </Stack>
                       </Stack>
                       <Stack marginTop={2} marginLeft={2}>
-                        <p style={{marginBottom: 0}}>Trap Source Lane Selection</p>    
+                        <p style={{marginBottom: 0}}>Source Lane Selection</p>
                       </Stack>
                       <Stack width={'100%'} direction="column" spacing={2} marginTop={2} marginLeft={2}>
                         <Stack direction="row" spacing={2}>
-                          <Item id="LEFT" onClick={() => this.handleSourceSelection("LEFT")}>Left Source</Item>
-                          <Item id="CENTER" style={{backgroundColor: "#43a5ff"}} onClick={() => this.handleSourceSelection("CENTER")}>Center Source</Item>
-                          <Item id="RIGHT" onClick={() => this.handleSourceSelection("RIGHT")}>Right Source</Item>
+                          <Item id="LEFT" onClick={() => this.handleSourceSelection("LEFT")}>Left Lane</Item>
+                          <Item id="CENTER" style={{backgroundColor: "#43a5ff"}} onClick={() => this.handleSourceSelection("CENTER")}>Center Lane</Item>
+                          <Item id="RIGHT" onClick={() => this.handleSourceSelection("RIGHT")}>Right Lane</Item>
                         </Stack>
-                        <Stack direction={'column'} marginTop={2} marginLeft={2} >
-                          <p style={{marginBottom: 0}}>Shooter Rev</p>
-                          <Stack direction={'row'} marginTop={2}>
-                            <Item style={{backgroundColor: this.state.startShooter ? "#43a5ff" : "#262b32"}} id="shooter-rev" onClick={(e) => this.handleStartShooterToggle(!this.state.startShooter)}><p>Shooter Rev</p>{this.state.startShooter ? <MusicNote style={{fontSize: 80}}/> : <MusicOff style={{fontSize: 80}}/>}</Item>
+                        <Stack marginTop={2} marginLeft={2}>
+                          <p style={{marginBottom: 0}}>Overrides</p>
+                        </Stack>
+                        <Stack height={'100'} direction={'row'} spacing={2} marginTop={2} marginLeft={2} width={"100%"}>
+                          <Stack>
+                            <Item style={{backgroundColor: this.state.limelightOverride ? "#43a5ff" : "#262b32"}} id="LIMELIGHT-OVERRIDE" onClick={() => this.handleLLOverride(!this.state.limelightOverride)}><p>LL Override</p><NoPhotography style={{fontSize: 80}}/></Item>
                           </Stack>
                         </Stack>
                       </Stack>
@@ -648,11 +595,6 @@ class App extends React.Component<{}, {
                       </Stack>
                     </Grid>
                   </Grid>
-                </React.Fragment>
-              }
-              {this.state.selectedTab == "Overrides" &&
-                <React.Fragment>
-
                 </React.Fragment>
               }
             </Grid>

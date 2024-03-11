@@ -73,9 +73,11 @@ import frc.util.StateManagement.DrivetrainState;
 import frc.util.StateManagement.IntakeTargetState;
 import frc.util.StateManagement.LEDSignalTargetState;
 import frc.util.StateManagement.LimelightDetectsNoteState;
+import frc.util.StateManagement.LimelightOverrideState;
 import frc.util.StateManagement.LoadState;
 import frc.util.StateManagement.OverallState;
 import frc.util.StateManagement.ScoringTargetState;
+import frc.util.StateManagement.SelectedShotTargetState;
 import frc.util.StateManagement.ShooterRevTargetState;
 import frc.util.StateManagement.TrapSourceLaneTargetState;
 
@@ -131,6 +133,8 @@ public class Robot extends TimedRobot {
   public static DrivetrainState DRIVETRAIN_STATE = DrivetrainState.FREEHAND;
   public static LimelightDetectsNoteState LIMELIGHT_DETECTS_NOTE_STATE = LimelightDetectsNoteState.NO_NOTE;
   public static boolean cutPower = false;
+  public static SelectedShotTargetState SELECTED_SHOT_TARGET_STATE = SelectedShotTargetState.SUBWOOFER_SHOT;
+  public static LimelightOverrideState LIMELIGHT_OVERRIDE_STATE = LimelightOverrideState.OVERRIDE_OFF;
 
   @Override
   public void robotPeriodic() {
@@ -145,6 +149,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("Shooter Rev Target State", SHOOTER_REV_TARGET_STATE.toString());
     SmartDashboard.putString("Climb Position Target State", CLIMB_POSITION_TARGET_STATE.toString());
     SmartDashboard.putNumber("Distance from Speaker", Robot.DRIVETRAIN_SUBSYSTEM.getDistanceFromSpeaker());
+    SmartDashboard.putString("Limelight Override State", LIMELIGHT_OVERRIDE_STATE.toString());
+    SmartDashboard.putString("Shot Selection Target State", SELECTED_SHOT_TARGET_STATE.toString());
     setNonButtonDependentOverallStates();
 
     SmartDashboard.putData("Drivetrain Command", DRIVETRAIN_SUBSYSTEM);
@@ -152,7 +158,6 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Arm Command", ELBOW_SUBSYSTEM);
     SmartDashboard.putData("Intake Command", INTAKE_SUBSYSTEM);
     SmartDashboard.putData("Shooter Command", SHOOTER_SUBSYSTEM);
-
 
     /*
     if (SHOOTER_SUBSYSTEM.hasPiece()) {
