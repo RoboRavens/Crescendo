@@ -5,6 +5,7 @@ public class RobotMap {
     public static final int DRIVE_CONTROLLER_PORT = 0;
     public static final int OVERRIDES_CONTROLLER_PORT = 1;
     public static final int BUTTONS_CONTROLLER_PORT = 2;
+    public static final int OPERATOR_CONTROLLER_PORT = 3;
 
     // DRIVETRAIN
     // start at 10

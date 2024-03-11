@@ -128,7 +128,8 @@ public class WristSubsystem extends SubsystemBase {
   }
 
   public void resetPosition() {
-    _wristRotationMotor.setPosition(0);
+    _wristRotationMotor.setPosition(WristConstants.ENCODER_POSITION_AT_FLOOR_PICKUP);
+    this.goToPosition(WristConstants.ENCODER_POSITION_AT_FLOOR_PICKUP);
   }
 
   public double getPosition() {

@@ -8,7 +8,7 @@ public class Constants {
 
     // Control
     public static final double JOYSTICK_DEADBAND = .1;
-    public static final double DRIVE_MAX_TURN_RADIANS_PER_SECOND = 3;
+    public static final double DRIVE_MAX_TURN_RADIANS_PER_SECOND = 6;
 
     // DRIVETRAIN SLEW
     public static final double SLEW_FRAMES_TO_MAX_X_VELOCITY = 10; // forward-back

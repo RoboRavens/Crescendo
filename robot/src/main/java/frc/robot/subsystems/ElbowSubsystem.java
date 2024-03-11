@@ -70,6 +70,7 @@ public class ElbowSubsystem extends SubsystemBase {
       System.out.println("ElbowSubsystem: position reset from " + originalPosition + " to " + newPosition);
       _elbowRotationMotor.stopMotor();
       _elbowRotationMotor.setPosition(newPosition);
+      this.goToPosition(targetPosition);
     }, this).ignoringDisable(true);
 
     new Trigger(() -> _forwardLimitSwitch.get()).onFalse(resetPositionCommand);
@@ -147,6 +148,11 @@ public class ElbowSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Elbow Motor Position", _elbowRotationMotor.getPosition().getValueAsDouble());
     SmartDashboard.putBoolean("Elbow ForwardLimitSwitch", _forwardLimitSwitch.get());
     SmartDashboard.putNumber("Elbow Target Position", this.targetPosition);
+  }
+
+  public void resetPosition() {
+    _elbowRotationMotor.setPosition(ElbowConstants.ENCODER_POSITION_AT_GROUND_PICKUP);
+    this.goToPosition(ElbowConstants.ENCODER_POSITION_AT_GROUND_PICKUP);
   }
 
   public double getPosition() {

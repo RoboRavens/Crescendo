@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.controls.ButtonCode;
+import frc.controls.OperatorController;
 import frc.controls.ButtonCode.Buttons;
 import frc.controls.ButtonCode.Toggle;
 import frc.robot.commands.compound.LimbGoToSetpointCommand;
@@ -96,7 +97,7 @@ public class Robot extends TimedRobot {
   public static final PoseEstimatorSubsystem POSE_ESTIMATOR_SUBSYSTEM = new PoseEstimatorSubsystem();
   public static final LimelightHelpers LIMELIGHT_HELPERS = new LimelightHelpers();
 
-  public static final CommandXboxController COMMAND_DRIVE_CONTROLLER = new CommandXboxController(0);
+  public static final CommandXboxController COMMAND_DRIVE_CONTROLLER = new CommandXboxController(RobotMap.DRIVE_CONTROLLER_PORT);
   public static final XboxController DRIVE_CONTROLLER = COMMAND_DRIVE_CONTROLLER.getHID();
   public static DriverStation.Alliance allianceColor = Alliance.Blue;
   public static final DrivetrainAutoAimCommand DRIVETRAIN_AUTO_AIM_COMMAND = new DrivetrainAutoAimCommand();
@@ -188,6 +189,7 @@ public class Robot extends TimedRobot {
     configureAutomatedBehaviorBindings();
     configureButtonBindings();
     configureOverrideBindings();
+    OperatorController.enable();
   }
 
   private void configureDriveControllerBindings() {
@@ -321,8 +323,8 @@ public class Robot extends TimedRobot {
       .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.AMP_SCORING));
     // BUTTON_CODE.getButton(Buttons.TRAP_SCORING)
     //     .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.TRAP_SCORING));
-    BUTTON_CODE.getButton(Buttons.AMP_AND_SPEAKER_SOURCE_INTAKE)
-      .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.AMP_AND_SPEAKER_SOURCE_INTAKE));
+    BUTTON_CODE.getButton(Buttons.SOURCE_INTAKE)
+      .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SOURCE_INTAKE));
     // BUTTON_CODE.getButton(Buttons.TRAP_SOURCE_INTAKE)
     //     .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.TRAP_SOURCE_INTAKE));
     BUTTON_CODE.getButton(Buttons.GROUND_PICKUP_AND_SPEAKER_SCORING)
