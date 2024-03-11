@@ -27,7 +27,7 @@ public class DrivetrainDefaultCommand extends Command {
 
     @Override
     public void initialize() {
-        // AngularPositionHolder.GetInstance().reset();
+        AngularPositionHolder.GetInstance().reset();
         _chassisSpeeds = new ChassisSpeeds(0, 0, 0);
     }
 

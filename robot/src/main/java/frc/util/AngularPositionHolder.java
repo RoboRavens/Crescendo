@@ -3,12 +3,14 @@ package frc.util;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Robot;
+import frc.robot.util.Constants.Constants;
 
 public class AngularPositionHolder {
   private static AngularPositionHolder _instance;
 
   private Double _angleToHold = null;
-  private PIDController _holdRobotAnglePID = new PIDController(4, 0, 0);
+  private PIDController _holdRobotAnglePID = new PIDController(6.5, 0, 0);
   private Timer _holdRobotAngleTimer = new Timer();
 
   public static AngularPositionHolder GetInstance(){
@@ -38,7 +40,7 @@ public class AngularPositionHolder {
 
     // wait a quarter second after robots stops being told to rotate
     double correctionPower = 0;
-    if (_holdRobotAngleTimer.get() > .25) {
+    if (_holdRobotAngleTimer.get() > Constants.DRIVE_HOLD_ANGLE_TIMEOUT_SECONDS) {
       if (_angleToHold == null) {
         _angleToHold = gyroAngleRadians;
       } else {
@@ -49,6 +51,10 @@ public class AngularPositionHolder {
     SmartDashboard.putString("AngularPositionHolder AngleToHold", _angleToHold == null ? "null" : "" + _angleToHold);
 
     return correctionPower;
+  }
+
+  public void setAngleToHoldToCurrentPosition() {
+    _angleToHold = Robot.DRIVETRAIN_SUBSYSTEM.getOdometryRotation().getRadians();
   }
 
   public void reset(){
