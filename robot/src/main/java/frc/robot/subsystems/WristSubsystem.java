@@ -44,10 +44,10 @@ public class WristSubsystem extends SubsystemBase {
     talonFXConfiguration.CurrentLimits.SupplyCurrentThreshold = 10;
     talonFXConfiguration.CurrentLimits.SupplyTimeThreshold = 0;
 
-    //talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    //talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 5;
-    //talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    //talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -5;
+    talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 3.12;
+    talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -3.47;
 
     this.setTargetPosition(WristConstants.ENCODER_POSITION_AT_STARTUP);
     _wristRotationMotor.getConfigurator().setPosition(WristConstants.ENCODER_POSITION_AT_STARTUP);

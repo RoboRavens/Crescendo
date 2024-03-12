@@ -40,6 +40,12 @@ public class ElbowSubsystem extends SubsystemBase {
 
     talonFXConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
+    talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0;
+    talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -34;
+    
+
     // low stator limit will prevent breaking static friction
     talonFXConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
     talonFXConfiguration.CurrentLimits.StatorCurrentLimit = 25;

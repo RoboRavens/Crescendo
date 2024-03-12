@@ -33,6 +33,8 @@ public class ElbowConstants {
   public static final double RADIANS_START_CONFIG = Math.toRadians(DEGREES_START_CONFIG);
   public static final double IS_AT_SETPOINT_BUFFER = 0.5;
 
+  public static final double JOYSTICK_CONTROL_SCALING_FACTOR = 0.15;
+
 
   public static double MOTOR_POWER_FEEDFORWARD_AT_HORIZONTAL = .025;
   public static double MOTOR_POWER_DIRECTION_TO_GO_UP_FROM_HORIZONTAL = -1;
