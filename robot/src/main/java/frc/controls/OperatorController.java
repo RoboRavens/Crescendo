@@ -9,8 +9,13 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.commands.compound.LimbGoToSetpointCommand;
+import frc.robot.commands.elbow.ElbowGoToPositionCommand;
+import frc.robot.commands.elbow.ElbowIncrementPositionCommand;
+import frc.robot.commands.elbow.ElbowDecrementPositionCommand;
 import frc.robot.commands.elbow.ElbowMoveWithJoystickCommand;
+import frc.robot.commands.elbow.ElbowSuspendLimitsCommand;
 import frc.robot.commands.wrist.WristMoveWithJoystickCommand;
+import frc.robot.commands.wrist.WristSuspendLimitsCommand;
 import frc.robot.commands.shooter.StartShooterCommand;
 import frc.robot.util.arm.LimbSetpoint;
 
@@ -43,5 +48,13 @@ public class OperatorController {
 
         _operatorController.leftTrigger().and(() -> Math.abs(_operatorController.getLeftY()) > .1).whileTrue(new ElbowMoveWithJoystickCommand(_operatorController));
         _operatorController.leftTrigger().and(() -> Math.abs(_operatorController.getRightY()) > .1).whileTrue(new WristMoveWithJoystickCommand(_operatorController));
-    }
+   
+        _operatorController.leftTrigger().and(_operatorController.povUp()).onTrue(new ElbowIncrementPositionCommand());
+        _operatorController.leftTrigger().and(_operatorController.povDown()).onTrue(new ElbowDecrementPositionCommand());
+        
+        _operatorController.leftTrigger().and(_operatorController.rightTrigger()).and(_operatorController.start()).whileTrue(new ElbowSuspendLimitsCommand());
+        _operatorController.leftTrigger().and(_operatorController.rightTrigger()).and(_operatorController.back()).whileTrue(new WristSuspendLimitsCommand());
+   
+
+        }      
 }
