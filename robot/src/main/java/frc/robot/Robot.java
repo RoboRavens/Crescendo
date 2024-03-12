@@ -27,6 +27,7 @@ import frc.controls.ButtonCode.Toggle;
 import frc.robot.commands.compound.LimbGoToSetpointCommand;
 import frc.robot.commands.elbow.ElbowMoveManuallyCommand;
 import frc.robot.commands.elbow.ElbowOffsetCommand;
+import frc.robot.commands.drivetrain.DriveTwoInchesCommand;
 import frc.robot.commands.drivetrain.DrivetrainAutoAimCommand;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
 import frc.robot.commands.elbow.ElbowDefaultCommand;
@@ -224,6 +225,11 @@ public class Robot extends TimedRobot {
 
     new Trigger(() -> DRIVE_CONTROLLER.getXButton())
       .whileTrue(new IntakeReverseCommand());
+
+    COMMAND_DRIVE_CONTROLLER.povRight().toggleOnTrue(new DriveTwoInchesCommand('R'));
+    COMMAND_DRIVE_CONTROLLER.povUp().toggleOnTrue(new DriveTwoInchesCommand('F'));
+    COMMAND_DRIVE_CONTROLLER.povDown().toggleOnTrue(new DriveTwoInchesCommand('B'));
+    COMMAND_DRIVE_CONTROLLER.povLeft().toggleOnTrue(new DriveTwoInchesCommand('L'));
 	}
 
   private void configureAutomatedBehaviorBindings() {
