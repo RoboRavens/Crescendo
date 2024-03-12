@@ -1,27 +1,19 @@
 package frc.robot.commands.drivetrain;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.util.Constants.Constants;
+import frc.util.AngularPositionHolder;
 import frc.util.Deadband;
-import frc.util.Scale;
 import frc.util.Slew;
 import frc.util.StateManagement.DrivetrainState;
 import frc.util.StateManagement.OverallState;
-import frc.util.StateManagement.ScoringTargetState;
 
 public class DrivetrainDefaultCommand extends Command {
-
-    // Pose2d _targetPose = new Pose2d(Units.feetToMeters(2), Units.feetToMeters(2), Rotation2d.fromDegrees(-180));
-
     private ChassisSpeeds _chassisSpeeds = new ChassisSpeeds(0,0,0);
     private double _velocityXSlewRate = DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / Constants.SLEW_FRAMES_TO_MAX_X_VELOCITY;
     private double _velocityYSlewRate = DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / Constants.SLEW_FRAMES_TO_MAX_Y_VELOCITY;
@@ -35,7 +27,7 @@ public class DrivetrainDefaultCommand extends Command {
 
     @Override
     public void initialize() {
-        // AngularPositionHolder.GetInstance().reset();
+        AngularPositionHolder.GetInstance().reset();
         _chassisSpeeds = new ChassisSpeeds(0, 0, 0);
     }
 
@@ -62,6 +54,8 @@ public class DrivetrainDefaultCommand extends Command {
             x = x * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
             y = y * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
             r = r * Constants.DRIVE_MAX_TURN_RADIANS_PER_SECOND;
+
+            r = AngularPositionHolder.GetInstance().getAngularVelocity(r, a.getRadians());
 
             var targetChassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
                 x, // x translation

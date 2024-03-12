@@ -8,12 +8,13 @@ public class Constants {
 
     // Control
     public static final double JOYSTICK_DEADBAND = .1;
-    public static final double DRIVE_MAX_TURN_RADIANS_PER_SECOND = 3;
+    public static final double DRIVE_MAX_TURN_RADIANS_PER_SECOND = 7;
 
-    // DRIVETRAIN SLEW
+    // DRIVETRAIN
     public static final double SLEW_FRAMES_TO_MAX_X_VELOCITY = 10; // forward-back
     public static final double SLEW_FRAMES_TO_MAX_Y_VELOCITY = 10; // left-right
     public static final double SLEW_FRAMES_TO_MAX_ANGULAR_VELOCITY = 10; // turning
+    public static final double DRIVE_HOLD_ANGLE_TIMEOUT_SECONDS = .33;
 
     // Move Elbow and Wrist
     public static final double MOVE_ELBOW_UP_MANUAL_POWER = -0.1; // Elbow up

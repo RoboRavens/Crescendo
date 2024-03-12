@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.controls.ButtonCode;
+import frc.controls.OperatorController;
 import frc.controls.ButtonCode.Buttons;
 import frc.controls.ButtonCode.Toggle;
 import frc.robot.commands.compound.LimbGoToSetpointCommand;
@@ -72,9 +73,11 @@ import frc.util.StateManagement.DrivetrainState;
 import frc.util.StateManagement.IntakeTargetState;
 import frc.util.StateManagement.LEDSignalTargetState;
 import frc.util.StateManagement.LimelightDetectsNoteState;
+import frc.util.StateManagement.LimelightOverrideState;
 import frc.util.StateManagement.LoadState;
 import frc.util.StateManagement.OverallState;
 import frc.util.StateManagement.ScoringTargetState;
+import frc.util.StateManagement.SelectedShotTargetState;
 import frc.util.StateManagement.ShooterRevTargetState;
 import frc.util.StateManagement.TrapSourceLaneTargetState;
 
@@ -96,7 +99,7 @@ public class Robot extends TimedRobot {
   public static final PoseEstimatorSubsystem POSE_ESTIMATOR_SUBSYSTEM = new PoseEstimatorSubsystem();
   public static final LimelightHelpers LIMELIGHT_HELPERS = new LimelightHelpers();
 
-  public static final CommandXboxController COMMAND_DRIVE_CONTROLLER = new CommandXboxController(0);
+  public static final CommandXboxController COMMAND_DRIVE_CONTROLLER = new CommandXboxController(RobotMap.DRIVE_CONTROLLER_PORT);
   public static final XboxController DRIVE_CONTROLLER = COMMAND_DRIVE_CONTROLLER.getHID();
   public static DriverStation.Alliance allianceColor = Alliance.Blue;
   public static final DrivetrainAutoAimCommand DRIVETRAIN_AUTO_AIM_COMMAND = new DrivetrainAutoAimCommand();
@@ -130,6 +133,8 @@ public class Robot extends TimedRobot {
   public static DrivetrainState DRIVETRAIN_STATE = DrivetrainState.FREEHAND;
   public static LimelightDetectsNoteState LIMELIGHT_DETECTS_NOTE_STATE = LimelightDetectsNoteState.NO_NOTE;
   public static boolean cutPower = false;
+  public static SelectedShotTargetState SELECTED_SHOT_TARGET_STATE = SelectedShotTargetState.SUBWOOFER_SHOT;
+  public static LimelightOverrideState LIMELIGHT_OVERRIDE_STATE = LimelightOverrideState.OVERRIDE_OFF;
 
   @Override
   public void robotPeriodic() {
@@ -144,6 +149,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("Shooter Rev Target State", SHOOTER_REV_TARGET_STATE.toString());
     SmartDashboard.putString("Climb Position Target State", CLIMB_POSITION_TARGET_STATE.toString());
     SmartDashboard.putNumber("Distance from Speaker", Robot.DRIVETRAIN_SUBSYSTEM.getDistanceFromSpeaker());
+    SmartDashboard.putString("Limelight Override State", LIMELIGHT_OVERRIDE_STATE.toString());
+    SmartDashboard.putString("Shot Selection Target State", SELECTED_SHOT_TARGET_STATE.toString());
     setNonButtonDependentOverallStates();
 
     SmartDashboard.putData("Drivetrain Command", DRIVETRAIN_SUBSYSTEM);
@@ -151,7 +158,6 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Arm Command", ELBOW_SUBSYSTEM);
     SmartDashboard.putData("Intake Command", INTAKE_SUBSYSTEM);
     SmartDashboard.putData("Shooter Command", SHOOTER_SUBSYSTEM);
-
 
     /*
     if (SHOOTER_SUBSYSTEM.hasPiece()) {
@@ -188,6 +194,7 @@ public class Robot extends TimedRobot {
     configureAutomatedBehaviorBindings();
     configureButtonBindings();
     configureOverrideBindings();
+    OperatorController.enable();
   }
 
   private void configureDriveControllerBindings() {
@@ -284,6 +291,10 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     setDriverStationData();
+    
+    //DRIVETRAIN_SUBSYSTEM.setAngleToHoldToCurrentPosition();
+    
+  
   }
 
   /** This function is called periodically during teleoperated mode. */
@@ -321,8 +332,8 @@ public class Robot extends TimedRobot {
       .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.AMP_SCORING));
     // BUTTON_CODE.getButton(Buttons.TRAP_SCORING)
     //     .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.TRAP_SCORING));
-    BUTTON_CODE.getButton(Buttons.AMP_AND_SPEAKER_SOURCE_INTAKE)
-      .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.AMP_AND_SPEAKER_SOURCE_INTAKE));
+    BUTTON_CODE.getButton(Buttons.SOURCE_INTAKE)
+      .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SOURCE_INTAKE));
     // BUTTON_CODE.getButton(Buttons.TRAP_SOURCE_INTAKE)
     //     .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.TRAP_SOURCE_INTAKE));
     BUTTON_CODE.getButton(Buttons.GROUND_PICKUP_AND_SPEAKER_SCORING)
