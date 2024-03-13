@@ -29,7 +29,7 @@ public class ElbowSubsystem extends SubsystemBase {
 
   private double targetPosition = 0;
 
-  public ElbowSubsystem() {
+  public TalonFXConfiguration getTalonFXConfigurationObject() {
     var talonFXConfiguration = new TalonFXConfiguration();
     talonFXConfiguration.MotionMagic.MotionMagicAcceleration = 100;
     talonFXConfiguration.MotionMagic.MotionMagicCruiseVelocity = 20;
@@ -39,6 +39,12 @@ public class ElbowSubsystem extends SubsystemBase {
     talonFXConfiguration.Audio.BeepOnConfig = false;
 
     talonFXConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+    talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0;
+    talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -34;
+    
 
     // low stator limit will prevent breaking static friction
     talonFXConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -50,14 +56,13 @@ public class ElbowSubsystem extends SubsystemBase {
     talonFXConfiguration.CurrentLimits.SupplyCurrentThreshold = 10;
     talonFXConfiguration.CurrentLimits.SupplyTimeThreshold = 0;
 
-    //talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    //talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 5;
-    //talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    //talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -5;
+    return talonFXConfiguration;
+  }
 
+  public ElbowSubsystem() {
     this.setTargetPosition(ElbowConstants.ENCODER_POSITION_AT_STARTUP);
     _elbowRotationMotor.getConfigurator().setPosition(ElbowConstants.ENCODER_POSITION_AT_STARTUP);
-    _elbowRotationMotor.getConfigurator().apply(talonFXConfiguration);
+    _elbowRotationMotor.getConfigurator().apply(this.getTalonFXConfigurationObject());
     this.updateStaticFeedfoward();
 
     _elbowRotationFollower.getConfigurator().apply(new AudioConfigs().withBeepOnBoot(false).withBeepOnConfig(false));
@@ -76,12 +81,49 @@ public class ElbowSubsystem extends SubsystemBase {
     new Trigger(() -> _forwardLimitSwitch.get()).onFalse(resetPositionCommand);
   }
 
+  public void suspendLimits() {
+    var talonFXConfiguration = this.getTalonFXConfigurationObject();
+    talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
+    talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
+
+    _elbowRotationMotor.getConfigurator().apply(talonFXConfiguration);
+  }
+
+  public void restoreLimits() {
+    var talonFXConfiguration = this.getTalonFXConfigurationObject();
+    _elbowRotationMotor.getConfigurator().apply(talonFXConfiguration);
+  }
+
   public void setTargetPosition(double position) {
     this.targetPosition = position;
   }
 
   public double getTargetPosition() {
     return this.targetPosition;
+  }
+
+  public double incrementTargetPosition() {
+
+    double targetDegrees = ElbowSubsystem.getDegreesFromPosition(targetPosition) + 1;
+
+    System.out.println("Current degrees:" + this.getDegrees() + " new target: " + targetDegrees);
+    this.setTargetDegrees(targetDegrees);
+
+    return this.targetPosition;
+  }
+
+  public double decrementTargetPosition() {
+    double targetDegrees = ElbowSubsystem.getDegreesFromPosition(targetPosition) - 1;
+    this.setTargetDegrees(targetDegrees);
+
+    return this.targetPosition;
+  }
+
+  public void setTargetDegrees(double targetDegrees) {
+    double targetRadians = Math.toRadians(targetDegrees);
+    double targetPosition = ElbowSubsystem.getPositionFromRadians(targetRadians);
+
+    this.setTargetPosition(targetPosition);
   }
 
   private void updateStaticFeedfoward() {
@@ -106,6 +148,14 @@ public class ElbowSubsystem extends SubsystemBase {
     double distanceFromHorizontal = ((position - ElbowConstants.ENCODER_POSITION_AT_HORIZONTAL) / unitsTo90);
     double angleInRadians = distanceFromHorizontal * (Math.PI / 2);
     return angleInRadians;
+  }
+
+  public static double getDegreesFromPosition(double position) {
+    return Math.toDegrees(getRadiansFromPosition(position));
+  }
+
+  public double getDegrees() {
+    return Math.toDegrees(this.getRadians());
   }
 
   public double getRadians() {
@@ -148,6 +198,12 @@ public class ElbowSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Elbow Motor Position", _elbowRotationMotor.getPosition().getValueAsDouble());
     SmartDashboard.putBoolean("Elbow ForwardLimitSwitch", _forwardLimitSwitch.get());
     SmartDashboard.putNumber("Elbow Target Position", this.targetPosition);
+    SmartDashboard.putNumber("Elbow Target Degrees", ElbowSubsystem.getDegreesFromPosition(this.targetPosition));
+  }
+
+  public void resetPosition() {
+    _elbowRotationMotor.setPosition(ElbowConstants.ENCODER_POSITION_AT_GROUND_PICKUP);
+    this.goToPosition(ElbowConstants.ENCODER_POSITION_AT_GROUND_PICKUP);
   }
 
   public void resetPosition() {
