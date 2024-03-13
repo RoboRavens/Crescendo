@@ -77,10 +77,11 @@ public class IntakeSubsystem extends SubsystemBase {
   public boolean intakeHasPiece() {
     return _pieceSensorIntake.get();
   }
-
+/*
   public boolean trapHasPiece() {
     return _pieceSensorTrap.get();
   }
+  */
 
   public void updatePieceIndexer() {
     if (intakeHasPiece() == false) {
