@@ -229,6 +229,20 @@ public class Robot extends TimedRobot {
 
     new Trigger(() -> DRIVE_CONTROLLER.getXButton())
       .whileTrue(new IntakeReverseCommand());
+
+    new Trigger(() -> DRIVE_CONTROLLER.getYButton())
+      .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.AMP_SCORING));
+    
+    new Trigger(() -> DRIVE_CONTROLLER.getBButton() && (SHOOTER_SUBSYSTEM.hasPiece() || INTAKE_TARGET_STATE == IntakeTargetState.GROUND))
+      .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.DEFENDED_SPEAKER_SCORING));
+
+    new Trigger(() -> DRIVE_CONTROLLER.getBButton() && (SHOOTER_SUBSYSTEM.hasPiece() == false && INTAKE_TARGET_STATE == IntakeTargetState.SOURCE))
+      .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SOURCE_INTAKE));
+    
+    new Trigger(() -> DRIVE_CONTROLLER.getBButton() == false && ARM_UP_TARGET_STATE == ArmUpTargetState.FREE)
+      .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.GROUND_PICKUP));
+      
+      
 	}
 
   private void configureAutomatedBehaviorBindings() {

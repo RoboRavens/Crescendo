@@ -24,6 +24,15 @@ public class WristSubsystem extends SubsystemBase {
   private double targetPosition = 0;
   
   public WristSubsystem() {
+    var talonFXConfiguration = getTalonFXConfigurationObject();
+
+    this.setTargetPosition(WristConstants.ENCODER_POSITION_AT_STARTUP);
+    _wristRotationMotor.getConfigurator().setPosition(WristConstants.ENCODER_POSITION_AT_STARTUP);
+    _wristRotationMotor.getConfigurator().apply(talonFXConfiguration);
+    this.updateStaticFeedfoward();
+  }
+
+  public TalonFXConfiguration getTalonFXConfigurationObject() {
     var talonFXConfiguration = new TalonFXConfiguration();
     talonFXConfiguration.MotionMagic.MotionMagicAcceleration = 100;
     talonFXConfiguration.MotionMagic.MotionMagicCruiseVelocity = 20;
@@ -44,15 +53,25 @@ public class WristSubsystem extends SubsystemBase {
     talonFXConfiguration.CurrentLimits.SupplyCurrentThreshold = 10;
     talonFXConfiguration.CurrentLimits.SupplyTimeThreshold = 0;
 
-    //talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    //talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 5;
-    //talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    //talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -5;
+    talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 3.12;
+    talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -3.47;
 
-    this.setTargetPosition(WristConstants.ENCODER_POSITION_AT_STARTUP);
-    _wristRotationMotor.getConfigurator().setPosition(WristConstants.ENCODER_POSITION_AT_STARTUP);
+    return talonFXConfiguration;
+  }
+
+  public void suspendLimits() {
+    var talonFXConfiguration = this.getTalonFXConfigurationObject();
+    talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
+    talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
+
     _wristRotationMotor.getConfigurator().apply(talonFXConfiguration);
-    this.updateStaticFeedfoward();
+  }
+
+  public void restoreLimits() {
+    var talonFXConfiguration = this.getTalonFXConfigurationObject();
+    _wristRotationMotor.getConfigurator().apply(talonFXConfiguration);
   }
 
   public void offsetByDegrees(double degrees) {

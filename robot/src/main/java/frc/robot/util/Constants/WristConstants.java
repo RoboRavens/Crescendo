@@ -29,6 +29,8 @@ public class WristConstants {
     public static double DEGREES_SIX_NOTE_AUTO_GN_4_AND_5 = 35;
     public static double DEGREES_SIX_NOTE_PRELOAD = 6;
 
+    public static final double JOYSTICK_CONTROL_SCALING_FACTOR = .1;
+
 
     public static Slot0Configs getSlot0Configs() {
         var slot0Config = new Slot0Configs();
