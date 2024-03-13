@@ -206,11 +206,6 @@ public class ElbowSubsystem extends SubsystemBase {
     this.goToPosition(ElbowConstants.ENCODER_POSITION_AT_GROUND_PICKUP);
   }
 
-  public void resetPosition() {
-    _elbowRotationMotor.setPosition(ElbowConstants.ENCODER_POSITION_AT_GROUND_PICKUP);
-    this.goToPosition(ElbowConstants.ENCODER_POSITION_AT_GROUND_PICKUP);
-  }
-
   public double getPosition() {
       return _elbowRotationMotor.getPosition().getValueAsDouble();
   }
