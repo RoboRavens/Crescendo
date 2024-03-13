@@ -9,13 +9,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.commands.compound.LimbGoToSetpointCommand;
-import frc.robot.commands.elbow.ElbowIncrementPositionCommand;
-import frc.robot.commands.elbow.ElbowDecrementPositionCommand;
-import frc.robot.commands.elbow.ElbowMoveWithJoystickCommand;
-import frc.robot.commands.elbow.ElbowSuspendLimitsCommand;
-import frc.robot.commands.wrist.WristMoveWithJoystickCommand;
-import frc.robot.commands.wrist.WristSuspendLimitsCommand;
-import frc.robot.commands.shooter.StartShooterCommand;
 import frc.robot.util.arm.LimbSetpoint;
 
 /** Add your docs here. */
@@ -53,5 +46,5 @@ public class OperatorController {
         
         _operatorController.leftTrigger().and(_operatorController.rightTrigger()).and(_operatorController.start()).whileTrue(new ElbowSuspendLimitsCommand());
         _operatorController.leftTrigger().and(_operatorController.rightTrigger()).and(_operatorController.back()).whileTrue(new WristSuspendLimitsCommand());
-    }      
+    }
 }
