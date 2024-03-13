@@ -66,8 +66,8 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
       () -> new PathPlannerAuto("Amp Side Center Auto"))
     );
     this.addOption(
-      new AutoMode("B7: Sadville Auto",
-      () -> new PathPlannerAuto("Sadville Auto"))
+      new AutoMode("B7: Sadville Center Auto",
+      () -> new PathPlannerAuto("Sadville Center Auto"))
     );
     this.addOption(
       new AutoMode("B8: 3 Note Source Side Center AUTO RED",
@@ -80,6 +80,14 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
     this.addOption(
       new AutoMode("B10: 6 Note Optimized PATH",
       () -> new PathPlannerAuto("6 Note Optimized Path"))
+    );
+    this.addOption(
+      new AutoMode("B11: Sadville Source Side Auto",
+      () -> new PathPlannerAuto("Sadville Source Side Auto"))
+    );
+    this.addOption(
+      new AutoMode("B12: Sadville Amp Side Auto",
+      () -> new PathPlannerAuto("Sadville Amp Side Auto"))
     );
 
     // RED SIDE
@@ -108,8 +116,8 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
       () -> new PathPlannerAuto("Amp Side Center Auto"))
     );
     this.addOption(
-      new AutoMode("R7: Sadville Auto",
-      () -> new PathPlannerAuto("Sadville Auto"))
+      new AutoMode("R7: Sadville Center Auto",
+      () -> new PathPlannerAuto("Sadville Center Auto"))
     );
     this.addOption(
       new AutoMode("R8: 3 Note Source Side Center AUTO RED",
@@ -122,6 +130,14 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
     this.addOption(
       new AutoMode("R10: 6 Note Optimized PATH",
       () -> new PathPlannerAuto("6 Note Optimized Path"))
+    );
+    this.addOption(
+      new AutoMode("R11: Sadville Source Side Auto",
+      () -> new PathPlannerAuto("Sadville Source Side Auto"))
+    );
+    this.addOption(
+      new AutoMode("R12: Sadville Amp Side Auto",
+      () -> new PathPlannerAuto("Sadville Amp Side Auto"))
     );
   }
 
