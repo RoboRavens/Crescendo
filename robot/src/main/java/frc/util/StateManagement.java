@@ -92,7 +92,8 @@ public class StateManagement {
     public enum SelectedShotTargetState {
         SUBWOOFER_SHOT,
         STARTING_LINE_SHOT,
-        PODIUM_SHOT
+        PODIUM_SHOT,
+        NONE
     }
     public enum LimelightOverrideState {
         OVERRIDE_ON,

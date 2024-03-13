@@ -371,13 +371,21 @@ class App extends React.Component<{}, {
   }
   
   handleShotSelection(type: string) {
-    const currentSelectedButton = window.document.getElementById(type)
-    if (currentSelectedButton != null) currentSelectedButton.style.backgroundColor = "#43a5ff"
+    const deselectedButton : boolean = type == this.state.selectedShotType
+    const currentSelectedButton = window.document.getElementById(type);
+    if (deselectedButton) {
+      if (currentSelectedButton != null) currentSelectedButton.style.backgroundColor = "#262b32";
+      topics.selectedShotTypePub?.setValue("NONE");
+      this.setState({
+        selectedShotType: "NONE"
+      });
+      return;
+    }
+    if (currentSelectedButton != null) currentSelectedButton.style.backgroundColor = "#43a5ff";
     const previouslySelectedButton = window.document.getElementById(this.state.selectedShotType)
-    if (previouslySelectedButton != null && previouslySelectedButton.id != type) {
+    if (previouslySelectedButton != null) {
       previouslySelectedButton.style.backgroundColor = "#262b32";
     }
-    console.log(type)
     topics.selectedShotTypePub?.setValue(type);
     this.setState({
       selectedShotType: type
@@ -503,7 +511,7 @@ class App extends React.Component<{}, {
                       </Stack>            
                       <Stack height={'100'} direction={'row'} spacing={2} marginTop={2} marginLeft={2} width={"100%"}>
                         <Stack>
-                          <Item id="SUBWOOFER_SHOT" style={{backgroundColor: "#43a5ff"}} onClick={() => this.handleShotSelection("SUBWOOFER_SHOT")}><p>Subwoofer</p></Item>
+                          <Item id="SUBWOOFER_SHOT" onClick={() => this.handleShotSelection("SUBWOOFER_SHOT")}><p>Subwoofer</p></Item>
                         </Stack>
                         <Stack>
                           <Item id="STARTING_LINE_SHOT" onClick={() => this.handleShotSelection("STARTING_LINE_SHOT")}><p>Starting Line</p></Item>

@@ -23,7 +23,9 @@ public class LimbSetpoint {
     public static LimbSetpoint SIX_NOTE_AUTO_GN_4_and_5_SCORING_SETPOINT = new LimbSetpoint("Six Note Auto GN 4 and 5 Scoring Setpoint", ElbowConstants.DEGREES_FLOOR_PICKUP, WristConstants.DEGREES_SIX_NOTE_AUTO_GN_4_AND_5);
     public static LimbSetpoint SIX_NOTE_AUTO_PRELOAD_SCORING_SETPOINT = new LimbSetpoint("Six Note Auto Preload Scoring Setpoint", ElbowConstants.DEGREES_FLOOR_PICKUP, WristConstants.DEGREES_SIX_NOTE_PRELOAD);
     public static LimbSetpoint START_CONFIG_UP = new LimbSetpoint("Start Config Up", ElbowConstants.DEGREES_START_CONFIG_UP, WristConstants.DEGREES_START_CONFIG);    
-    public static LimbSetpoint SOUTH_CENTER_PRELOAD = new LimbSetpoint("South Center Preload", ElbowConstants.DEGREES_SOUTH_CENTER_PRELOAD, WristConstants.DEGREES_START_CONFIG);    
+    public static LimbSetpoint SOUTH_CENTER_PRELOAD = new LimbSetpoint("South Center Preload", ElbowConstants.DEGREES_SOUTH_CENTER_PRELOAD, WristConstants.DEGREES_START_CONFIG);  
+    public static LimbSetpoint PODIUM_SCORING = new LimbSetpoint("Podium Scoring", ElbowConstants.DEGREES_FLOOR_PICKUP, WristConstants.DEGREES_PODIUM_SCORE);
+    public static LimbSetpoint STARTING_LINE_SCORING = new LimbSetpoint("Starting Line Scoring", ElbowConstants.DEGREES_FLOOR_PICKUP, WristConstants.DEGREES_STARTING_LINE_SCORE);
 
     private String _name;
     private double _elbowRotationDegrees;
