@@ -73,6 +73,14 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
       new AutoMode("B8: 3 Note South Center AUTO RED",
       () -> new PathPlannerAuto("South Center Auto Red"))
     );
+    this.addOption(
+      new AutoMode("B9: 6 Note Optimized AUTO",
+      () -> new PathPlannerAuto("6 Note Optimized Auto"))
+    );
+    this.addOption(
+      new AutoMode("B10: 6 Note Optimized PATH",
+      () -> new PathPlannerAuto("6 Note Optimized Path"))
+    );
 
     // RED SIDE
     this.addRedDefault(
@@ -106,6 +114,14 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
     this.addOption(
       new AutoMode("R8: 3 Note South Center AUTO RED",
       () -> new PathPlannerAuto("South Center Auto Red"))
+    );
+    this.addOption(
+      new AutoMode("R9: 6 Note Optimized AUTO",
+      () -> new PathPlannerAuto("6 Note Optimized Auto"))
+    );
+    this.addOption(
+      new AutoMode("R10: 6 Note Optimized PATH",
+      () -> new PathPlannerAuto("6 Note Optimized Path"))
     );
   }
 

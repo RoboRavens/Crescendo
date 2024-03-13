@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.72,
-      "y": 6.69
+      "x": 1.37,
+      "y": 5.56
     },
-    "rotation": 60.95
+    "rotation": 0
   },
   "command": {
     "type": "sequential",
@@ -69,7 +69,7 @@
                           {
                             "type": "path",
                             "data": {
-                              "pathName": "NorthCenter1"
+                              "pathName": "6NoteOptimized1"
                             }
                           }
                         ]
@@ -82,13 +82,13 @@
                           {
                             "type": "path",
                             "data": {
-                              "pathName": "NorthCenter2"
+                              "pathName": "6NoteOptimized2"
                             }
                           },
                           {
                             "type": "named",
                             "data": {
-                              "name": "LimbGoToPreloadNoteScorePositionCommand"
+                              "name": "LimbGoToGN1and2ScorePositionCommand"
                             }
                           }
                         ]
@@ -126,7 +126,7 @@
                           {
                             "type": "path",
                             "data": {
-                              "pathName": "NorthCenter3"
+                              "pathName": "6NoteOptimized3"
                             }
                           }
                         ]
@@ -139,13 +139,13 @@
                           {
                             "type": "path",
                             "data": {
-                              "pathName": "NorthCenter4"
+                              "pathName": "6NoteOptimized4"
                             }
                           },
                           {
                             "type": "named",
                             "data": {
-                              "name": "LimbGoToPreloadNoteScorePositionCommand"
+                              "name": "LimbGoToGN1and2ScorePositionCommand"
                             }
                           }
                         ]
@@ -183,29 +183,16 @@
                           {
                             "type": "path",
                             "data": {
-                              "pathName": "NorthCenter5"
+                              "pathName": "6NoteOptimized5"
                             }
                           }
                         ]
                       }
                     },
                     {
-                      "type": "deadline",
+                      "type": "named",
                       "data": {
-                        "commands": [
-                          {
-                            "type": "path",
-                            "data": {
-                              "pathName": "NorthCenter6"
-                            }
-                          },
-                          {
-                            "type": "named",
-                            "data": {
-                              "name": "LimbGoToPreloadNoteScorePositionCommand"
-                            }
-                          }
-                        ]
+                        "name": "LimbGoToPreloadNoteScorePositionCommand"
                       }
                     },
                     {
@@ -219,7 +206,7 @@
                       "data": {
                         "commands": [
                           {
-                            "type": "deadline",
+                            "type": "parallel",
                             "data": {
                               "commands": [
                                 {
@@ -240,7 +227,7 @@
                           {
                             "type": "path",
                             "data": {
-                              "pathName": "6Note3"
+                              "pathName": "6NoteOptimized6"
                             }
                           }
                         ]
@@ -253,13 +240,13 @@
                           {
                             "type": "path",
                             "data": {
-                              "pathName": "6Note4"
+                              "pathName": "6NoteOptimized7"
                             }
                           },
                           {
                             "type": "named",
                             "data": {
-                              "name": "LimbGoToPreloadNoteScorePositionCommand"
+                              "name": "LimbGoToGN4And5ScorePositionCommand"
                             }
                           }
                         ]
@@ -297,7 +284,7 @@
                           {
                             "type": "path",
                             "data": {
-                              "pathName": "6Note1"
+                              "pathName": "6NoteOptimized8"
                             }
                           }
                         ]
@@ -310,13 +297,13 @@
                           {
                             "type": "path",
                             "data": {
-                              "pathName": "6Note2"
+                              "pathName": "6NoteOptimized9"
                             }
                           },
                           {
                             "type": "named",
                             "data": {
-                              "name": "LimbGoToPreloadNoteScorePositionCommand"
+                              "name": "LimbGoToGN4And5ScorePositionCommand"
                             }
                           }
                         ]
