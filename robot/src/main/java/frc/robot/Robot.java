@@ -199,7 +199,7 @@ public class Robot extends TimedRobot {
     configureOverrideBindings();
     OperatorController.enable();
   }
-
+  
   private void configureDriveControllerBindings() {
     // If the left trigger is held
     new Trigger(() -> DRIVE_CONTROLLER.getLeftTriggerAxis() > 0)
@@ -257,6 +257,9 @@ public class Robot extends TimedRobot {
 
     new Trigger(() -> Robot.SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON)
       .whileTrue(new LEDsSolidColorCommand(ledsSubsystem24, Color.kBlue));
+
+    new Trigger(() -> Robot.ARM_UP_TARGET_STATE == ArmUpTargetState.UP)
+      .whileTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.START_CONFIG_UP));
 
     var amp = new ConditionalCommand(new LEDsBlinkCommand(37, 94, 186), new LEDsSolidColorNewCommand(37, 94, 186), () -> Robot.SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON);
     var coOp = new ConditionalCommand(new LEDsBlinkCommand(230, 151, 16), new LEDsSolidColorNewCommand(230, 151, 16), () -> Robot.SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON);
