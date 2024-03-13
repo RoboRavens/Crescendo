@@ -16,6 +16,8 @@ public class IntakeReverseCommand extends Command {
 
   @Override
   public void execute() {
+    // Any time this command is run, re-indexing will need to take place after.
+    Robot.INTAKE_SUBSYSTEM.clearIndexBooleans();
   }
 
   @Override

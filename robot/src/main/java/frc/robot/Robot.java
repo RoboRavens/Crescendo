@@ -34,6 +34,7 @@ import frc.robot.commands.elbow.ElbowDefaultCommand;
 import frc.robot.commands.elbow.ElbowGoToPositionCommand;
 import frc.robot.commands.elbow.ElbowMoveManuallyCommand;
 import frc.robot.commands.intake.IntakeCommand;
+import frc.robot.commands.intake.IntakeDefaultCommand;
 import frc.robot.commands.intake.IntakePreShooterRevCommand;
 import frc.robot.commands.intake.IntakeReverseCommand;
 import frc.robot.commands.intake.FeedCommand;
@@ -115,6 +116,7 @@ public class Robot extends TimedRobot {
   public static final LEDsSubsystem24 ledsSubsystem24 = new LEDsSubsystem24();
   public static final PathPlannerConfigurator PATH_PLANNER_CONFIGURATOR = new PathPlannerConfigurator();
   public static final LEDsDefaultCommand LEDS_DEFAULT_COMMAND = new LEDsDefaultCommand();
+  public static final IntakeDefaultCommand INTAKE_DEFAULT_COMMAND = new IntakeDefaultCommand();
 
   // DEFAULT COMMANDS
   public static final DrivetrainDefaultCommand DRIVETRAIN_DEFAULT_COMMAND = new DrivetrainDefaultCommand();
