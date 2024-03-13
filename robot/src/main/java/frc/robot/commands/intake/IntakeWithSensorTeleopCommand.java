@@ -35,6 +35,6 @@ public class IntakeWithSensorTeleopCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Robot.SHOOTER_SUBSYSTEM.hasPiece();
+    return Robot.INTAKE_SUBSYSTEM.intakeHasPiece();
   }
 }

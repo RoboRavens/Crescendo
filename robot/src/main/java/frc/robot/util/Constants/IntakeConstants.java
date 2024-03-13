@@ -17,4 +17,6 @@ public class IntakeConstants {
     public static final double MIN_INTAKE_RPM = 6000;
     public static final double MAX_INTAKE_RPM = 8000;
     public static final double PRE_SHOOTER_REV_REVERSE_SPEED = .4;
+    public static final double INTAKE_INDEX_PIECE_FORWARD_MOTOR_SPEED = .1;
+    public static final double INTAKE_INDEX_PIECE_BACKWARD_MOTOR_SPEED = .1;
 }

@@ -202,6 +202,26 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
     return m_kinematics.toChassisSpeeds(_moduleStates);
   }
 
+  public boolean getIsBeingDriven() {
+    boolean isBeingDriven = false;
+
+    ChassisSpeeds chassisSpeeds = getSpeeds();
+
+    if (chassisSpeeds.vxMetersPerSecond != 0) {
+      isBeingDriven =  true;
+    }
+
+    if (chassisSpeeds.vyMetersPerSecond != 0) {
+      isBeingDriven =  true;
+    }
+
+    if (chassisSpeeds.omegaRadiansPerSecond != 0) {
+      isBeingDriven =  true;
+    }
+
+    return isBeingDriven;
+}
+
   /**
    * Sets the gyroscope angle to zero. This can be used to set the direction the robot is currently facing to the
    * 'forwards' direction.

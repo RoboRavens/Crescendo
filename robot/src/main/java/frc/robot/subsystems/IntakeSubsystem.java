@@ -9,11 +9,14 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.ravenhardware.BufferedDigitalInput;
+import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.util.Constants.IntakeConstants;
 import frc.robot.util.Constants.ShooterConstants;
 
 public class IntakeSubsystem extends SubsystemBase {
+  private boolean _hasIndexedPiece = true;
+  private boolean _finishedIndexingForward = true;
 
   private BufferedDigitalInput _pieceSensorIntake = new BufferedDigitalInput(RobotMap.INTAKE_INTAKE_SENSOR_DIO_PORT, 3, false,
       false);
@@ -31,6 +34,14 @@ public class IntakeSubsystem extends SubsystemBase {
   
   public void startIntake() {
     _intakeMotor.set(IntakeConstants.INTAKE_MOTOR_SPEED * -1);
+  }
+
+  public void indexPieceForward() {
+    _intakeMotor.set(IntakeConstants.INTAKE_INDEX_PIECE_FORWARD_MOTOR_SPEED * -1);
+  }
+
+  public void indexPieceBackward() {
+    _intakeMotor.set(IntakeConstants.INTAKE_INDEX_PIECE_BACKWARD_MOTOR_SPEED);
   }
 
   public void reverseIntake() {
@@ -66,9 +77,37 @@ public class IntakeSubsystem extends SubsystemBase {
   public boolean intakeHasPiece() {
     return _pieceSensorIntake.get();
   }
-
+/*
   public boolean trapHasPiece() {
     return _pieceSensorTrap.get();
+  }
+  */
+
+  public void updatePieceIndexer() {
+    if (intakeHasPiece() == false) {
+      clearIndexBooleans();
+    }
+  }
+
+  public void clearIndexBooleans() {
+    setHasIndexedPiece(false);
+    setFinishedIndexingForward(false);
+  }
+
+  public void setHasIndexedPiece(boolean hasIndexedPiece) {
+    _hasIndexedPiece = hasIndexedPiece;
+  }
+
+  public boolean getHasIndexedPiece() {
+    return _hasIndexedPiece;
+  }
+
+  public void setFinishedIndexingForward(boolean finishedIndexingForward) {
+    _finishedIndexingForward = finishedIndexingForward;
+  }
+
+  public boolean getFinishedIndexingForward() {
+    return _finishedIndexingForward;
   }
 
   @Override
@@ -76,6 +115,8 @@ public class IntakeSubsystem extends SubsystemBase {
     _pieceSensorIntake.maintainState();
     _pieceSensorTrap.maintainState();
     SmartDashboard.putBoolean("Intake Piece", this.intakeHasPiece());
-    SmartDashboard.putBoolean("Trap Piece", this.trapHasPiece());
+    // SmartDashboard.putBoolean("Trap Piece", this.trapHasPiece());
+
+    updatePieceIndexer();
   }
 }

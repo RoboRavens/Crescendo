@@ -2,6 +2,7 @@ package frc.robot.commands.drivetrain;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
@@ -19,6 +20,8 @@ public class DrivetrainDefaultCommand extends Command {
     private double _velocityYSlewRate = DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / Constants.SLEW_FRAMES_TO_MAX_Y_VELOCITY;
     private double _angularSlewRate = DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND / Constants.SLEW_FRAMES_TO_MAX_ANGULAR_VELOCITY;
 
+    private Timer inputTimer = new Timer();
+
     public boolean CutPower = false;
 
     public DrivetrainDefaultCommand() {
@@ -27,6 +30,9 @@ public class DrivetrainDefaultCommand extends Command {
 
     @Override
     public void initialize() {
+        inputTimer.reset();
+        inputTimer.start();
+
         AngularPositionHolder.GetInstance().reset();
         _chassisSpeeds = new ChassisSpeeds(0, 0, 0);
     }
@@ -76,7 +82,16 @@ public class DrivetrainDefaultCommand extends Command {
                
             }
         }
-        
+
+        if (Robot.DRIVETRAIN_SUBSYSTEM.getIsBeingDriven()) {
+            inputTimer.reset();
+            inputTimer.start();
+        }
+        else {
+            if (inputTimer.get() >= Constants.DRIVETRAIN_HOLD_POSITION_TIMER_THRESHOLD) {
+                Robot.DRIVETRAIN_SUBSYSTEM.holdPosition();
+            }
+        }
     }
 
     // public double getYVelocity(Translation2d target) {
