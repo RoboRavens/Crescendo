@@ -69,7 +69,7 @@
                           {
                             "type": "path",
                             "data": {
-                              "pathName": "NorthCenter1"
+                              "pathName": "AmpSideCenter1"
                             }
                           }
                         ]
@@ -82,7 +82,7 @@
                           {
                             "type": "path",
                             "data": {
-                              "pathName": "NorthCenter2"
+                              "pathName": "AmpSideCenter2"
                             }
                           },
                           {
@@ -126,7 +126,7 @@
                           {
                             "type": "path",
                             "data": {
-                              "pathName": "NorthCenter3"
+                              "pathName": "AmpSideCenter3"
                             }
                           }
                         ]
@@ -139,7 +139,7 @@
                           {
                             "type": "path",
                             "data": {
-                              "pathName": "NorthCenter4"
+                              "pathName": "AmpSideCenter4"
                             }
                           },
                           {
@@ -183,7 +183,7 @@
                           {
                             "type": "path",
                             "data": {
-                              "pathName": "NorthCenter5"
+                              "pathName": "AmpSideCenter5"
                             }
                           }
                         ]
@@ -196,7 +196,7 @@
                           {
                             "type": "path",
                             "data": {
-                              "pathName": "NorthCenter6"
+                              "pathName": "AmpSideCenter6"
                             }
                           },
                           {

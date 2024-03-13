@@ -47,31 +47,31 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
     );
     this.addOption(
       new AutoMode("B2: 6 Note AUTO",
-      () -> new PathPlannerAuto("SixNoteTest2"))
+      () -> new PathPlannerAuto("6 Note Auto"))
     );
     this.addOption(
-      new AutoMode("B3: 3 Note South Center PATH",
-      () -> new PathPlannerAuto("South Center Path"))
+      new AutoMode("B3: 3 Note Source Side Center PATH",
+      () -> new PathPlannerAuto("Source Side Center Path"))
     );
     this.addOption(
-      new AutoMode("B4: 3 Note South Center AUTO BLUE",
-      () -> new PathPlannerAuto("South Center Auto Blue"))
+      new AutoMode("B4: 3 Note Source Side Center AUTO BLUE",
+      () -> new PathPlannerAuto("Source Side Center Auto Blue"))
     );
     this.addOption(
-      new AutoMode("B5: North Center Then Wing Notes PATH",
-      () -> new PathPlannerAuto("North Center Path"))
+      new AutoMode("B5: Amp Side Center Then Wing Notes PATH",
+      () -> new PathPlannerAuto("Amp Side Center Path"))
     );
     this.addOption(
-      new AutoMode("B6: North Center Then Wing Notes AUTO",
-      () -> new PathPlannerAuto("North Center Auto"))
+      new AutoMode("B6: Amp Side Center Then Wing Notes AUTO",
+      () -> new PathPlannerAuto("Amp Side Center Auto"))
     );
     this.addOption(
       new AutoMode("B7: Sadville Auto",
       () -> new PathPlannerAuto("Sadville Auto"))
     );
     this.addOption(
-      new AutoMode("B8: 3 Note South Center AUTO RED",
-      () -> new PathPlannerAuto("South Center Auto Red"))
+      new AutoMode("B8: 3 Note Source Side Center AUTO RED",
+      () -> new PathPlannerAuto("Source Side Center Auto Red"))
     );
     this.addOption(
       new AutoMode("B9: 6 Note Optimized AUTO",
@@ -89,31 +89,31 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
     );
     this.addOption(
       new AutoMode("R2: 6 Note AUTO",
-      () -> new PathPlannerAuto("SixNoteTest2"))
+      () -> new PathPlannerAuto("6 Note Auto"))
     );
     this.addOption(
-      new AutoMode("R3: 3 Note South Center PATH",
-      () -> new PathPlannerAuto("South Center Path"))
+      new AutoMode("R3: 3 Note Source Side Center PATH",
+      () -> new PathPlannerAuto("Source Side Center Path"))
     );
     this.addOption(
-      new AutoMode("R4: 3 Note South Center AUTO BLUE",
-      () -> new PathPlannerAuto("South Center Auto Blue"))
+      new AutoMode("R4: 3 Note Source Side Center AUTO BLUE",
+      () -> new PathPlannerAuto("Source Side Center Auto Blue"))
     );
     this.addOption(
-      new AutoMode("R5: North Center Then Wing Notes PATH",
-      () -> new PathPlannerAuto("North Center Path"))
+      new AutoMode("R5: Amp Side Center Then Wing Notes PATH",
+      () -> new PathPlannerAuto("Amp Side Center Path"))
     );
     this.addOption(
-      new AutoMode("R6: North Center Then Wing Notes AUTO",
-      () -> new PathPlannerAuto("North Center Auto"))
+      new AutoMode("R6: Amp Side Center Then Wing Notes AUTO",
+      () -> new PathPlannerAuto("Amp Side Center Auto"))
     );
     this.addOption(
       new AutoMode("R7: Sadville Auto",
       () -> new PathPlannerAuto("Sadville Auto"))
     );
     this.addOption(
-      new AutoMode("R8: 3 Note South Center AUTO RED",
-      () -> new PathPlannerAuto("South Center Auto Red"))
+      new AutoMode("R8: 3 Note Source Side Center AUTO RED",
+      () -> new PathPlannerAuto("Source Side Center Auto Red"))
     );
     this.addOption(
       new AutoMode("R9: 6 Note Optimized AUTO",
