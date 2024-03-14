@@ -50,7 +50,7 @@
                           {
                             "type": "path",
                             "data": {
-                              "pathName": "SouthCenter1Blue"
+                              "pathName": "SourceSideCenter1"
                             }
                           },
                           {
@@ -82,7 +82,7 @@
                           {
                             "type": "path",
                             "data": {
-                              "pathName": "SouthCenter2Blue"
+                              "pathName": "SourceSideCenter2"
                             }
                           },
                           {
@@ -107,7 +107,7 @@
                           {
                             "type": "path",
                             "data": {
-                              "pathName": "SouthCenter3"
+                              "pathName": "SourceSideCenter3"
                             }
                           },
                           {
@@ -139,7 +139,7 @@
                           {
                             "type": "path",
                             "data": {
-                              "pathName": "SouthCenter4"
+                              "pathName": "SourceSideCenter4"
                             }
                           },
                           {

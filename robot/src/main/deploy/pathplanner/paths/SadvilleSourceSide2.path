@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.37,
-        "y": 5.564
+        "x": 2.45,
+        "y": 4.11
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.6890056857036806,
-        "y": 4.874269748539498
+        "x": 1.8175856037874687,
+        "y": 4.20419031993556
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.5,
-        "y": 4.33
+        "x": 0.75,
+        "y": 4.41
       },
       "prevControl": {
-        "x": 1.9356792559738978,
-        "y": 4.676930892323324
+        "x": 1.5131038535971493,
+        "y": 4.251033666118688
       },
       "nextControl": null,
       "isLocked": false,
@@ -39,13 +39,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -27.2161115573074,
+    "rotation": -60.15999999999997,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "6 Note",
+  "folder": "Sadville",
   "previewStartingState": {
-    "rotation": -0.9240453527726651,
+    "rotation": 0.0,
     "velocity": 0
   },
   "useDefaultConstraints": false

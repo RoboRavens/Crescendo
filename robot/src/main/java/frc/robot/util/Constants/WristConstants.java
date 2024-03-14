@@ -28,6 +28,8 @@ public class WristConstants {
     public static double DEGREES_SIX_NOTE_AUTO_GN_3 = 31.4;
     public static double DEGREES_SIX_NOTE_AUTO_GN_4_AND_5 = 35;
     public static double DEGREES_SIX_NOTE_PRELOAD = 6;
+    public static double DEGREES_PODIUM_SCORE = 0;
+    public static double DEGREES_STARTING_LINE_SCORE = 0;
 
     public static final double JOYSTICK_CONTROL_SCALING_FACTOR = .1;
 

@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.networktables.StringArrayPublisher;
 import edu.wpi.first.networktables.StringPublisher;
@@ -13,6 +14,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Robot;
 import frc.util.AutoMode;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -27,6 +29,9 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
   private StringArrayPublisher _optionsPub;
   private StringSubscriber _selectedAutoSub;
   private StringPublisher _selectedAutoRobotPub;
+  
+  private DoubleSubscriber _autoDelaySub;
+  private DoublePublisher _autoDelayRobotPub;
 
   private DoublePublisher _matchTimePub;
   private StringPublisher _alliancePub;
@@ -36,6 +41,9 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
     _optionsPub = autoTable.getStringArrayTopic("rpub/options").publish();
     _selectedAutoSub = autoTable.getStringTopic("dpub/selectedAuto").subscribe(null);
     _selectedAutoRobotPub = autoTable.getStringTopic("rpub/selectedAuto").publish(PubSubOption.periodic(10));
+
+    _autoDelaySub = autoTable.getDoubleTopic("dpub/autoDelay").subscribe(0);
+    _autoDelayRobotPub = autoTable.getDoubleTopic("rpub/autoDelayFromRobot").publish();
 
     _matchTimePub = autoTable.getDoubleTopic("rpub/matchTime").publish();
     _alliancePub = autoTable.getStringTopic("rpub/alliance").publish();
@@ -47,31 +55,55 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
     );
     this.addOption(
       new AutoMode("B2: 6 Note AUTO",
-      () -> new PathPlannerAuto("SixNoteTest2"))
+      () -> new PathPlannerAuto("6 Note Auto"))
     );
     this.addOption(
-      new AutoMode("B3: 3 Note South Center PATH",
-      () -> new PathPlannerAuto("South Center Path"))
+      new AutoMode("B3: 3 Note Source Side Center PATH",
+      () -> new PathPlannerAuto("Source Side Center Path"))
     );
     this.addOption(
-      new AutoMode("B4: 3 Note South Center AUTO BLUE",
-      () -> new PathPlannerAuto("South Center Auto Blue"))
+      new AutoMode("B4: 3 Note Source Side Center AUTO BLUE",
+      () -> new PathPlannerAuto("Source Side Center Auto Blue"))
     );
     this.addOption(
-      new AutoMode("B5: North Center Then Wing Notes PATH",
-      () -> new PathPlannerAuto("North Center Path"))
+      new AutoMode("B5: Amp Side Center Then Wing Notes PATH",
+      () -> new PathPlannerAuto("Amp Side Center Path"))
     );
     this.addOption(
-      new AutoMode("B6: North Center Then Wing Notes AUTO",
-      () -> new PathPlannerAuto("North Center Auto"))
+      new AutoMode("B6: Amp Side Center Then Wing Notes AUTO",
+      () -> new PathPlannerAuto("Amp Side Center Auto"))
     );
     this.addOption(
-      new AutoMode("B7: Sadville Auto",
-      () -> new PathPlannerAuto("Sadville Auto"))
+      new AutoMode("B7: Sadville Center Auto",
+      () -> new PathPlannerAuto("Sadville Center Auto"))
     );
     this.addOption(
-      new AutoMode("B8: 3 Note South Center AUTO RED",
-      () -> new PathPlannerAuto("South Center Auto Red"))
+      new AutoMode("B8: 3 Note Source Side Center AUTO RED",
+      () -> new PathPlannerAuto("Source Side Center Auto Red"))
+    );
+    this.addOption(
+      new AutoMode("B9: 6 Note Optimized AUTO",
+      () -> new PathPlannerAuto("6 Note Optimized Auto"))
+    );
+    this.addOption(
+      new AutoMode("B10: 6 Note Optimized PATH",
+      () -> new PathPlannerAuto("6 Note Optimized Path"))
+    );
+    this.addOption(
+      new AutoMode("B11: Sadville Source Side Auto",
+      () -> new PathPlannerAuto("Sadville Source Side Auto"))
+    );
+    this.addOption(
+      new AutoMode("B12: Sadville Amp Side Auto",
+      () -> new PathPlannerAuto("Sadville Amp Side Auto"))
+    );
+    this.addOption(
+      new AutoMode("B13: Source Side Center Optimized Auto",
+      () -> new PathPlannerAuto("Source Side Center Optimized Auto"))
+    );
+    this.addOption(
+      new AutoMode("B14: Amp Side Center Optimized Auto",
+      () -> new PathPlannerAuto("Amp Side Center Optimized Auto"))
     );
 
     // RED SIDE
@@ -81,31 +113,55 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
     );
     this.addOption(
       new AutoMode("R2: 6 Note AUTO",
-      () -> new PathPlannerAuto("SixNoteTest2"))
+      () -> new PathPlannerAuto("6 Note Auto"))
     );
     this.addOption(
-      new AutoMode("R3: 3 Note South Center PATH",
-      () -> new PathPlannerAuto("South Center Path"))
+      new AutoMode("R3: 3 Note Source Side Center PATH",
+      () -> new PathPlannerAuto("Source Side Center Path"))
     );
     this.addOption(
-      new AutoMode("R4: 3 Note South Center AUTO BLUE",
-      () -> new PathPlannerAuto("South Center Auto Blue"))
+      new AutoMode("R4: 3 Note Source Side Center AUTO BLUE",
+      () -> new PathPlannerAuto("Source Side Center Auto Blue"))
     );
     this.addOption(
-      new AutoMode("R5: North Center Then Wing Notes PATH",
-      () -> new PathPlannerAuto("North Center Path"))
+      new AutoMode("R5: Amp Side Center Then Wing Notes PATH",
+      () -> new PathPlannerAuto("Amp Side Center Path"))
     );
     this.addOption(
-      new AutoMode("R6: North Center Then Wing Notes AUTO",
-      () -> new PathPlannerAuto("North Center Auto"))
+      new AutoMode("R6: Amp Side Center Then Wing Notes AUTO",
+      () -> new PathPlannerAuto("Amp Side Center Auto"))
     );
     this.addOption(
-      new AutoMode("R7: Sadville Auto",
-      () -> new PathPlannerAuto("Sadville Auto"))
+      new AutoMode("R7: Sadville Center Auto",
+      () -> new PathPlannerAuto("Sadville Center Auto"))
     );
     this.addOption(
-      new AutoMode("R8: 3 Note South Center AUTO RED",
-      () -> new PathPlannerAuto("South Center Auto Red"))
+      new AutoMode("R8: 3 Note Source Side Center AUTO RED",
+      () -> new PathPlannerAuto("Source Side Center Auto Red"))
+    );
+    this.addOption(
+      new AutoMode("R9: 6 Note Optimized AUTO",
+      () -> new PathPlannerAuto("6 Note Optimized Auto"))
+    );
+    this.addOption(
+      new AutoMode("R10: 6 Note Optimized PATH",
+      () -> new PathPlannerAuto("6 Note Optimized Path"))
+    );
+    this.addOption(
+      new AutoMode("R11: Sadville Source Side Auto",
+      () -> new PathPlannerAuto("Sadville Source Side Auto"))
+    );
+    this.addOption(
+      new AutoMode("R12: Sadville Amp Side Auto",
+      () -> new PathPlannerAuto("Sadville Amp Side Auto"))
+    );
+    this.addOption(
+      new AutoMode("R13: Source Side Center Optimized Auto",
+      () -> new PathPlannerAuto("Source Side Center Optimized Auto"))
+    );
+    this.addOption(
+      new AutoMode("R14: Amp Side Center Optimized Auto",
+      () -> new PathPlannerAuto("Amp Side Center Optimized Auto"))
     );
   }
 
@@ -146,7 +202,7 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
   }
 
   public Command GetAutoCommand() {
-    return this.GetAuto().getCommandSupplier().getCommand();
+    return new WaitCommand(_autoDelaySub.get()).andThen(this.GetAuto().getCommandSupplier().getCommand());
   }
 
   private AutoMode GetDefaultAuto() {
@@ -168,6 +224,7 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
     }
 
     _selectedAutoRobotPub.set(this.GetAuto().getText());
+    _autoDelayRobotPub.set(_autoDelaySub.get());
 
     _matchTimePub.set(Timer.getMatchTime());
     _alliancePub.set(alliance.name());

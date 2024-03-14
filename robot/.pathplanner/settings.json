@@ -2,7 +2,15 @@
   "robotWidth": 0.9,
   "robotLength": 0.9,
   "holonomicMode": true,
-  "pathFolders": [],
+  "pathFolders": [
+    "6 Note",
+    "6 Note Optimized",
+    "Amp Side",
+    "Amp Side Optimized",
+    "Sadville",
+    "Source Side",
+    "Source Side Optimized"
+  ],
   "autoFolders": [
     "New Folder"
   ],

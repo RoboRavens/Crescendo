@@ -2,9 +2,14 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Arm Command": "Subsystem",
+      "/SmartDashboard/Drivetrain Command": "Subsystem",
       "/SmartDashboard/ElbowSubsystem": "Subsystem",
       "/SmartDashboard/HardwareOdometry Field": "Field2d",
+      "/SmartDashboard/Intake Command": "Subsystem",
       "/SmartDashboard/PoseEstimator Field": "Field2d",
+      "/SmartDashboard/Shooter Command": "Subsystem",
+      "/SmartDashboard/Wrist Command": "Subsystem",
       "/SmartDashboard/WristSubsystem": "Subsystem"
     }
   },
