@@ -6,13 +6,13 @@ public class ShooterConstants {
     public static final double lkI = 0;
     public static final double lkD = 0;
     public static final double lmaxRPM = 240; // shooter wheel rotations per second
-    public static final double lShooterVelocityPercentage = .80;
+    public static final double lShooterVelocityPercentage = -.80;
 
     public static final double rkP = 0.11;
     public static final double rkI = 0;
     public static final double rkD = 0;
     public static final double rmaxRPM = 210; // shooter wheel rotations per second
-    public static final double rShooterVelocityPercentage = -.75;
+    public static final double rShooterVelocityPercentage = .75;
 
     public static final double INITIAL_NOTE_SPEED = 20; // in m/s
     public static final double GRAVITY_ACCELERATION = 9.81;

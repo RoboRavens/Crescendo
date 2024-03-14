@@ -214,7 +214,9 @@ public class Robot extends TimedRobot {
     //new Trigger(() -> StateManagement.isRobotReadyToShoot() && DRIVE_CONTROLLER.getAButton())
     //  .onTrue(new IntakeFeedCommand(INTAKE_SUBSYSTEM));
 
-    COMMAND_DRIVE_CONTROLLER.leftBumper().whileTrue(new IntakeWithSensorTeleopCommand());
+    COMMAND_DRIVE_CONTROLLER.leftBumper()
+      .and(new Trigger(() -> Robot.INTAKE_SUBSYSTEM.driverCanIntake()))
+      .whileTrue(new IntakeWithSensorTeleopCommand());
     COMMAND_DRIVE_CONTROLLER.rightBumper().whileTrue(new FeedWithSensorCommand());
 
     new Trigger(() -> SHOOTER_SUBSYSTEM.hasPiece()).onTrue(
