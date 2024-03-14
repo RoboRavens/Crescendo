@@ -135,6 +135,32 @@ public class WristSubsystem extends SubsystemBase {
     this.setTargetPosition(setpoint);
   }
 
+  public double incrementTargetPosition() {
+    double targetDegrees = WristSubsystem.getDegreesFromPosition(targetPosition) + 1;
+
+    this.setTargetDegrees(targetDegrees);
+
+    return this.targetPosition;
+  }
+
+  public double decrementTargetPosition() {
+    double targetDegrees = WristSubsystem.getDegreesFromPosition(targetPosition) - 1;
+    this.setTargetDegrees(targetDegrees);
+
+    return this.targetPosition;
+  }
+
+  public void setTargetDegrees(double targetDegrees) {
+    double targetRadians = Math.toRadians(targetDegrees);
+    double targetPosition = WristSubsystem.getPositionFromRadians(targetRadians);
+
+    this.setTargetPosition(targetPosition);
+  }
+
+  public static double getDegreesFromPosition(double position) {
+    return Math.toDegrees(getRadiansFromPosition(position));
+  }
+
   public void stopWristRotation() {
     _wristRotationMotor.stopMotor();
   }
