@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.networktables.StringArrayPublisher;
 import edu.wpi.first.networktables.StringPublisher;
@@ -13,6 +14,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Robot;
 import frc.util.AutoMode;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -27,6 +29,9 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
   private StringArrayPublisher _optionsPub;
   private StringSubscriber _selectedAutoSub;
   private StringPublisher _selectedAutoRobotPub;
+  
+  private DoubleSubscriber _autoDelaySub;
+  private DoublePublisher _autoDelayRobotPub;
 
   private DoublePublisher _matchTimePub;
   private StringPublisher _alliancePub;
@@ -36,6 +41,9 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
     _optionsPub = autoTable.getStringArrayTopic("rpub/options").publish();
     _selectedAutoSub = autoTable.getStringTopic("dpub/selectedAuto").subscribe(null);
     _selectedAutoRobotPub = autoTable.getStringTopic("rpub/selectedAuto").publish(PubSubOption.periodic(10));
+
+    _autoDelaySub = autoTable.getDoubleTopic("dpub/autoDelay").subscribe(0);
+    _autoDelayRobotPub = autoTable.getDoubleTopic("rpub/autoDelayFromRobot").publish();
 
     _matchTimePub = autoTable.getDoubleTopic("rpub/matchTime").publish();
     _alliancePub = autoTable.getStringTopic("rpub/alliance").publish();
@@ -89,6 +97,14 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
       new AutoMode("B12: Sadville Amp Side Auto",
       () -> new PathPlannerAuto("Sadville Amp Side Auto"))
     );
+    this.addOption(
+      new AutoMode("B13: Source Side Center Optimized Auto",
+      () -> new PathPlannerAuto("Source Side Center Optimized Auto"))
+    );
+    this.addOption(
+      new AutoMode("B14: Amp Side Center Optimized Auto",
+      () -> new PathPlannerAuto("Amp Side Center Optimized Auto"))
+    );
 
     // RED SIDE
     this.addRedDefault(
@@ -139,6 +155,14 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
       new AutoMode("R12: Sadville Amp Side Auto",
       () -> new PathPlannerAuto("Sadville Amp Side Auto"))
     );
+    this.addOption(
+      new AutoMode("R13: Source Side Center Optimized Auto",
+      () -> new PathPlannerAuto("Source Side Center Optimized Auto"))
+    );
+    this.addOption(
+      new AutoMode("R14: Amp Side Center Optimized Auto",
+      () -> new PathPlannerAuto("Amp Side Center Optimized Auto"))
+    );
   }
 
   private void addOption(AutoMode auto) {
@@ -178,7 +202,7 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
   }
 
   public Command GetAutoCommand() {
-    return this.GetAuto().getCommandSupplier().getCommand();
+    return new WaitCommand(_autoDelaySub.get()).andThen(this.GetAuto().getCommandSupplier().getCommand());
   }
 
   private AutoMode GetDefaultAuto() {
@@ -200,6 +224,7 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
     }
 
     _selectedAutoRobotPub.set(this.GetAuto().getText());
+    _autoDelayRobotPub.set(_autoDelaySub.get());
 
     _matchTimePub.set(Timer.getMatchTime());
     _alliancePub.set(alliance.name());

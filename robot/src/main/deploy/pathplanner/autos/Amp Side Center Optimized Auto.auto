@@ -1,0 +1,209 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.72,
+      "y": 6.69
+    },
+    "rotation": 60.95
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "StartShooterCommand"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "LimbStartConfigUpCommand"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "LimbGoToPreloadNoteScorePositionCommand"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "FeedNoteCommand"
+                      }
+                    },
+                    {
+                      "type": "deadline",
+                      "data": {
+                        "commands": [
+                          {
+                            "type": "parallel",
+                            "data": {
+                              "commands": [
+                                {
+                                  "type": "named",
+                                  "data": {
+                                    "name": "LimbGoToGroundSetpointCommand"
+                                  }
+                                },
+                                {
+                                  "type": "named",
+                                  "data": {
+                                    "name": "IntakeNoteCommand"
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "type": "path",
+                            "data": {
+                              "pathName": "AmpSideOptimized1"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "deadline",
+                      "data": {
+                        "commands": [
+                          {
+                            "type": "path",
+                            "data": {
+                              "pathName": "AmpSideOptimized2"
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "LimbGoToPreloadNoteScorePositionCommand"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "FeedNoteCommand"
+                      }
+                    },
+                    {
+                      "type": "deadline",
+                      "data": {
+                        "commands": [
+                          {
+                            "type": "parallel",
+                            "data": {
+                              "commands": [
+                                {
+                                  "type": "named",
+                                  "data": {
+                                    "name": "LimbGoToGroundSetpointCommand"
+                                  }
+                                },
+                                {
+                                  "type": "named",
+                                  "data": {
+                                    "name": "IntakeNoteCommand"
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "type": "path",
+                            "data": {
+                              "pathName": "AmpSideOptimized3"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "deadline",
+                      "data": {
+                        "commands": [
+                          {
+                            "type": "path",
+                            "data": {
+                              "pathName": "AmpSideOptimized4"
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "LimbGoToPreloadNoteScorePositionCommand"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "FeedNoteCommand"
+                      }
+                    },
+                    {
+                      "type": "deadline",
+                      "data": {
+                        "commands": [
+                          {
+                            "type": "parallel",
+                            "data": {
+                              "commands": [
+                                {
+                                  "type": "named",
+                                  "data": {
+                                    "name": "LimbGoToGroundSetpointCommand"
+                                  }
+                                },
+                                {
+                                  "type": "named",
+                                  "data": {
+                                    "name": "IntakeNoteCommand"
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "type": "path",
+                            "data": {
+                              "pathName": "AmpSideOptimized5"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "FeedNoteCommand"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

@@ -64,6 +64,7 @@ interface Topics {
   startShooterPub?: NetworkTablesTopic<boolean>;
   selectedShotTypePub?: NetworkTablesTopic<string>;
   limelightOverridePub?: NetworkTablesTopic<boolean>;
+  autoDelayPub?: NetworkTablesTopic<number>;
 }
 
 const topics: Topics = {
@@ -75,7 +76,8 @@ const topics: Topics = {
   signalSelectionPub: undefined,
   startShooterPub: undefined,
   selectedShotTypePub: undefined,
-  limelightOverridePub: undefined
+  limelightOverridePub: undefined,
+  autoDelayPub: undefined
 };
 
 // const NT_CORE = NetworkTables.getInstanceByTeam(1188);
@@ -100,7 +102,9 @@ class App extends React.Component<{}, {
   signalSelection: string,
   startShooter: boolean,
   selectedShotType: string,
-  limelightOverride: boolean
+  limelightOverride: boolean,
+  autoDelay: number,
+  autoDelayFromRobot: number
 }> {
   constructor(props: {}) {
     super(props);
@@ -123,7 +127,9 @@ class App extends React.Component<{}, {
       signalSelection: "NONE",
       startShooter: false,
       selectedShotType: "SUBWOOFER_SHOT",
-      limelightOverride: false
+      limelightOverride: false,
+      autoDelay: 0,
+      autoDelayFromRobot: 0
     };
   }
 
@@ -276,10 +282,16 @@ class App extends React.Component<{}, {
     .subscribe((value: number | null) => { this.setMatchTime(value); }, true);
     NT_CORE.createTopic<string>('/ReactDash/Autonomous/rpub/alliance', NetworkTablesTypeInfos.kString)
     .subscribe((value: string | null) => { this.setAlliance(value); }, true);
+    NT_CORE.createTopic<number>('/ReactDash/Autonomous/rpub/autoDelayFromRobot', NetworkTablesTypeInfos.kInteger)
+    .subscribe((value: number | null) => { this.setState({
+      autoDelayFromRobot: value ?? this.state.autoDelayFromRobot
+    }) }, true);
 
     const optionsTopic = NT_CORE.createTopic<string[]>('/ReactDash/Autonomous/rpub/options', NetworkTablesTypeInfos.kString);
     optionsTopic.subscribe((value: string[] | null) => { this.onOptionsChange(value); }, true);
 
+    topics.autoDelayPub = NT_CORE.createTopic<number>('/ReactDash/Autonomous/dpub/autoDelay', NetworkTablesTypeInfos.kDouble, 0);
+    topics.autoDelayPub.publish({retained: true});
     topics.selectedAutoPub = NT_CORE.createTopic<string>('/ReactDash/Autonomous/dpub/selectedAuto', NetworkTablesTypeInfos.kString, "No Auto");
     topics.selectedAutoPub.publish({retained: true}); // make us the publisher for this topic and tell the server retain the value if we disconnect
     topics.armUpPub = NT_CORE.createTopic<boolean>('/ReactDash/Teleop/dpub/armUp', NetworkTablesTypeInfos.kBoolean, false);
@@ -398,6 +410,15 @@ class App extends React.Component<{}, {
       limelightOverride: override
     });
   }
+
+  handleAutoDelayChange(delay: number) {
+    console.log(delay)
+    topics.autoDelayPub?.setValue(delay);
+    console.log(topics.autoDelayPub?.getValue())
+    this.setState({
+      autoDelay: delay
+    });
+  }
   
   render() {
     let allianceColor = '#808080'
@@ -491,6 +512,18 @@ class App extends React.Component<{}, {
                       sx={{marginTop: darkTheme.spacing(2)}}
                       InputProps={{sx:{fontSize: '2rem'}}}
                     />
+                    <Stack direction={"row"} spacing={2} alignItems={"center"} marginTop={4}>
+                      <TextField
+                        fullWidth
+                        label="Auto Delay (Seconds)"
+                        defaultValue={0}
+                        InputProps={{sx:{fontSize: '2rem'}}}
+                        onChange={(e) => this.handleAutoDelayChange(Number(e.currentTarget.value))}/>
+                      {this.state.autoDelay === this.state.autoDelayFromRobot
+                        ? <CheckBoxIcon sx={{fontSize: 50, color: COLOR_GREEN}} />
+                        : <WarningIcon sx={{fontSize: 50, color: COLOR_RED}} />
+                      }
+                    </Stack>
                   </Grid>
                 </React.Fragment>
               }
