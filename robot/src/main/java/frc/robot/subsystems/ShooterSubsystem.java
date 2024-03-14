@@ -4,6 +4,7 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -42,6 +43,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
         _leftTalonFX.getConfigurator().apply(talonFXConfiguration);
         _rightTalonFX.getConfigurator().apply(talonFXConfiguration);
+        _leftTalonFX.setNeutralMode(NeutralModeValue.Coast);
+        _rightTalonFX.setNeutralMode(NeutralModeValue.Coast);
 
         _leftTalonFX.getConfigurator().apply(leftSlot0Configs);
         _rightTalonFX.getConfigurator().apply(rightSlot0Configs);
@@ -60,8 +63,8 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void setPowerManually(double speed) {
-        _leftTalonFX.set(speed);
-        _rightTalonFX.set(speed * -1);
+        _leftTalonFX.set(speed * -1);
+        _rightTalonFX.set(speed);
     }
 
     public void stopShooting() {

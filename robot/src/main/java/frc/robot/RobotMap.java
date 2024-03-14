@@ -41,7 +41,8 @@ public class RobotMap {
     public static final int SHOOTER_RIGHT_MOTOR_CAN_ID = 7;
 
     // Intake
-    public static final int INTAKE_MOTOR_CAN_ID = 8;
+    public static final int INTAKE_MOTOR_TOP_CAN_ID = 8;
+    public static final int INTAKE_MOTOR_BOTTOM_CAN_ID = 9;
     
     //needs can IDs these are placeholders
     public static final int ELBOW_ROTATION_MOTOR = 1;
