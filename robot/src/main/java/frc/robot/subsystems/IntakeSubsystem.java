@@ -18,7 +18,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private BufferedDigitalInput _pieceSensorIntake = new BufferedDigitalInput(RobotMap.INTAKE_INTAKE_SENSOR_DIO_PORT, 3, false,
       false);
-  private BufferedDigitalInput _pieceSensorFeeder = new BufferedDigitalInput(RobotMap.INTAKE_TRAP_SENSOR_DIO_PORT, 3, false,
+  private BufferedDigitalInput _pieceSensorFeeder = new BufferedDigitalInput(RobotMap.INTAKE_FEEDER_SENSOR_DIO_PORT, 3, false,
       false);
   private TalonFX _intakeMotorTop = new TalonFX(RobotMap.INTAKE_MOTOR_TOP_CAN_ID);
   private TalonFX _intakeMotorBottom = new TalonFX(RobotMap.INTAKE_MOTOR_BOTTOM_CAN_ID);
