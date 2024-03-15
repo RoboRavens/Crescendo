@@ -267,21 +267,27 @@ public class Robot extends TimedRobot {
     new Trigger(() -> LIMELIGHT_OVERRIDE_STATE == LimelightOverrideState.OVERRIDE_ON && SELECTED_SHOT_TARGET_STATE == SelectedShotTargetState.PODIUM_SHOT)
       .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.PODIUM_SCORING));
 
-    var amp = new ConditionalCommand(new LEDsBlinkCommand(Color.kBlue, Color.kBlack, 0.5), new LEDsSolidColorCommand(Color.kBlue), () -> Robot.SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON);
-    var coOp = new ConditionalCommand(new LEDsBlinkCommand(Color.kOrange, Color.kBlack, 0.5), new LEDsSolidColorCommand(Color.kOrange), () -> Robot.SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON);
-    var piece = new ConditionalCommand(new LEDsBlinkCommand(Color.kGreen, Color.kBlack, 0.5), new LEDsSolidColorCommand(Color.kGreen), () -> Robot.SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON);
+    var ampTrigger = new Trigger(() -> LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.AMP_SIGNAL);
+    var coOpTrigger = new Trigger(() -> LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.CO_OP_SIGNAL);
+    var noDashboardLEDsAndHasPieceTrigger = new Trigger(() -> LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.NONE && SHOOTER_SUBSYSTEM.hasPiece());
+    
+    // Amp
+    ampTrigger.and(() -> SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON)
+      .whileTrue(new LEDsBlinkCommand(Color.kBlue, Color.kBlack, 0.5));
+    ampTrigger.and(() -> SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.OFF)
+      .whileTrue(new LEDsSolidColorCommand(Color.kBlue));
+    
+    // Co-op
+    coOpTrigger.and(() -> SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON)
+      .whileTrue(new LEDsBlinkCommand(Color.kOrange, Color.kBlack, 0.5));
+    coOpTrigger.and(() -> SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.OFF)
+      .whileTrue(new LEDsSolidColorCommand(Color.kOrange));
 
-    // Blue
-    new Trigger(() -> LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.AMP_SIGNAL)
-      .whileTrue(amp);
-
-    // Orange
-    new Trigger(() -> LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.CO_OP_SIGNAL)
-      .whileTrue(coOp);
-
-    // Green
-    new Trigger(() -> Robot.SHOOTER_SUBSYSTEM.hasPiece() && LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.NONE)
-      .whileTrue(piece);
+    // Has Piece
+    noDashboardLEDsAndHasPieceTrigger.and(() -> SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON)
+      .whileTrue(new LEDsBlinkCommand(Color.kGreen, Color.kBlack, 0.5));
+    noDashboardLEDsAndHasPieceTrigger.and(() -> SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.OFF)
+      .whileTrue(new LEDsSolidColorCommand(Color.kGreen));
   }
 
 	/** This function is run once each time the robot enters autonomous mode. */
