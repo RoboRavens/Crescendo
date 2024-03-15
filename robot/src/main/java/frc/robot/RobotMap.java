@@ -54,4 +54,9 @@ public class RobotMap {
     public static final int INTAKE_INTAKE_SENSOR_DIO_PORT = 1;
     public static final int INTAKE_TRAP_SENSOR_DIO_PORT = 2;
     public static final int SHOOTER_PIECE_SENSOR = 3;
+
+    // TODO: Correct these IDs
+    // Climber
+    public static final int LEFT_CLIMBER_MOTOR = 100;
+    public static final int RIGHT_CLIMBER_MOTOR = 101;
 }
