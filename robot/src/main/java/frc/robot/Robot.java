@@ -93,10 +93,10 @@ import frc.util.StateManagement.TrapSourceLaneTargetState;
  * directory.
  */
 public class Robot extends TimedRobot {
-  public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_ONE = new LimelightSubsystem("limelight-pick");
-  public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_TWO = new LimelightSubsystem("limelight-front");
-  public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_THREE = new LimelightSubsystem("limelight-backl");
-  public static final LimelightSubsystem LIMELIGHT_SUBSYSTEM_FOUR = new LimelightSubsystem("limelight-backr");
+  public static final LimelightSubsystem LIMELIGHT_PICKUP = new LimelightSubsystem("limelight-pickup");
+  public static final LimelightSubsystem LIMELIGHT_LEFT = new LimelightSubsystem("limelight-left");
+  public static final LimelightSubsystem LIMELIGHT_RIGHT = new LimelightSubsystem("limelight-right");
+  public static final LimelightSubsystem LIMELIGHT_BACK = new LimelightSubsystem("limelight-back");
   public static final DrivetrainSubsystem DRIVETRAIN_SUBSYSTEM = new DrivetrainSubsystem();
   public static final PoseEstimatorSubsystem POSE_ESTIMATOR_SUBSYSTEM = new PoseEstimatorSubsystem();
   public static final LimelightHelpers LIMELIGHT_HELPERS = new LimelightHelpers();
