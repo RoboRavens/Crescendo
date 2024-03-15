@@ -14,7 +14,7 @@ import frc.robot.RobotMap;
 import frc.robot.util.Constants.ShooterConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
-    private BufferedDigitalInput _shooterPieceSensor = new BufferedDigitalInput(RobotMap.SHOOTER_PIECE_SENSOR, 3, false,
+    private BufferedDigitalInput _shooterPieceSensor = new BufferedDigitalInput(RobotMap.SHOOTER_PIECE_SENSOR_DIO_PORT, 3, false,
             false);
     private TalonFX _leftTalonFX = new TalonFX(RobotMap.SHOOTER_LEFT_MOTOR_CAN_ID);
     private TalonFX _rightTalonFX = new TalonFX(RobotMap.SHOOTER_RIGHT_MOTOR_CAN_ID);
