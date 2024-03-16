@@ -5,9 +5,12 @@
 package frc.controls;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
+import frc.robot.commands.climber.SetClimberToPowerCommand;
+import frc.robot.commands.climber.SetClimberToPowerCommand;
 import frc.robot.commands.compound.LimbGoToSetpointCommand;
 import frc.robot.commands.elbow.ElbowDecrementPositionCommand;
 import frc.robot.commands.elbow.ElbowIncrementPositionCommand;
@@ -60,5 +63,10 @@ public class OperatorController {
         
         _operatorController.leftTrigger().and(_operatorController.rightTrigger()).and(_operatorController.start()).whileTrue(new ElbowSuspendLimitsCommand());
         _operatorController.leftTrigger().and(_operatorController.rightTrigger()).and(_operatorController.back()).whileTrue(new WristSuspendLimitsCommand());
+
+        _operatorController.leftTrigger().negate().and(() -> Math.abs(_operatorController.getLeftY()) > .1)
+        .whileTrue(new SetClimberToPowerCommand(() -> _operatorController.getLeftY() * -1, Robot.LEFT_CLIMBER_SUBSYSTEM));
+        _operatorController.leftTrigger().negate().and(() -> Math.abs(_operatorController.getRightY()) > .1)
+        .whileTrue(new SetClimberToPowerCommand(() -> _operatorController.getRightY() * -1, Robot.RIGHT_CLIMBER_SUBSYSTEM));
     }
 }

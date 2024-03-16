@@ -51,6 +51,11 @@ public class RobotMap {
      
     // These are DIO Ports
     public static final int ELBOW_FORWARD_LIMIT_DIO = 0;
+  
+    // Climber
+    public static final int LEFT_CLIMBER_MOTOR = 25;
+    public static final int RIGHT_CLIMBER_MOTOR = 26;
+  
     public static final int INTAKE_INTAKE_SENSOR_DIO_PORT = 3;
     public static final int INTAKE_FEEDER_SENSOR_DIO_PORT = 1;
     public static final int SHOOTER_PIECE_SENSOR_DIO_PORT = 2;

@@ -53,6 +53,7 @@ import frc.robot.commands.wrist.WristMoveManuallyCommand;
 import frc.robot.commands.wrist.WristOffsetCommand;
 import frc.robot.commands.wrist.WristSetPowerCommand;
 import frc.robot.subsystems.AutoChooserSubsystemReact;
+import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.ElbowSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -116,6 +117,8 @@ public class Robot extends TimedRobot {
   public static final LEDsSubsystem24 ledsSubsystem24 = new LEDsSubsystem24();
   public static final PathPlannerConfigurator PATH_PLANNER_CONFIGURATOR = new PathPlannerConfigurator();
   public static final IntakeDefaultCommand INTAKE_DEFAULT_COMMAND = new IntakeDefaultCommand();
+  public static final ClimberSubsystem LEFT_CLIMBER_SUBSYSTEM = new ClimberSubsystem(RobotMap.LEFT_CLIMBER_MOTOR);
+  public static final ClimberSubsystem RIGHT_CLIMBER_SUBSYSTEM = new ClimberSubsystem(RobotMap.RIGHT_CLIMBER_MOTOR);
   public static final LEDsRainbowCommand LEDS_RAINBOW_COMMAND = new LEDsRainbowCommand();
   public static final WristSetPowerCommand WRIST_SET_POWER_COMMAND = new WristSetPowerCommand();
 
