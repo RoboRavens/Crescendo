@@ -19,6 +19,7 @@ import frc.robot.commands.wrist.WristIncrementPositionCommand;
 import frc.robot.commands.wrist.WristMoveWithJoystickCommand;
 import frc.robot.commands.wrist.WristSuspendLimitsCommand;
 import frc.robot.util.arm.LimbSetpoint;
+import frc.util.StateManagement.ShooterRevTargetState;
 
 /** Add your docs here. */
 public class OperatorController {
@@ -46,6 +47,7 @@ public class OperatorController {
         .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.START_CONFIG_UP));
 
         _operatorController.leftBumper().whileTrue(new StartShooterCommand());
+        _operatorController.leftBumper().whileTrue(new InstantCommand(() -> Robot.SHOOTER_REV_TARGET_STATE = ShooterRevTargetState.ON)).onFalse(new InstantCommand(() -> Robot.SHOOTER_REV_TARGET_STATE = ShooterRevTargetState.OFF));
 
         _operatorController.leftTrigger().and(() -> Math.abs(_operatorController.getLeftY()) > .1).whileTrue(new ElbowMoveWithJoystickCommand(_operatorController));
         _operatorController.leftTrigger().and(() -> Math.abs(_operatorController.getRightY()) > .1).whileTrue(new WristMoveWithJoystickCommand(_operatorController));

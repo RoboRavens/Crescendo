@@ -23,9 +23,9 @@ public class LEDsBlinkCommand extends Command {
   /** Creates a new LEDsBlinkCommand. */
   public LEDsBlinkCommand(Color color, Color color2, double blinkDurationSeconds) {
     this.blinkDurationSeconds = blinkDurationSeconds;
-    this.red = (int)color.red;
-    this.green = (int)color.green;
-    this.blue = (int)color.blue;
+    this.red = (int)color.red * 255;
+    this.green = (int)color.green * 255;
+    this.blue = (int)color.blue * 255;
     addRequirements(Robot.ledsSubsystem24);
   }
 

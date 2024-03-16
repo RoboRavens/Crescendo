@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -25,12 +26,14 @@ public class IntakeSubsystem extends SubsystemBase {
   final VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
 
   public IntakeSubsystem() {
-    var leftSlot0Configs = new Slot0Configs();
-        leftSlot0Configs.kP = 0.15;
-    _intakeMotorTop.getConfigurator().apply(leftSlot0Configs);
-    _intakeMotorTop.setNeutralMode(NeutralModeValue.Brake);
-    _intakeMotorBottom.getConfigurator().apply(leftSlot0Configs);
-    _intakeMotorBottom.setNeutralMode(NeutralModeValue.Brake);
+
+    var config = new TalonFXConfiguration();
+    config.MotorOutput.DutyCycleNeutralDeadband = 0.001;
+    config.Slot0.kP = 0.15;
+    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+    _intakeMotorTop.getConfigurator().apply(config);
+    _intakeMotorBottom.getConfigurator().apply(config);
   }
   
   public void startIntake() {
@@ -39,6 +42,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public void indexPieceForward() {
     this.setPowerManually(IntakeConstants.INTAKE_INDEX_PIECE_FORWARD_MOTOR_SPEED);
+  }
+
+  public void indexPieceForwardFast() {
+    this.setPowerManually(IntakeConstants.INTAKE_SPEED_BEFORE_FEEDER_SENSOR);
   }
 
   public void indexPieceBackward() {
@@ -50,12 +57,12 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public void startIntakeFeeder() {
-    this.setPowerManually(IntakeConstants.INTAKE_FEEDER_SPEED * -1);
+    this.setPowerManually(IntakeConstants.INTAKE_FEEDER_SPEED);
   }
 
   public void setPowerManually(double speed) {
-    _intakeMotorTop.set(speed * -1);
-    _intakeMotorBottom.set(speed * -1);
+    _intakeMotorTop.set(speed);
+    _intakeMotorBottom.set(speed);
 }
 
   public void stopMotorWithPID() {

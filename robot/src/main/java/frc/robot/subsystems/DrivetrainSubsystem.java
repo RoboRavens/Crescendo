@@ -39,6 +39,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Robot;
 import frc.robot.util.field.FieldConstants;
+import frc.util.AngularPositionHolder;
 // import frc.robot.commands.drivetrain.RavenSwerveControllerCommand;
 // import frc.robot.shuffleboard.DrivetrainDiagnosticsShuffleboard;
 import frc.util.Deadband;
@@ -242,6 +243,8 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
     // _driveCharacteristics.reset();
 
     Robot.POSE_ESTIMATOR_SUBSYSTEM.zeroGyroscope();
+
+    AngularPositionHolder.GetInstance().reset();
   }
 
   public SwerveModulePosition[] getSwerveModulePositions() {
