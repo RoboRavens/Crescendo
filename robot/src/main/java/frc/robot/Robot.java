@@ -192,7 +192,7 @@ public class Robot extends TimedRobot {
 
     AUTO_CHOOSER.ShowTab();
     
-    //new Trigger(() -> DRIVE_CONTROLLER.getLeftTriggerAxis() > .1 && Robot.LIMELIGHT_SUBSYSTEM_ONE.getTv() == 1).whileTrue(DRIVETRAIN_AUTO_AIM_COMMAND);
+    new Trigger(() -> DRIVE_CONTROLLER.getLeftTriggerAxis() > .1 && Robot.LIMELIGHT_PICKUP.getTv() == 1).whileTrue(DRIVETRAIN_AUTO_AIM_COMMAND);
 
     configureDriveControllerBindings();
     configureAutomatedBehaviorBindings();

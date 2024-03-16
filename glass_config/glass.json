@@ -39,21 +39,49 @@
         }
       },
       "/SmartDashboard/HardwareOdometry Field": {
+        "bottom": 544,
+        "builtin": "2024 Crescendo",
+        "height": 8.013679504394531,
+        "left": 46,
+        "right": 1088,
+        "top": 36,
+        "width": 16.541748046875,
         "window": {
           "visible": true
         }
       },
       "/SmartDashboard/Limelight Back Field2d": {
+        "bottom": 544,
+        "builtin": "2024 Crescendo",
+        "height": 8.013679504394531,
+        "left": 46,
+        "right": 1088,
+        "top": 36,
+        "width": 16.541748046875,
         "window": {
           "visible": true
         }
       },
       "/SmartDashboard/Limelight Left Field2d": {
+        "bottom": 544,
+        "builtin": "2024 Crescendo",
+        "height": 8.013679504394531,
+        "left": 46,
+        "right": 1088,
+        "top": 36,
+        "width": 16.541748046875,
         "window": {
           "visible": true
         }
       },
       "/SmartDashboard/Limelight Right Field2d": {
+        "bottom": 544,
+        "builtin": "2024 Crescendo",
+        "height": 8.013679504394531,
+        "left": 46,
+        "right": 1088,
+        "top": 36,
+        "width": 16.541748046875,
         "window": {
           "visible": true
         }
@@ -100,7 +128,10 @@
           ],
           "height": 332
         }
-      ]
+      ],
+      "window": {
+        "visible": false
+      }
     }
   }
 }
