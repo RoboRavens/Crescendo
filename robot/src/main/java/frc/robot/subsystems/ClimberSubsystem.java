@@ -4,33 +4,35 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotMap;
-import frc.robot.util.Constants.Constants;
 
 public class ClimberSubsystem extends SubsystemBase {
-  private TalonFX _climberMotor;
+  private CANSparkMax _climberMotor;
 
   /** Creates a new ClimberSubsystem. */
   public ClimberSubsystem(int deviceID) {
-    _climberMotor = new TalonFX(deviceID);
-
-    _climberMotor.getConfigurator().setPosition(0);
-    _climberMotor.getConfigurator().apply(this.getTalonFXConfigurationObject());
-  }
-
-  public TalonFXConfiguration getTalonFXConfigurationObject() {
-    var talonFXConfiguration = new TalonFXConfiguration();
-    talonFXConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    return talonFXConfiguration;
+    Timer _timer = new Timer();
+    _timer.start();
+    System.out.println("ClimberSubsystem ID " + deviceID + " starting motor config at time " + _timer.get());
+    _climberMotor = new CANSparkMax(deviceID, MotorType.kBrushless);
+    System.out.println("ClimberSubsystem ID " + deviceID + " created SparkMax object at time " + _timer.get());
+    _climberMotor.restoreFactoryDefaults();
+    System.out.println("ClimberSubsystem ID " + deviceID + " restored factory defaults at time " + _timer.get());
+    _climberMotor.setIdleMode(IdleMode.kBrake);
+    System.out.println("ClimberSubsystem ID " + deviceID + " set idle mode to brake at time " + _timer.get());
   }
 
   public void setPower(double power) {
     _climberMotor.set(power);
+  }
+
+  public void stop() {
+    _climberMotor.set(0);
   }
 
   @Override
