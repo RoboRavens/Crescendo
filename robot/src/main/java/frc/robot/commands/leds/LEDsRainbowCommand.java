@@ -7,28 +7,22 @@ package frc.robot.commands.leds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
 
-public class LEDsSolidColorNewCommand extends Command {
-  private int _r;
-  private int _g;
-  private int _b;
-  /** Creates a new LEDsSolidColorNewCommand. */
-  public LEDsSolidColorNewCommand(int r, int g, int b) {
-    _r = r;
-    _g = g;
-    _b = b;
-    // Use addRequirements() here to declare subsystem dependencies.
+public class LEDsRainbowCommand extends Command {
+  /** Creates a new RainbowLEDs. */
+  public LEDsRainbowCommand() {
     addRequirements(Robot.ledsSubsystem24);
+    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    Robot.ledsSubsystem24.rainbowLeds();
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    Robot.ledsSubsystem24.setColor(_r, _g, _b);
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override

@@ -17,7 +17,7 @@ public class IntakeWithSensorTeleopCommand extends Command {
   @Override
   public void initialize() {
     System.out.println("IntakeWithSensorTeleopCommand: Init");
-    Robot.INTAKE_SUBSYSTEM.setPowerManually(IntakeConstants.INTAKE_MOTOR_TELEOP_SPEED * -1);
+    Robot.INTAKE_SUBSYSTEM.setPowerManually(IntakeConstants.INTAKE_MOTOR_TELEOP_SPEED);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

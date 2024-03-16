@@ -4,7 +4,8 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 
 public class WristConstants {
 	// public static final double MOTOR_POWER_FEEDFORWARD_AT_HORIZONTAL = -0.079; original, save for later
-    public static final double MOTOR_POWER_FEEDFORWARD_AT_HORIZONTAL = -.16;
+    public static final double MOTOR_POWER_FEEDFORWARD_AT_HORIZONTAL = -.08;
+    public static final double DEGREES_OFFSET_TO_VERTICAL = 40;
     public static final double MOTOR_POWER_DIRECTION_TO_GO_UP_FROM_HORIZONTAL = 0;
     
     public static final double ENCODER_POSITION_AT_FLOOR_PICKUP = 0;

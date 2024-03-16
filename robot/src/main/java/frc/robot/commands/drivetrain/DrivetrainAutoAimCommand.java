@@ -27,7 +27,7 @@ public class DrivetrainAutoAimCommand extends Command {
     }
 
     private double getAngularVelocityForAlignment() {
-        double txRadians = Math.toRadians(LimelightHelpers.getTX("limelight"));
+        double txRadians = Math.toRadians(LimelightHelpers.getTX("limelight-pickup"));
         double angularVelocity = _autoAlignRotationPID.calculate(txRadians) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
         
         double velocityDirection = angularVelocity < 0 ? -1 : 1;

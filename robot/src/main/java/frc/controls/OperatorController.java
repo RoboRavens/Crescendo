@@ -17,9 +17,12 @@ import frc.robot.commands.elbow.ElbowIncrementPositionCommand;
 import frc.robot.commands.elbow.ElbowMoveWithJoystickCommand;
 import frc.robot.commands.elbow.ElbowSuspendLimitsCommand;
 import frc.robot.commands.shooter.StartShooterCommand;
+import frc.robot.commands.wrist.WristDecrementPositionCommand;
+import frc.robot.commands.wrist.WristIncrementPositionCommand;
 import frc.robot.commands.wrist.WristMoveWithJoystickCommand;
 import frc.robot.commands.wrist.WristSuspendLimitsCommand;
 import frc.robot.util.arm.LimbSetpoint;
+import frc.util.StateManagement.ShooterRevTargetState;
 
 /** Add your docs here. */
 public class OperatorController {
@@ -47,12 +50,16 @@ public class OperatorController {
         .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.START_CONFIG_UP));
 
         _operatorController.leftBumper().whileTrue(new StartShooterCommand());
+        _operatorController.leftBumper().whileTrue(new InstantCommand(() -> Robot.SHOOTER_REV_TARGET_STATE = ShooterRevTargetState.ON)).onFalse(new InstantCommand(() -> Robot.SHOOTER_REV_TARGET_STATE = ShooterRevTargetState.OFF));
 
         _operatorController.leftTrigger().and(() -> Math.abs(_operatorController.getLeftY()) > .1).whileTrue(new ElbowMoveWithJoystickCommand(_operatorController));
         _operatorController.leftTrigger().and(() -> Math.abs(_operatorController.getRightY()) > .1).whileTrue(new WristMoveWithJoystickCommand(_operatorController));
    
         _operatorController.leftTrigger().and(_operatorController.povUp()).onTrue(new ElbowIncrementPositionCommand());
         _operatorController.leftTrigger().and(_operatorController.povDown()).onTrue(new ElbowDecrementPositionCommand());
+
+        _operatorController.leftTrigger().and(_operatorController.povRight()).onTrue(new WristIncrementPositionCommand());
+        _operatorController.leftTrigger().and(_operatorController.povLeft()).onTrue(new WristDecrementPositionCommand());
         
         _operatorController.leftTrigger().and(_operatorController.rightTrigger()).and(_operatorController.start()).whileTrue(new ElbowSuspendLimitsCommand());
         _operatorController.leftTrigger().and(_operatorController.rightTrigger()).and(_operatorController.back()).whileTrue(new WristSuspendLimitsCommand());

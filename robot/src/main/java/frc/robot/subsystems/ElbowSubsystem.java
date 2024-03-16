@@ -48,7 +48,7 @@ public class ElbowSubsystem extends SubsystemBase {
 
     // low stator limit will prevent breaking static friction
     talonFXConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
-    talonFXConfiguration.CurrentLimits.StatorCurrentLimit = 25;
+    talonFXConfiguration.CurrentLimits.StatorCurrentLimit = 30;
 
     // low supply limit will cap motor velocity
     talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 10;

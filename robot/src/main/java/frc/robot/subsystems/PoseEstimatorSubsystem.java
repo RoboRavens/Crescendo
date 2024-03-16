@@ -19,12 +19,15 @@ import frc.robot.util.Constants.Constants;
 
 public class PoseEstimatorSubsystem extends SubsystemBase {
     public final Field2d _field = new Field2d();
-    private double _timeStamp = Timer.getFPGATimestamp() - (Robot.LIMELIGHT_SUBSYSTEM_ONE.getTl() / 1000)
-        - (Robot.LIMELIGHT_SUBSYSTEM_ONE.getCl() / 1000);
-    private double _timeStamp2 = Timer.getFPGATimestamp() - (Robot.LIMELIGHT_SUBSYSTEM_TWO.getTl() / 1000)
-        - (Robot.LIMELIGHT_SUBSYSTEM_TWO.getCl() / 1000);
-    private double _timeStamp3 = Timer.getFPGATimestamp() - (Robot.LIMELIGHT_SUBSYSTEM_THREE.getTl() / 1000)
-        - (Robot.LIMELIGHT_SUBSYSTEM_THREE.getCl() / 1000);
+    private final Field2d _field2dLeft = new Field2d();
+    private final Field2d _field2dRight = new Field2d();
+    private final Field2d _field2dBack = new Field2d();
+    private double _timeStamp = Timer.getFPGATimestamp() - (Robot.LIMELIGHT_PICKUP.getTl() / 1000)
+        - (Robot.LIMELIGHT_PICKUP.getCl() / 1000);
+    private double _timeStamp2 = Timer.getFPGATimestamp() - (Robot.LIMELIGHT_LEFT.getTl() / 1000)
+        - (Robot.LIMELIGHT_LEFT.getCl() / 1000);
+    private double _timeStamp3 = Timer.getFPGATimestamp() - (Robot.LIMELIGHT_RIGHT.getTl() / 1000)
+        - (Robot.LIMELIGHT_RIGHT.getCl() / 1000);
     private Matrix<N3, N1> _stateStdDevs = VecBuilder.fill(Constants.STATE_STANDARD_DEVIATION,
         Constants.STATE_STANDARD_DEVIATION, Constants.STATE_STANDARD_DEVIATION);
     private Matrix<N3, N1> _visionStdDevs = VecBuilder.fill(Constants.STARTING_VISION_STANDARD_DEVIATION,
@@ -32,6 +35,9 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
 
     public PoseEstimatorSubsystem() {
         SmartDashboard.putData("PoseEstimator Field", _field);
+        SmartDashboard.putData("Limelight Back Field2d", _field2dBack);
+        SmartDashboard.putData("Limelight Left Field2d", _field2dLeft);
+        SmartDashboard.putData("Limelight Right Field2d", _field2dRight);
     }
 
     @Override
@@ -39,26 +45,26 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         updateVisionMeasurementTimestamp();
         updateVisionMeasurmentTimestampSecondLimelight();
         updateVisionMeasurmentTimestampThirdLimelight();
-        double ta = Robot.LIMELIGHT_SUBSYSTEM_ONE.getTa();
-        double ta2 = Robot.LIMELIGHT_SUBSYSTEM_TWO.getTa();
-        double ta3 = Robot.LIMELIGHT_SUBSYSTEM_THREE.getTa();
+        double ta = Robot.LIMELIGHT_PICKUP.getTa();
+        double ta2 = Robot.LIMELIGHT_LEFT.getTa();
+        double ta3 = Robot.LIMELIGHT_RIGHT.getTa();
 
         //SmartDashboard.putNumber("ta", ta);
 
   //      SmartDashboard.putNumber("ta2", ta2);
 
-        Pose2d firstLimelightPose = Robot.LIMELIGHT_SUBSYSTEM_ONE.getLimelightPoseWithOdometryRotation();
-        Pose2d secondLimelightPose = Robot.LIMELIGHT_SUBSYSTEM_TWO.getLimelightPoseWithOdometryRotation();
-        Pose2d thirdLimelightPose = Robot.LIMELIGHT_SUBSYSTEM_THREE.getLimelightPoseWithOdometryRotation();
+        Pose2d firstLimelightPose = Robot.LIMELIGHT_PICKUP.getLimelightPoseWithOdometryRotation();
+        Pose2d secondLimelightPose = Robot.LIMELIGHT_LEFT.getLimelightPoseWithOdometryRotation();
+        Pose2d thirdLimelightPose = Robot.LIMELIGHT_RIGHT.getLimelightPoseWithOdometryRotation();
         //Pose2d robotPose = Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose();
         //Robot.LIMELIGHT_SUBSYSTEM_ONE.getPureLimelightRobotPose();
         //Robot.DRIVE_TRAIN_SUBSYSTEM.getPose();
         //Robot.DRIVE_TRAIN_SUBSYSTEM.getGyroscopeRotation();
         //Robot.DRIVE_TRAIN_SUBSYSTEM.getSwerveModulePositions();
 
-        boolean hasVisionTarget = Robot.LIMELIGHT_SUBSYSTEM_ONE.hasVisionTarget() == 1;
-        boolean hasVisionTarget2 = Robot.LIMELIGHT_SUBSYSTEM_TWO.hasVisionTarget() == 1;
-        boolean hasVisionTarget3 = Robot.LIMELIGHT_SUBSYSTEM_THREE.hasVisionTarget() == 1;
+        boolean hasVisionTarget = Robot.LIMELIGHT_PICKUP.hasVisionTarget() == 1;
+        boolean hasVisionTarget2 = Robot.LIMELIGHT_LEFT.hasVisionTarget() == 1;
+        boolean hasVisionTarget3 = Robot.LIMELIGHT_RIGHT.hasVisionTarget() == 1;
         //boolean firstLimelightIsWithinXDistance = Math.abs(robotPose.getX() - firstLimelightPose.getX()) < 2;
         //boolean firstLimelightIsWithinYDistance = Math.abs(robotPose.getY() - firstLimelightPose.getY()) < 2;
         //boolean secondLimelightIsWithinXDistance = Math.abs(robotPose.getX() - secondLimelightPose.getX()) < 2;
@@ -103,9 +109,13 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         // SmartDashboard.putNumber("PoseEstimator X", pose.getX());
         // SmartDashboard.putNumber("PoseEstimator Y", pose.getY());
         // SmartDashboard.putNumber("PoseEstimator Rotation (Degrees)", pose.getRotation().getDegrees());
-        SmartDashboard.putString("Limelight 1 Pose", Robot.LIMELIGHT_SUBSYSTEM_ONE.getPureLimelightRobotPose().toString());
-        SmartDashboard.putString("Limelight 2 Pose", Robot.LIMELIGHT_SUBSYSTEM_TWO.getPureLimelightRobotPose().toString());
-        SmartDashboard.putString("Limelight 3 Pose", Robot.LIMELIGHT_SUBSYSTEM_THREE.getPureLimelightRobotPose().toString());
+        // SmartDashboard.putString("Limelight 1 Pose", Robot.LIMELIGHT_PICKUP.getPureLimelightRobotPose().toString());
+        // SmartDashboard.putString("Limelight 2 Pose", Robot.LIMELIGHT_LEFT.getPureLimelightRobotPose().toString());
+        // SmartDashboard.putString("Limelight 3 Pose", Robot.LIMELIGHT_RIGHT.getPureLimelightRobotPose().toString());
+        _field.setRobotPose(getCurrentPose());
+        _field2dBack.setRobotPose(Robot.LIMELIGHT_BACK.getPureLimelightRobotPose());
+        _field2dLeft.setRobotPose(Robot.LIMELIGHT_LEFT.getPureLimelightRobotPose());
+        _field2dRight.setRobotPose(Robot.LIMELIGHT_RIGHT.getPureLimelightRobotPose());
     }
 
     private static Matrix<N3, N1> GetVisionStdDevs(double ta) {
@@ -123,18 +133,18 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
     }
 
     public void updateVisionMeasurementTimestamp() {
-        _timeStamp = Timer.getFPGATimestamp() - (Robot.LIMELIGHT_SUBSYSTEM_ONE.getTl() / 1000)
-            - (Robot.LIMELIGHT_SUBSYSTEM_ONE.getCl() / 1000);
+        _timeStamp = Timer.getFPGATimestamp() - (Robot.LIMELIGHT_PICKUP.getTl() / 1000)
+            - (Robot.LIMELIGHT_PICKUP.getCl() / 1000);
     }
 
     public void updateVisionMeasurmentTimestampSecondLimelight() {
-        _timeStamp2 = Timer.getFPGATimestamp() - (Robot.LIMELIGHT_SUBSYSTEM_TWO.getTl() / 1000)
-            - (Robot.LIMELIGHT_SUBSYSTEM_TWO.getCl() / 1000);
+        _timeStamp2 = Timer.getFPGATimestamp() - (Robot.LIMELIGHT_LEFT.getTl() / 1000)
+            - (Robot.LIMELIGHT_LEFT.getCl() / 1000);
     }
 
     public void updateVisionMeasurmentTimestampThirdLimelight() {
-        _timeStamp3 = Timer.getFPGATimestamp() - (Robot.LIMELIGHT_SUBSYSTEM_THREE.getTl() / 1000)
-            - (Robot.LIMELIGHT_SUBSYSTEM_THREE.getCl() / 1000);
+        _timeStamp3 = Timer.getFPGATimestamp() - (Robot.LIMELIGHT_RIGHT.getTl() / 1000)
+            - (Robot.LIMELIGHT_RIGHT.getCl() / 1000);
     }
 
     private final SwerveDrivePoseEstimator m_poseEstimator = new SwerveDrivePoseEstimator(
@@ -146,7 +156,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         _visionStdDevs);
 
     public void resetOdometryPoseToLimelight() {
-        var gyroBasedPose = Robot.LIMELIGHT_SUBSYSTEM_ONE.getLimelightPoseWithOdometryRotation();
+        var gyroBasedPose = Robot.LIMELIGHT_PICKUP.getLimelightPoseWithOdometryRotation();
        // System.out.println("resetOdometryPoseToLimelight: " + gyroBasedPose.getX() + " - " + gyroBasedPose.getY()
        //         + " - " + gyroBasedPose.getRotation().getDegrees());
         m_poseEstimator.resetPosition(
@@ -160,7 +170,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         // Reset state estimate and error covariance
         m_poseEstimator.resetPosition(Robot.DRIVETRAIN_SUBSYSTEM.getGyroscopeRotation(),
             Robot.DRIVETRAIN_SUBSYSTEM.getSwerveModulePositions(),
-            Robot.LIMELIGHT_SUBSYSTEM_TWO.getLimelightPoseWithOdometryRotation());
+            Robot.LIMELIGHT_LEFT.getLimelightPoseWithOdometryRotation());
     }
 
     public void resetOdometryPoseFromThirdLimelight(Rotation2d rotation2d, SwerveModulePosition[] modulePositions,
@@ -168,7 +178,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         // Reset state estimate and error covariance
         m_poseEstimator.resetPosition(Robot.DRIVETRAIN_SUBSYSTEM.getGyroscopeRotation(),
             Robot.DRIVETRAIN_SUBSYSTEM.getSwerveModulePositions(),
-            Robot.LIMELIGHT_SUBSYSTEM_THREE.getLimelightPoseWithOdometryRotation());
+            Robot.LIMELIGHT_RIGHT.getLimelightPoseWithOdometryRotation());
     }
 
     // public void addVisionMeasurment(Pose2d robotPose, double timestampSeconds) {

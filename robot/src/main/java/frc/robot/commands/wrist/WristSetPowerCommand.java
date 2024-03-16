@@ -2,33 +2,33 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.leds;
+package frc.robot.commands.wrist;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
 
-public class LEDsDefaultCommand extends Command {
-  /** Creates a new LEDsDefaultCommand. */
-  public LEDsDefaultCommand() {
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(Robot.ledsSubsystem24);
+public class WristSetPowerCommand extends Command {
+  /** Creates a new WristSetPowerCommand. */
+  public WristSetPowerCommand() {
+    addRequirements(Robot.WRIST_SUBSYSTEM);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    SmartDashboard.putNumber("Wrist Power", 0);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Robot.ledsSubsystem24.rainbowLeds();
+    Robot.WRIST_SUBSYSTEM.setPowerManually(SmartDashboard.getNumber("Wrist Power", 0));
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    Robot.ledsSubsystem24.setColor(0, 0, 0);
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
