@@ -468,6 +468,8 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
       }, targetPose);
 
     Robot.POSE_ESTIMATOR_SUBSYSTEM.resetPosition(targetPose);
+    
+    AngularPositionHolder.GetInstance().reset();
   }
 
   // used only by SwerveControllerCommand to follow trajectories

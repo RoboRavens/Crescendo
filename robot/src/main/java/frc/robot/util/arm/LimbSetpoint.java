@@ -13,7 +13,7 @@ public class LimbSetpoint {
     public static LimbSetpoint GROUND_PICKUP = new LimbSetpoint("Ground Pickup", ElbowConstants.DEGREES_FLOOR_PICKUP, WristConstants.DEGREES_FLOOR_PICKUP);
     public static LimbSetpoint SPEAKER_SCORING = new LimbSetpoint("Speaker Scoring", ElbowConstants.DEGREES_FLOOR_PICKUP, WristConstants.DEGREES_FLOOR_PICKUP);
     public static LimbSetpoint SPEAKER_SCORING_ARM_UP = new LimbSetpoint("Speaker Scoring", ElbowConstants.DEGREES_FLOOR_PICKUP, WristConstants.DEGREES_FLOOR_PICKUP);
-    public static LimbSetpoint DEFENDED_SPEAKER_SCORING = new LimbSetpoint("Defended Speaker Scoring", ElbowConstants.DEGREES_START_CONFIG, WristConstants.DEGREES_START_CONFIG);
+    public static LimbSetpoint DEFENDED_SPEAKER_SCORING = new LimbSetpoint("Defended Speaker Scoring", ElbowConstants.DEGREES_START_CONFIG, WristConstants.DEGREES_DEFENDED_SCORING);
     public static LimbSetpoint AMP_SCORING = new LimbSetpoint("Amp Scoring", ElbowConstants.DEGREES_AMP_SCORE, WristConstants.DEGREES_AMP_SCORE);
     public static LimbSetpoint TRAP_SCORING = new LimbSetpoint("Trap Scoring", ElbowConstants.DEGREES_TRAP_SCORE, WristConstants.DEGREES_TRAP_SCORE);
     public static LimbSetpoint SOURCE_INTAKE = new LimbSetpoint("DualSource Intake", ElbowConstants.DEGREES_SOURCE_LOAD, WristConstants.DEGREES_SOURCE_LOAD);
@@ -22,8 +22,8 @@ public class LimbSetpoint {
     public static LimbSetpoint SIX_NOTE_AUTO_GN_3_SCORING_SETPOINT = new LimbSetpoint("Six Note Auto GN 3 Scoring Setpoint", ElbowConstants.DEGREES_FLOOR_PICKUP, WristConstants.DEGREES_SIX_NOTE_AUTO_GN_3);
     public static LimbSetpoint SIX_NOTE_AUTO_GN_4_and_5_SCORING_SETPOINT = new LimbSetpoint("Six Note Auto GN 4 and 5 Scoring Setpoint", ElbowConstants.DEGREES_FLOOR_PICKUP, WristConstants.DEGREES_SIX_NOTE_AUTO_GN_4_AND_5);
     public static LimbSetpoint SIX_NOTE_AUTO_PRELOAD_SCORING_SETPOINT = new LimbSetpoint("Six Note Auto Preload Scoring Setpoint", ElbowConstants.DEGREES_FLOOR_PICKUP, WristConstants.DEGREES_SIX_NOTE_PRELOAD);
-    public static LimbSetpoint START_CONFIG_UP = new LimbSetpoint("Start Config Up", ElbowConstants.DEGREES_START_CONFIG_UP, WristConstants.DEGREES_START_CONFIG);    
-    public static LimbSetpoint SOUTH_CENTER_PRELOAD = new LimbSetpoint("South Center Preload", ElbowConstants.DEGREES_SOUTH_CENTER_PRELOAD, WristConstants.DEGREES_START_CONFIG);  
+    public static LimbSetpoint START_CONFIG_UP = new LimbSetpoint("Start Config Up", ElbowConstants.DEGREES_START_CONFIG_UP, WristConstants.DEGREES_DEFENDED_SCORING);    
+    public static LimbSetpoint SOUTH_CENTER_PRELOAD = new LimbSetpoint("South Center Preload", ElbowConstants.DEGREES_SOUTH_CENTER_PRELOAD, WristConstants.DEGREES_DEFENDED_SCORING);  
     public static LimbSetpoint PODIUM_SCORING = new LimbSetpoint("Podium Scoring", ElbowConstants.DEGREES_FLOOR_PICKUP, WristConstants.DEGREES_PODIUM_SCORE);
     public static LimbSetpoint STARTING_LINE_SCORING = new LimbSetpoint("Starting Line Scoring", ElbowConstants.DEGREES_FLOOR_PICKUP, WristConstants.DEGREES_STARTING_LINE_SCORE);
 
