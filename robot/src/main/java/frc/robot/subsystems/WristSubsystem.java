@@ -99,7 +99,9 @@ public class WristSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Wrist Total Angle Degrees", Math.toDegrees(totalAngle));
     //SmartDashboard.putNumber("Cosine Total Angle", Math.cos(totalAngle));
     //SmartDashboard.putNumber("Wrist Total Angle", Math.toRadians(15)+totalAngle);
-    double wristFeedForward =  WristConstants.MOTOR_POWER_FEEDFORWARD_AT_HORIZONTAL * Math.cos(Math.toRadians(15)+totalAngle);
+    var cosine = Math.cos(Math.toRadians(WristConstants.DEGREES_OFFSET_TO_VERTICAL)+totalAngle);
+    double wristFeedForward =  WristConstants.MOTOR_POWER_FEEDFORWARD_AT_HORIZONTAL * cosine;
+    SmartDashboard.putNumber("Wrist Cosine", cosine);
     SmartDashboard.putNumber("Wrist Feed Forward", wristFeedForward);
     if (_pidConfig.kS != wristFeedForward) {
        _pidConfig.kS = wristFeedForward;

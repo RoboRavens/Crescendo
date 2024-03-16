@@ -51,6 +51,7 @@ import frc.robot.commands.wrist.WristGoToPositionCommand;
 import frc.robot.commands.wrist.WristGoToSpeakerAngleCommand;
 import frc.robot.commands.wrist.WristMoveManuallyCommand;
 import frc.robot.commands.wrist.WristOffsetCommand;
+import frc.robot.commands.wrist.WristSetPowerCommand;
 import frc.robot.subsystems.AutoChooserSubsystemReact;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.ElbowSubsystem;
@@ -116,6 +117,7 @@ public class Robot extends TimedRobot {
   public static final PathPlannerConfigurator PATH_PLANNER_CONFIGURATOR = new PathPlannerConfigurator();
   public static final IntakeDefaultCommand INTAKE_DEFAULT_COMMAND = new IntakeDefaultCommand();
   public static final LEDsRainbowCommand LEDS_RAINBOW_COMMAND = new LEDsRainbowCommand();
+  public static final WristSetPowerCommand WRIST_SET_POWER_COMMAND = new WristSetPowerCommand();
 
   // DEFAULT COMMANDS
   public static final DrivetrainDefaultCommand DRIVETRAIN_DEFAULT_COMMAND = new DrivetrainDefaultCommand();
@@ -183,6 +185,7 @@ public class Robot extends TimedRobot {
     DRIVETRAIN_SUBSYSTEM.setDefaultCommand(DRIVETRAIN_DEFAULT_COMMAND);
     ELBOW_SUBSYSTEM.setDefaultCommand(ELBOW_DEFAULT_COMMAND);
     WRIST_SUBSYSTEM.setDefaultCommand(WRIST_DEFAULT_COMMAND);
+    INTAKE_SUBSYSTEM.setDefaultCommand(INTAKE_DEFAULT_COMMAND);
 
     SmartDashboard.putData(ELBOW_SUBSYSTEM);
     SmartDashboard.putData(WRIST_SUBSYSTEM);
@@ -196,6 +199,7 @@ public class Robot extends TimedRobot {
     configureButtonBindings();
     configureOverrideBindings();
     OperatorController.enable();
+
   }
   
   private void configureDriveControllerBindings() {
@@ -204,10 +208,10 @@ public class Robot extends TimedRobot {
         .onTrue(new InstantCommand(() -> DRIVETRAIN_STATE = DrivetrainState.ROBOT_ALIGN))
         .onFalse(new InstantCommand(() -> DRIVETRAIN_STATE = DrivetrainState.FREEHAND));
     
-    new Trigger(() -> DRIVE_CONTROLLER.getLeftBumper()
-        && (DRIVE_CONTROLLER.getRightBumper())
-        && (DRIVE_CONTROLLER.getYButton()))
-        .onTrue(new InstantCommand(() -> DRIVETRAIN_SUBSYSTEM.zeroGyroscope()));
+    // new Trigger(() -> DRIVE_CONTROLLER.getLeftBumper()
+    //     && (DRIVE_CONTROLLER.getRightBumper())
+    //     && (DRIVE_CONTROLLER.getYButton()))
+    //     .onTrue(new InstantCommand(() -> DRIVETRAIN_SUBSYSTEM.zeroGyroscope()));
     // If the robot is ready to shoot and we hold A, feed the note into the shooter
     //new Trigger(() -> StateManagement.isRobotReadyToShoot() && DRIVE_CONTROLLER.getAButton())
     //  .onTrue(new IntakeFeedCommand(INTAKE_SUBSYSTEM));
@@ -249,6 +253,9 @@ public class Robot extends TimedRobot {
     
     new Trigger(() -> DRIVE_CONTROLLER.getBButton() == false && ARM_UP_TARGET_STATE == ArmUpTargetState.FREE)
       .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.GROUND_PICKUP));
+
+    new Trigger(() -> DRIVE_CONTROLLER.getStartButton() && DRIVE_CONTROLLER.getBackButton())
+        .onTrue(new InstantCommand(() -> DRIVETRAIN_SUBSYSTEM.zeroGyroscope()));
 	}
 
   private void configureAutomatedBehaviorBindings() {
@@ -271,6 +278,8 @@ public class Robot extends TimedRobot {
     var coOpTrigger = new Trigger(() -> LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.CO_OP_SIGNAL);
     var noDashboardLEDsAndHasPieceTrigger = new Trigger(() -> LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.NONE && SHOOTER_SUBSYSTEM.hasPiece());
     
+    ampTrigger.onTrue(new InstantCommand(() -> System.out.println("amp")));
+
     // Amp
     ampTrigger.and(() -> SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON)
       .whileTrue(new LEDsBlinkCommand(Color.kBlue, Color.kBlack, 0.5));
@@ -293,6 +302,7 @@ public class Robot extends TimedRobot {
 	/** This function is run once each time the robot enters autonomous mode. */
   @Override
   public void autonomousInit() {
+    ledsSubsystem24.setColor(0, 0, 0);
     setDriverStationData();
     // PathPlannerTrajectory traj = exampleChoreoTraj.getTrajectory(new
     // ChassisSpeeds(0, 0, 0), new Rotation2d(0, 0));
@@ -320,7 +330,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     setDriverStationData();
-    
+    ledsSubsystem24.setColor(0, 0, 0);
+
     //DRIVETRAIN_SUBSYSTEM.setAngleToHoldToCurrentPosition();
     
   
@@ -334,6 +345,7 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters test mode. */
   @Override
   public void testInit() {
+    ledsSubsystem24.setColor(0, 0, 0);
   }
 
   /** This function is called periodically during test mode. */
@@ -387,6 +399,10 @@ public class Robot extends TimedRobot {
         .whileTrue(wristDownCommand);
 
     BUTTON_CODE.getButton(Buttons.SHOOTER_REV)
+      .whileTrue(new InstantCommand(() -> SHOOTER_REV_TARGET_STATE = ShooterRevTargetState.ON))
+      .onFalse(new InstantCommand(() -> SHOOTER_REV_TARGET_STATE = ShooterRevTargetState.OFF));
+
+    BUTTON_CODE.getButton(Buttons.SHOOTER_REV)
       .whileTrue(new StartShooterCommand());
       // .whileTrue(new IntakePreShooterRevCommand().andThen(new StartShooterCommand()));
 
@@ -418,7 +434,7 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-    LEDS_RAINBOW_COMMAND.schedule();
+    System.out.println("disabled init");
   }
 
   @Override

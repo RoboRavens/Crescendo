@@ -80,8 +80,8 @@ const topics: Topics = {
   autoDelayPub: undefined
 };
 
-// const NT_CORE = NetworkTables.getInstanceByTeam(1188);
-const NT_CORE = NetworkTables.getInstanceByURI("localhost");
+const NT_CORE = NetworkTables.getInstanceByTeam(1188);
+// const NT_CORE = NetworkTables.getInstanceByURI("localhost");
 
 class App extends React.Component<{}, {
   connected: boolean,

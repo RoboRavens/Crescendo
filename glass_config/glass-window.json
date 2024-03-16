@@ -1,0 +1,89 @@
+{
+  "Docking": {
+    "Data": [
+      "DockSpace ID=0x8B93E3BD Window=0xA787BDB4 Pos=0,22 Size=1920,969 CentralNode=1"
+    ]
+  },
+  "MainWindow": {
+    "GLOBAL": {
+      "fps": "120",
+      "height": "991",
+      "maximized": "1",
+      "style": "0",
+      "userScale": "2",
+      "width": "1920",
+      "xpos": "0",
+      "ypos": "29"
+    }
+  },
+  "Table": {
+    "0xE56EC1C2,4": {
+      "Column 0  Weight": "1.0000",
+      "Column 1  Weight": "1.0000",
+      "Column 2  Weight": "1.0000",
+      "Column 3  Weight": "1.0000"
+    }
+  },
+  "Window": {
+    "###/SmartDashboard/ElbowSubsystem": {
+      "Collapsed": "0",
+      "Pos": "807,84",
+      "Size": "148,78"
+    },
+    "###/SmartDashboard/HardwareOdometry Field": {
+      "Collapsed": "0",
+      "Pos": "922,427",
+      "Size": "881,421"
+    },
+    "###/SmartDashboard/Limelight Back Field2d": {
+      "Collapsed": "0",
+      "Pos": "1127,187",
+      "Size": "400,200"
+    },
+    "###/SmartDashboard/Limelight Left Field2d": {
+      "Collapsed": "0",
+      "Pos": "750,192",
+      "Size": "400,200"
+    },
+    "###/SmartDashboard/Limelight Right Field2d": {
+      "Collapsed": "0",
+      "Pos": "1515,180",
+      "Size": "400,200"
+    },
+    "###/SmartDashboard/PoseEstimator Field": {
+      "Collapsed": "0",
+      "Pos": "46,471",
+      "Size": "846,412"
+    },
+    "###NetworkTables": {
+      "Collapsed": "1",
+      "Pos": "966,104",
+      "Size": "937,494"
+    },
+    "###NetworkTables Info": {
+      "Collapsed": "1",
+      "Pos": "1062,63",
+      "Size": "750,145"
+    },
+    "###NetworkTables Settings": {
+      "Collapsed": "0",
+      "Pos": "37,37",
+      "Size": "400,190"
+    },
+    "###Plot <0>": {
+      "Collapsed": "0",
+      "Pos": "60,60",
+      "Size": "700,400"
+    },
+    "Debug##Default": {
+      "Collapsed": "0",
+      "Pos": "60,60",
+      "Size": "400,400"
+    },
+    "DockSpaceViewport_11111111": {
+      "Collapsed": "0",
+      "Pos": "0,22",
+      "Size": "1920,969"
+    }
+  }
+}

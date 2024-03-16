@@ -19,6 +19,9 @@ import frc.robot.util.Constants.Constants;
 
 public class PoseEstimatorSubsystem extends SubsystemBase {
     public final Field2d _field = new Field2d();
+    private final Field2d _field2dLeft = new Field2d();
+    private final Field2d _field2dRight = new Field2d();
+    private final Field2d _field2dBack = new Field2d();
     private double _timeStamp = Timer.getFPGATimestamp() - (Robot.LIMELIGHT_PICKUP.getTl() / 1000)
         - (Robot.LIMELIGHT_PICKUP.getCl() / 1000);
     private double _timeStamp2 = Timer.getFPGATimestamp() - (Robot.LIMELIGHT_LEFT.getTl() / 1000)
@@ -32,6 +35,9 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
 
     public PoseEstimatorSubsystem() {
         SmartDashboard.putData("PoseEstimator Field", _field);
+        SmartDashboard.putData("Limelight Back Field2d", _field2dBack);
+        SmartDashboard.putData("Limelight Left Field2d", _field2dLeft);
+        SmartDashboard.putData("Limelight Right Field2d", _field2dRight);
     }
 
     @Override
@@ -103,9 +109,13 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         // SmartDashboard.putNumber("PoseEstimator X", pose.getX());
         // SmartDashboard.putNumber("PoseEstimator Y", pose.getY());
         // SmartDashboard.putNumber("PoseEstimator Rotation (Degrees)", pose.getRotation().getDegrees());
-        SmartDashboard.putString("Limelight 1 Pose", Robot.LIMELIGHT_PICKUP.getPureLimelightRobotPose().toString());
-        SmartDashboard.putString("Limelight 2 Pose", Robot.LIMELIGHT_LEFT.getPureLimelightRobotPose().toString());
-        SmartDashboard.putString("Limelight 3 Pose", Robot.LIMELIGHT_RIGHT.getPureLimelightRobotPose().toString());
+        // SmartDashboard.putString("Limelight 1 Pose", Robot.LIMELIGHT_PICKUP.getPureLimelightRobotPose().toString());
+        // SmartDashboard.putString("Limelight 2 Pose", Robot.LIMELIGHT_LEFT.getPureLimelightRobotPose().toString());
+        // SmartDashboard.putString("Limelight 3 Pose", Robot.LIMELIGHT_RIGHT.getPureLimelightRobotPose().toString());
+        _field.setRobotPose(getCurrentPose());
+        _field2dBack.setRobotPose(Robot.LIMELIGHT_BACK.getPureLimelightRobotPose());
+        _field2dLeft.setRobotPose(Robot.LIMELIGHT_LEFT.getPureLimelightRobotPose());
+        _field2dRight.setRobotPose(Robot.LIMELIGHT_RIGHT.getPureLimelightRobotPose());
     }
 
     private static Matrix<N3, N1> GetVisionStdDevs(double ta) {
