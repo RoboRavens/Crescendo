@@ -16,6 +16,7 @@ import frc.robot.commands.elbow.ElbowDefaultCommand;
 import frc.robot.commands.elbow.ElbowGoToPositionCommand;
 import frc.robot.commands.wrist.WristDefaultCommand;
 import frc.robot.commands.wrist.WristGoToPositionCommand;
+import frc.robot.subsystems.WristSubsystem;
 import frc.robot.util.Constants.ElbowConstants;
 import frc.robot.util.Constants.WristConstants;
 import frc.robot.util.arm.LimbSetpoint;
@@ -89,10 +90,13 @@ public class LimbGoToSetpointCommand extends Command {
       return false;
     };
 
+    var safeLimbSetpoint = new LimbSetpoint("Advanced Movement Safe Point", 20, 5);
+
     var advancedMovementCommand = new SequentialCommandGroup(
       new InstantCommand(() -> System.out.println("---Running advancedMovementCommand---")),
-      new ParallelDeadlineGroup(new WristGoToPositionCommand(WristConstants.DEGREES_FLOOR_PICKUP), new ElbowDefaultCommand()),
-      new ParallelDeadlineGroup(new ElbowGoToPositionCommand(targetLimbSetPoint.getElbowRotationPosition()), new WristDefaultCommand()),
+      //new ParallelDeadlineGroup(new WristGoToPositionCommand(WristSubsystem.getPositionFromRadians(Math.toRadians(5))), new ElbowDefaultCommand()),
+      //new ParallelDeadlineGroup(new ElbowGoToPositionCommand(targetLimbSetPoint.getElbowRotationPosition()), new WristDefaultCommand()),
+      new LimbGoToSetpointCommand(safeLimbSetpoint),
       new LimbGoToSetpointCommand(targetLimbSetPoint),
       new InstantCommand(() -> System.out.println("Finished advancedMovementCommand"))
     );

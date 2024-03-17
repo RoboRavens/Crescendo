@@ -121,6 +121,10 @@ public class WristSubsystem extends SubsystemBase {
     return radians;
   }
 
+  public double getDegrees() {
+    return Math.toDegrees(this.getRadians());
+  }
+
   public static double getPositionFromRadians(double angleInRadians) {
     double distanceFromHorizontal =  angleInRadians / (Math.PI / 4);
     double unitsTo90 = WristConstants.ENCODER_POSITION_45_FROM_FLOOR_PICKUP - WristConstants.ENCODER_POSITION_AT_FLOOR_PICKUP;
@@ -137,19 +141,18 @@ public class WristSubsystem extends SubsystemBase {
     this.setTargetPosition(setpoint);
   }
 
-  public double incrementTargetPosition() {
-    double targetDegrees = WristSubsystem.getDegreesFromPosition(targetPosition) + 1;
-
-    this.setTargetDegrees(targetDegrees);
-
-    return this.targetPosition;
+  public void incrementTargetPosition() {
+    double currentTargetDegrees = WristSubsystem.getDegreesFromPosition(targetPosition);
+    double newTargetDegrees = currentTargetDegrees + 1;
+    System.out.println("WristSubsystem: incrementTargetPosition - Current target:" + currentTargetDegrees + " New target: " + newTargetDegrees);
+    this.setTargetDegrees(newTargetDegrees);
   }
 
-  public double decrementTargetPosition() {
-    double targetDegrees = WristSubsystem.getDegreesFromPosition(targetPosition) - 1;
-    this.setTargetDegrees(targetDegrees);
-
-    return this.targetPosition;
+  public void decrementTargetPosition() {
+    double currentTargetDegrees = WristSubsystem.getDegreesFromPosition(targetPosition);
+    double newTargetDegrees = currentTargetDegrees - 1;
+    System.out.println("WristSubsystem: decrementTargetPosition - Current target:" + currentTargetDegrees + " New target: " + newTargetDegrees);
+    this.setTargetDegrees(newTargetDegrees);
   }
 
   public void setTargetDegrees(double targetDegrees) {
@@ -172,6 +175,7 @@ public class WristSubsystem extends SubsystemBase {
     this.updateStaticFeedfoward();
     SmartDashboard.putNumber("Wrist Motor Position", _wristRotationMotor.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("Wrist Target Position", this.targetPosition);
+    SmartDashboard.putNumber("Wrist Target Degrees", WristSubsystem.getDegreesFromPosition(this.targetPosition));
   }
 
   public void resetPosition() {

@@ -46,6 +46,8 @@ public class OperatorController {
         .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SOURCE_INTAKE));
         _operatorController.a()
         .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.GROUND_PICKUP));
+        _operatorController.leftTrigger().negate().and(_operatorController.povDown())
+            .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SPEAKER_SCORING));
         _operatorController.leftTrigger().and(_operatorController.rightBumper())
         .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.START_CONFIG_UP));
 
