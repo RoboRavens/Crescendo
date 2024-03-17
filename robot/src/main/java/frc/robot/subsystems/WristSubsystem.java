@@ -143,14 +143,14 @@ public class WristSubsystem extends SubsystemBase {
 
   public void incrementTargetPosition() {
     double currentTargetDegrees = WristSubsystem.getDegreesFromPosition(targetPosition);
-    double newTargetDegrees = currentTargetDegrees + 1;
+    double newTargetDegrees = currentTargetDegrees + WristConstants.WRIST_DEGREES_PER_INCREMENT;
     System.out.println("WristSubsystem: incrementTargetPosition - Current target:" + currentTargetDegrees + " New target: " + newTargetDegrees);
     this.setTargetDegrees(newTargetDegrees);
   }
 
   public void decrementTargetPosition() {
     double currentTargetDegrees = WristSubsystem.getDegreesFromPosition(targetPosition);
-    double newTargetDegrees = currentTargetDegrees - 1;
+    double newTargetDegrees = currentTargetDegrees - WristConstants.WRIST_DEGREES_PER_INCREMENT;
     System.out.println("WristSubsystem: decrementTargetPosition - Current target:" + currentTargetDegrees + " New target: " + newTargetDegrees);
     this.setTargetDegrees(newTargetDegrees);
   }
@@ -175,7 +175,11 @@ public class WristSubsystem extends SubsystemBase {
     this.updateStaticFeedfoward();
     SmartDashboard.putNumber("Wrist Motor Position", _wristRotationMotor.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("Wrist Target Position", this.targetPosition);
-    SmartDashboard.putNumber("Wrist Target Degrees", WristSubsystem.getDegreesFromPosition(this.targetPosition));
+
+    var currentDegrees = this.getDegrees();
+    var targetDegrees = WristSubsystem.getDegreesFromPosition(this.targetPosition);
+    SmartDashboard.putNumber("Wrist Target Degrees", targetDegrees);
+    SmartDashboard.putNumber("Wrist Degree Diff", targetDegrees - currentDegrees);
   }
 
   public void resetPosition() {

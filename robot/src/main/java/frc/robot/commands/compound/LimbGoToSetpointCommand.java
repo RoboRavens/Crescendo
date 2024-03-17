@@ -93,12 +93,14 @@ public class LimbGoToSetpointCommand extends Command {
     var safeLimbSetpoint = new LimbSetpoint("Advanced Movement Safe Point", 20, 5);
 
     var advancedMovementCommand = new SequentialCommandGroup(
-      new InstantCommand(() -> System.out.println("---Running advancedMovementCommand---")),
-      //new ParallelDeadlineGroup(new WristGoToPositionCommand(WristSubsystem.getPositionFromRadians(Math.toRadians(5))), new ElbowDefaultCommand()),
-      //new ParallelDeadlineGroup(new ElbowGoToPositionCommand(targetLimbSetPoint.getElbowRotationPosition()), new WristDefaultCommand()),
-      new LimbGoToSetpointCommand(safeLimbSetpoint),
+      new InstantCommand(() -> System.out.println("AdvancedMovementCommand: " + targetLimbSetPoint.getName() + " starting")),
+      new ParallelDeadlineGroup(new WristGoToPositionCommand(WristSubsystem.getPositionFromRadians(Math.toRadians(0))), new ElbowDefaultCommand()),
+      new InstantCommand(() -> System.out.println("AdvancedMovementCommand: "  + targetLimbSetPoint.getName() + " wrist movement finished")),
+      new ParallelDeadlineGroup(new ElbowGoToPositionCommand(targetLimbSetPoint.getElbowRotationPosition()), new WristDefaultCommand()),
+      new InstantCommand(() -> System.out.println("AdvancedMovementCommand: "  + targetLimbSetPoint.getName() + " elbow movement finished")),
+      //new LimbGoToSetpointCommand(safeLimbSetpoint),
       new LimbGoToSetpointCommand(targetLimbSetPoint),
-      new InstantCommand(() -> System.out.println("Finished advancedMovementCommand"))
+      new InstantCommand(() -> System.out.println("AdvancedMovementCommand: " + targetLimbSetPoint.getName() + " completed"))
     );
 
     var basicMovementCommand = new LimbGoToSetpointCommand(targetLimbSetPoint);

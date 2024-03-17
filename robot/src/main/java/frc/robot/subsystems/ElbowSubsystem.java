@@ -195,7 +195,11 @@ public class ElbowSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Elbow Motor Position", _elbowRotationMotor.getPosition().getValueAsDouble());
     SmartDashboard.putBoolean("Elbow ForwardLimitSwitch", _forwardLimitSwitch.get());
     SmartDashboard.putNumber("Elbow Target Position", this.targetPosition);
-    SmartDashboard.putNumber("Elbow Target Degrees", ElbowSubsystem.getDegreesFromPosition(this.targetPosition));
+
+    var currentDegrees = this.getDegrees();
+    var targetDegrees = ElbowSubsystem.getDegreesFromPosition(this.targetPosition);
+    SmartDashboard.putNumber("Elbow Target Degrees", targetDegrees);
+    SmartDashboard.putNumber("Elbow Degree Diff", targetDegrees - currentDegrees);
   }
 
   public void resetPosition() {

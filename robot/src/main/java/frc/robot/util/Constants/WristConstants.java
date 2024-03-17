@@ -14,6 +14,8 @@ public class WristConstants {
 
     public static final double IS_AT_SETPOINT_BUFFER = .2;
 
+    public static final double WRIST_DEGREES_PER_INCREMENT = 2.5;
+
     // these constants show degrees from floor pickup and are relative to the arm (not relative to the field)
     // values from onshape need to have their sign inverted
     // as degrees get bigger (right d-pad), the shooting angle becomes less (note hits the speaker at lower height)
@@ -39,8 +41,8 @@ public class WristConstants {
     public static Slot0Configs getSlot0Configs() {
         var slot0Config = new Slot0Configs();
         slot0Config.kP = 5;
-        slot0Config.kI = 0;
-        slot0Config.kD = 0;
+        slot0Config.kI = 3;
+        slot0Config.kD = 1.5;
         return slot0Config;
     }
 }
