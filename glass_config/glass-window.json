@@ -16,14 +16,6 @@
       "ypos": "29"
     }
   },
-  "Table": {
-    "0xE56EC1C2,4": {
-      "Column 0  Weight": "1.0000",
-      "Column 1  Weight": "1.0000",
-      "Column 2  Weight": "1.0000",
-      "Column 3  Weight": "1.0000"
-    }
-  },
   "Window": {
     "###/SmartDashboard/ElbowSubsystem": {
       "Collapsed": "0",
@@ -52,16 +44,16 @@
     },
     "###/SmartDashboard/PoseEstimator Field": {
       "Collapsed": "0",
-      "Pos": "46,471",
+      "Pos": "62,442",
       "Size": "846,412"
     },
     "###NetworkTables": {
-      "Collapsed": "1",
+      "Collapsed": "0",
       "Pos": "966,104",
       "Size": "937,494"
     },
     "###NetworkTables Info": {
-      "Collapsed": "1",
+      "Collapsed": "0",
       "Pos": "1062,63",
       "Size": "750,145"
     },

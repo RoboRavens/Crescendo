@@ -23,7 +23,7 @@ public class WristConstants {
     public static double DEGREES_TRAP_LOAD_FROM_SOURCE = -20;
     public static double DEGREES_SOURCE_LOAD = -54.979414;
     public static double DEGREES_TRAP_SCORE = -40;
-    public static double DEGREES_START_CONFIG = 46;
+    public static double DEGREES_DEFENDED_SCORING = 58;
     // TODO: Update these target values
     public static double DEGREES_SIX_NOTE_AUTO_GN_1_AND_2 = 19.7;
     public static double DEGREES_SIX_NOTE_AUTO_GN_3 = 31.4;

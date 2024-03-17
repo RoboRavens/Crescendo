@@ -115,6 +115,9 @@ public class DriveTwoInchesCommand extends Command {
     public boolean isFinished() {
         if (_timer.get() > 1 || (Math.abs(xOffsetFromTarget) < 0.00254 && Math.abs(yOffsetFromTarget) < 0.00254)) { // 1/10 of an inch
             // SmartDashboard.putNumber("Time taken", _timer.get());
+            if (_timer.get() > 1) {
+                System.out.println("DriveTwoInchesCommand timeout");
+            }
             return true;
         }
         return false;
