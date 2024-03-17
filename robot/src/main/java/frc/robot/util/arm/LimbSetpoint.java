@@ -11,8 +11,7 @@ import frc.robot.util.Constants.WristConstants;
 
 public class LimbSetpoint {
     public static LimbSetpoint GROUND_PICKUP = new LimbSetpoint("Ground Pickup", ElbowConstants.DEGREES_FLOOR_PICKUP, WristConstants.DEGREES_FLOOR_PICKUP);
-    public static LimbSetpoint SPEAKER_SCORING = new LimbSetpoint("Speaker Scoring", ElbowConstants.DEGREES_FLOOR_PICKUP, WristConstants.DEGREES_FLOOR_PICKUP);
-    public static LimbSetpoint SPEAKER_SCORING_ARM_UP = new LimbSetpoint("Speaker Scoring", ElbowConstants.DEGREES_FLOOR_PICKUP, WristConstants.DEGREES_FLOOR_PICKUP);
+    public static LimbSetpoint SPEAKER_SCORING = new LimbSetpoint("Speaker Scoring", ElbowConstants.DEGREES_SPEAKER_SCORING, WristConstants.DEGREES_SPEAKER_SCORING);
     public static LimbSetpoint DEFENDED_SPEAKER_SCORING = new LimbSetpoint("Defended Speaker Scoring", ElbowConstants.DEGREES_START_CONFIG, WristConstants.DEGREES_DEFENDED_SCORING);
     public static LimbSetpoint AMP_SCORING = new LimbSetpoint("Amp Scoring", ElbowConstants.DEGREES_AMP_SCORE, WristConstants.DEGREES_AMP_SCORE);
     public static LimbSetpoint TRAP_SCORING = new LimbSetpoint("Trap Scoring", ElbowConstants.DEGREES_TRAP_SCORE, WristConstants.DEGREES_TRAP_SCORE);
@@ -34,7 +33,7 @@ public class LimbSetpoint {
     public LimbSetpoint(String name, double elbowRotationDegrees, double wristRotationDegrees) {
         _name = name;
         _elbowRotationDegrees = elbowRotationDegrees;
-        _wristRotationDegrees = wristRotationDegrees * -1;
+        _wristRotationDegrees = wristRotationDegrees;
     }
 
     public String getName() {

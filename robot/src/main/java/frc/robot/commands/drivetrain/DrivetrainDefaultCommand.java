@@ -20,7 +20,7 @@ public class DrivetrainDefaultCommand extends Command {
     private double _velocityYSlewRate = DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / Constants.SLEW_FRAMES_TO_MAX_Y_VELOCITY;
     private double _angularSlewRate = DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND / Constants.SLEW_FRAMES_TO_MAX_ANGULAR_VELOCITY;
 
-    private Timer inputTimer = new Timer();
+    private Timer _xingTimer = new Timer();
 
     public boolean CutPower = false;
 
@@ -30,8 +30,8 @@ public class DrivetrainDefaultCommand extends Command {
 
     @Override
     public void initialize() {
-        inputTimer.reset();
-        inputTimer.start();
+        _xingTimer.reset();
+        _xingTimer.start();
 
         AngularPositionHolder.GetInstance().reset();
         _chassisSpeeds = new ChassisSpeeds(0, 0, 0);
@@ -44,52 +44,45 @@ public class DrivetrainDefaultCommand extends Command {
         double y = Robot.DRIVE_CONTROLLER.getLeftX() * controllerDirection;
         double r = Robot.DRIVE_CONTROLLER.getRightX() * -1;
 
-        if (Robot.cutPower) {
-            x *= 0.5;
-            y *= 0.5;
-            r *= 0.5;
-        }
+        x = Deadband.adjustValueToZero(x, Constants.JOYSTICK_DEADBAND);
+        y = Deadband.adjustValueToZero(y, Constants.JOYSTICK_DEADBAND);
+        r = Deadband.adjustValueToZero(r, Constants.JOYSTICK_DEADBAND);
         
         Rotation2d a = Robot.DRIVETRAIN_SUBSYSTEM.getOdometryRotation(); // The angle of the robot as measured by a gyroscope. The robot's angle is considered to be zero when it is facing directly away from your alliance station wall.        
         
+        if ((x == 0 && y == 0 && r == 0) == false) {
+            _xingTimer.reset();
+        }
+
         if (Robot.DRIVETRAIN_STATE == DrivetrainState.FREEHAND) {
-            x = Deadband.adjustValueToZero(x, Constants.JOYSTICK_DEADBAND);
-            y = Deadband.adjustValueToZero(y, Constants.JOYSTICK_DEADBAND);
-            r = Deadband.adjustValueToZero(r, Constants.JOYSTICK_DEADBAND);
+            if (_xingTimer.get() >= Constants.DRIVETRAIN_HOLD_POSITION_TIMER_THRESHOLD) {
+                Robot.DRIVETRAIN_SUBSYSTEM.holdPosition();
+            } else {
+                double cutPower = Robot.cutPower ? 0.5 : 1;
+                x = x * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND * cutPower;
+                y = y * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND * cutPower;
+                r = r * Constants.DRIVE_MAX_TURN_RADIANS_PER_SECOND * cutPower;
 
-            x = x * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
-            y = y * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
-            r = r * Constants.DRIVE_MAX_TURN_RADIANS_PER_SECOND;
+                r = AngularPositionHolder.GetInstance().getAngularVelocity(r, a.getRadians());
 
-            r = AngularPositionHolder.GetInstance().getAngularVelocity(r, a.getRadians());
+                var targetChassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+                    x, // x translation
+                    y, // y translation
+                    r, // rotation
+                    a // The angle of the robot as measured by a gyroscope.
+                );
 
-            var targetChassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-                x, // x translation
-                y, // y translation
-                r, // rotation
-                a // The angle of the robot as measured by a gyroscope.
-            );
+                targetChassisSpeeds.vxMetersPerSecond = Slew.GetSlewedTarget(_velocityXSlewRate, targetChassisSpeeds.vxMetersPerSecond, _chassisSpeeds.vxMetersPerSecond);
+                targetChassisSpeeds.vyMetersPerSecond = Slew.GetSlewedTarget(_velocityYSlewRate, targetChassisSpeeds.vyMetersPerSecond, _chassisSpeeds.vyMetersPerSecond);
+                targetChassisSpeeds.omegaRadiansPerSecond = Slew.GetSlewedTarget(_angularSlewRate, targetChassisSpeeds.omegaRadiansPerSecond, _chassisSpeeds.omegaRadiansPerSecond);
+                _chassisSpeeds = targetChassisSpeeds;
 
-            targetChassisSpeeds.vxMetersPerSecond = Slew.GetSlewedTarget(_velocityXSlewRate, targetChassisSpeeds.vxMetersPerSecond, _chassisSpeeds.vxMetersPerSecond);
-            targetChassisSpeeds.vyMetersPerSecond = Slew.GetSlewedTarget(_velocityYSlewRate, targetChassisSpeeds.vyMetersPerSecond, _chassisSpeeds.vyMetersPerSecond);
-            targetChassisSpeeds.omegaRadiansPerSecond = Slew.GetSlewedTarget(_angularSlewRate, targetChassisSpeeds.omegaRadiansPerSecond, _chassisSpeeds.omegaRadiansPerSecond);
-            _chassisSpeeds = targetChassisSpeeds;
-
-            Robot.DRIVETRAIN_SUBSYSTEM.drive(targetChassisSpeeds);
+                Robot.DRIVETRAIN_SUBSYSTEM.drive(targetChassisSpeeds);
+            }
         }
         else if (Robot.DRIVETRAIN_STATE == DrivetrainState.ROBOT_ALIGN) {
             if (Robot.OVERALL_STATE == OverallState.LOADED_TRANSIT) {
                
-            }
-        }
-
-        if (Robot.DRIVETRAIN_SUBSYSTEM.getIsBeingDriven()) {
-            inputTimer.reset();
-            inputTimer.start();
-        }
-        else {
-            if (inputTimer.get() >= Constants.DRIVETRAIN_HOLD_POSITION_TIMER_THRESHOLD) {
-                Robot.DRIVETRAIN_SUBSYSTEM.holdPosition();
             }
         }
     }

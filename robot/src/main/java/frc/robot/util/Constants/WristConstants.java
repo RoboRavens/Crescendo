@@ -15,20 +15,21 @@ public class WristConstants {
     public static final double IS_AT_SETPOINT_BUFFER = .2;
 
     // these constants show degrees from floor pickup and are relative to the arm (not relative to the field)
-    // these match what is shown in onshape, but may be adjusted based on testing
-    // be careful, these match onshape signs, the sign shown on the dashboard is inverted
-    // if dashboard shows 35, then put -35 here
+    // values from onshape need to have their sign inverted
+    // as degrees get bigger (right d-pad), the shooting angle becomes less (note hits the speaker at lower height)
     public static double DEGREES_FLOOR_PICKUP = 0.0;
-    public static double DEGREES_AMP_SCORE = -3;
-    public static double DEGREES_TRAP_LOAD_FROM_SOURCE = -20;
-    public static double DEGREES_SOURCE_LOAD = -54.979414;
-    public static double DEGREES_TRAP_SCORE = -40;
-    public static double DEGREES_DEFENDED_SCORING = 58;
-    // TODO: Update these target values
-    public static double DEGREES_SIX_NOTE_AUTO_GN_1_AND_2 = 19.7;
-    public static double DEGREES_SIX_NOTE_AUTO_GN_3 = 31.4;
-    public static double DEGREES_SIX_NOTE_AUTO_GN_4_AND_5 = 35;
-    public static double DEGREES_SIX_NOTE_PRELOAD = 6;
+    public static double DEGREES_AMP_SCORE = 3;
+    public static double DEGREES_TRAP_LOAD_FROM_SOURCE = 20;
+    public static double DEGREES_SOURCE_LOAD = 54.979414;
+    public static double DEGREES_TRAP_SCORE = 40;
+    public static double DEGREES_DEFENDED_SCORING = -39;
+    public static double DEGREES_SPEAKER_SCORING = 9.0;
+
+    // AUTO MODE ANGLES
+    public static double DEGREES_SIX_NOTE_AUTO_GN_1_AND_2 = -19.7;
+    public static double DEGREES_SIX_NOTE_AUTO_GN_3 = -31.4;
+    public static double DEGREES_SIX_NOTE_AUTO_GN_4_AND_5 = -35;
+    public static double DEGREES_SIX_NOTE_PRELOAD = -6;
     public static double DEGREES_PODIUM_SCORE = 0;
     public static double DEGREES_STARTING_LINE_SCORE = 0;
 

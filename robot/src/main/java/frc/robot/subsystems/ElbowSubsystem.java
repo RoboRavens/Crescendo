@@ -102,21 +102,18 @@ public class ElbowSubsystem extends SubsystemBase {
     return this.targetPosition;
   }
 
-  public double incrementTargetPosition() {
-
-    double targetDegrees = ElbowSubsystem.getDegreesFromPosition(targetPosition) + 1;
-
-    System.out.println("Current degrees:" + this.getDegrees() + " new target: " + targetDegrees);
-    this.setTargetDegrees(targetDegrees);
-
-    return this.targetPosition;
+  public void incrementTargetPosition() {
+    double currentTargetDegrees = ElbowSubsystem.getDegreesFromPosition(targetPosition);
+    double newTargetDegrees = currentTargetDegrees + 1.0;
+    System.out.println("ElbowSubsystem: incrementTargetPosition - Current target:" + currentTargetDegrees + " new target: " + newTargetDegrees);
+    this.setTargetDegrees(newTargetDegrees);
   }
 
-  public double decrementTargetPosition() {
-    double targetDegrees = ElbowSubsystem.getDegreesFromPosition(targetPosition) - 1;
-    this.setTargetDegrees(targetDegrees);
-
-    return this.targetPosition;
+  public void decrementTargetPosition() {
+    double currentTargetDegrees = ElbowSubsystem.getDegreesFromPosition(targetPosition);
+    double newTargetDegrees = currentTargetDegrees - 1.0;
+    System.out.println("ElbowSubsystem: decrementTargetPosition - Current target:" + currentTargetDegrees + " new target: " + newTargetDegrees);
+    this.setTargetDegrees(newTargetDegrees);
   }
 
   public void setTargetDegrees(double targetDegrees) {
