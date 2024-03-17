@@ -123,6 +123,7 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
 
   private Pose2d _markedPosition = null;
   private Field2d _field2d = new Field2d();
+  private boolean _xing = false;
 
   public DrivetrainSubsystem() {
     MkModuleConfiguration moduleConfig = new MkModuleConfiguration();
@@ -284,6 +285,7 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
 
   @Override
   public void holdPosition() {
+    _xing = true;
     // create an X pattern with the wheels to thwart pushing from other robots
     _moduleStates[0].angle = Rotation2d.fromDegrees(45); // front left
     _moduleStates[0].speedMetersPerSecond = 0;
@@ -297,6 +299,7 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
 
   @Override
   public void drive(ChassisSpeeds targetChassisSpeeds) {
+    _xing = false;
     _moduleStates = m_kinematics.toSwerveModuleStates(targetChassisSpeeds);
   }
 
@@ -341,7 +344,9 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
 
     // _diagnostics.updateHardware(_odometryFromHardware, statesHardware);
 
-    Deadband.adjustRotationWhenStopped(states, statesHardware);
+    if (_xing == false) {
+      Deadband.adjustRotationWhenStopped(states, statesHardware);
+    }
     
     m_frontLeftModule.set(states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[0].angle.getRadians());
     m_frontRightModule.set(states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[1].angle.getRadians());
