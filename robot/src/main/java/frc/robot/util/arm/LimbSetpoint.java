@@ -4,6 +4,7 @@
 
 package frc.robot.util.arm;
 
+import frc.robot.Robot;
 import frc.robot.subsystems.ElbowSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 import frc.robot.util.Constants.ElbowConstants;
@@ -23,8 +24,8 @@ public class LimbSetpoint {
     public static LimbSetpoint SIX_NOTE_AUTO_PRELOAD_SCORING_SETPOINT = new LimbSetpoint("Six Note Auto Preload Scoring Setpoint", ElbowConstants.DEGREES_FLOOR_PICKUP, WristConstants.DEGREES_SIX_NOTE_PRELOAD);
     public static LimbSetpoint START_CONFIG_UP = new LimbSetpoint("Start Config Up", ElbowConstants.DEGREES_START_CONFIG_UP, WristConstants.DEGREES_DEFENDED_SCORING);    
     public static LimbSetpoint SOUTH_CENTER_PRELOAD = new LimbSetpoint("South Center Preload", ElbowConstants.DEGREES_SOUTH_CENTER_PRELOAD, WristConstants.DEGREES_DEFENDED_SCORING);  
-    public static LimbSetpoint PODIUM_SCORING = new LimbSetpoint("Podium Scoring", ElbowConstants.DEGREES_FLOOR_PICKUP, WristConstants.DEGREES_PODIUM_SCORE);
-    public static LimbSetpoint STARTING_LINE_SCORING = new LimbSetpoint("Starting Line Scoring", ElbowConstants.DEGREES_FLOOR_PICKUP, WristConstants.DEGREES_STARTING_LINE_SCORE);
+    public static LimbSetpoint PODIUM_SCORING = new LimbSetpoint("Podium Scoring", ElbowConstants.DEGREES_FLOOR_PICKUP, Robot.SHOOTER_SUBSYSTEM.getShooterAngleMapDown(WristConstants.DISTANCE_METERS_PODIUM));
+    public static LimbSetpoint STARTING_LINE_SCORING = new LimbSetpoint("Starting Line Scoring", ElbowConstants.DEGREES_FLOOR_PICKUP, Robot.SHOOTER_SUBSYSTEM.getShooterAngleMapDown(WristConstants.DISTANCE_METERS_STARTING_LINE));
 
     private String _name;
     private double _elbowRotationDegrees;

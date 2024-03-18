@@ -32,8 +32,10 @@ public class WristConstants {
     public static double DEGREES_SIX_NOTE_AUTO_GN_3 = -31.4;
     public static double DEGREES_SIX_NOTE_AUTO_GN_4_AND_5 = -35;
     public static double DEGREES_SIX_NOTE_PRELOAD = -6;
-    public static double DEGREES_PODIUM_SCORE = 0;
-    public static double DEGREES_STARTING_LINE_SCORE = 0;
+
+    // distance in meters from speaker to back bumper
+    public static double DISTANCE_METERS_STARTING_LINE = 2.032;
+    public static double DISTANCE_METERS_PODIUM = 2.3368;
 
     public static final double JOYSTICK_CONTROL_SCALING_FACTOR = .1;
 
