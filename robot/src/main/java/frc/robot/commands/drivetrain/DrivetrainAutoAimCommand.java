@@ -4,16 +4,16 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.util.Constants.Constants;
 import frc.robot.LimelightHelpers;
 import frc.robot.Robot;
 import frc.robot.subsystems.DrivetrainSubsystem;
-import frc.util.Deadband;
 import frc.util.Slew;
 
 public class DrivetrainAutoAimCommand extends Command {
-    public PIDController _autoAlignRotationPID = new PIDController(0.35,  0, 0);
+    public PIDController _autoAlignRotationPID = new PIDController(0.15,  0, 0);
     private ChassisSpeeds _chassisSpeeds = new ChassisSpeeds(0,0,0);
     private double _velocityXSlewRate = DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / Constants.SLEW_FRAMES_TO_MAX_X_VELOCITY;
     private double _velocityYSlewRate = DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / Constants.SLEW_FRAMES_TO_MAX_Y_VELOCITY;
@@ -28,47 +28,29 @@ public class DrivetrainAutoAimCommand extends Command {
 
     private double getAngularVelocityForAlignment() {
         double txRadians = Math.toRadians(LimelightHelpers.getTX("limelight-pickup"));
-        double angularVelocity = _autoAlignRotationPID.calculate(txRadians) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
-        
-        double velocityDirection = angularVelocity < 0 ? -1 : 1;
-        boolean isWithinTwoHundredthsRadianOfTargetRotation = txRadians > 0.2;
-       
-        if (Math.abs(angularVelocity) > DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND) {
-            return DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * velocityDirection;
-        }
-        // If the angular velocity is less than 0.4 and the robot is not within 0.02 radians of 0 degrees, set the velocity to 0.4
-        else if (Math.abs(angularVelocity) < 0.4 && isWithinTwoHundredthsRadianOfTargetRotation == false) {
-            return 0.4 * velocityDirection;
-        }
-        return angularVelocity; // angular velocity
+        double angularVelocity = _autoAlignRotationPID.calculate(txRadians) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND; 
+        return angularVelocity;
     }
 
     @Override
     public void initialize() {
-        // AngularPositionHolder.GetInstance().reset();
         _chassisSpeeds = new ChassisSpeeds(0, 0, 0);
     }
 
     @Override
     public void execute() {
-        double controllerDirection = Robot.allianceColor == Alliance.Red ? 1 : -1;
-        double x = 0;
-        double y = 0;
         double r = getAngularVelocityForAlignment();
-       
-       
-        Rotation2d a = Robot.DRIVETRAIN_SUBSYSTEM.getOdometryRotation(); // The angle of the robot as measured by a gyroscope. The robot's angle is considered to be zero when it is facing directly away from your alliance station wall.
-      /* 
-        x = Deadband.adjustValueToZero(x, Constants.JOYSTICK_DEADBAND);
-        y = Deadband.adjustValueToZero(y, Constants.JOYSTICK_DEADBAND);
-        r = Deadband.adjustValueToZero(r, Constants.JOYSTICK_DEADBAND);
+        double tx = Math.toRadians(LimelightHelpers.getTX("limelight-pickup"));
+        double txMaxValue = 27;
 
-        x = x * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
-        y = y * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
-        r = r * Constants.DRIVE_MAX_TURN_RADIANS_PER_SECOND;
-        */
+        var proportion = (txMaxValue - Math.abs(tx)) / txMaxValue;
+        double minSpeed = 0;
+        double additionalSpeed = 2;
+
+        SmartDashboard.putNumber("limelight pickup angular velocity", r);
+
         var targetChassisSpeeds = new ChassisSpeeds(
-            Robot.DRIVE_CONTROLLER.getLeftTriggerAxis() * 3, // x translation
+            Robot.DRIVE_CONTROLLER.getLeftTriggerAxis() * (minSpeed + (proportion * additionalSpeed)), // x translation
              0, // y translation
             r // rotation
            // a // The angle of the robot as measured by a gyroscope.
