@@ -18,7 +18,7 @@ public class ElbowConstants {
   // these constants show degrees from horizontal
   // public static final double DEGREES_FLOOR_PICKUP = -15.684524;
   public static final double DEGREES_FLOOR_PICKUP = -13.684524;
-  public static final double DEGREES_SPEAKER_SCORING = 2;
+  public static final double DEGREES_SPEAKER_SCORING = -13.684524;
   public static final double DEGREES_AMP_SCORE = 80;
   public static final double DEGREES_TRAP_LOAD_FROM_SOURCE = 35;
   public static final double DEGREES_SOURCE_LOAD = 35;

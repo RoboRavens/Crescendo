@@ -20,12 +20,12 @@ public class WristConstants {
     // values from onshape need to have their sign inverted
     // as degrees get bigger (right d-pad), the shooting angle becomes less (note hits the speaker at lower height)
     public static double DEGREES_FLOOR_PICKUP = 0.0;
-    public static double DEGREES_AMP_SCORE = 3;
+    public static double DEGREES_AMP_SCORE = -16.2;
     public static double DEGREES_TRAP_LOAD_FROM_SOURCE = 20;
-    public static double DEGREES_SOURCE_LOAD = 54.979414;
+    public static double DEGREES_SOURCE_LOAD = 50;
     public static double DEGREES_TRAP_SCORE = 40;
     public static double DEGREES_DEFENDED_SCORING = -39;
-    public static double DEGREES_SPEAKER_SCORING = 9.0;
+    public static double DEGREES_SPEAKER_SCORING = 0.0;
 
     // AUTO MODE ANGLES
     public static double DEGREES_SIX_NOTE_AUTO_GN_1_AND_2 = -19.7;
@@ -36,6 +36,8 @@ public class WristConstants {
     public static double DEGREES_STARTING_LINE_SCORE = 0;
 
     public static final double JOYSTICK_CONTROL_SCALING_FACTOR = .1;
+
+    public static double DEGREES_DOWNWARD_MOTION_BUFFER = 15;
 
 
     public static Slot0Configs getSlot0Configs() {
