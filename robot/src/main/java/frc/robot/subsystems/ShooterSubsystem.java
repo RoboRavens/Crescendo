@@ -114,6 +114,10 @@ public class ShooterSubsystem extends SubsystemBase {
         this._rightTargetSpeed = _rightTargetSpeed;
     }
 
+    public boolean shooterUpToSpeed() {
+        return false;
+    }
+
     public double getShootingAngleFormula(double distance, double shooterHeightMeters) {
         double denumerator = 2 * ShooterConstants.GRAVITY_ACCELERATION * Math.pow(distance, 2);
         double numerator1 = 2 * Math.pow(ShooterConstants.INITIAL_NOTE_SPEED, 2) * distance;

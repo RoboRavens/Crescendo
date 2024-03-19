@@ -197,11 +197,6 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData(WRIST_SUBSYSTEM);
 
     AUTO_CHOOSER.ShowTab();
-
-    new Trigger(() -> Robot.LIMELIGHT_PICKUP.hasVisionTargetBuffered()
-      && INTAKE_TARGET_STATE == IntakeTargetState.GROUND
-      && Robot.INTAKE_SUBSYSTEM.driverCanIntake())
-    .whileTrue(new LEDsSolidColorCommand(Color.kOrange));
     
     new Trigger(() -> DRIVE_CONTROLLER.getLeftTriggerAxis() > .1
       && Robot.LIMELIGHT_PICKUP.hasVisionTargetBuffered()
@@ -214,7 +209,6 @@ public class Robot extends TimedRobot {
     configureButtonBindings();
     configureOverrideBindings();
     OperatorController.enable();
-
   }
   
   private void configureDriveControllerBindings() {
@@ -288,33 +282,6 @@ public class Robot extends TimedRobot {
 
     new Trigger(() -> LIMELIGHT_OVERRIDE_STATE == LimelightOverrideState.OVERRIDE_ON && SELECTED_SHOT_TARGET_STATE == SelectedShotTargetState.PODIUM_SHOT)
       .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.PODIUM_SCORING));
-
-    // var ampTrigger = new Trigger(() -> LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.AMP_SIGNAL);
-    // var coOpTrigger = new Trigger(() -> LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.CO_OP_SIGNAL);
-    var hasPieceAnywhereTrigger = new Trigger(() -> INTAKE_SUBSYSTEM.hasPieceAnywhere());
-    var posessesIndexedPieceTrigger = new Trigger(() -> INTAKE_SUBSYSTEM.getPossesesIndexedPiece());
-    
-    // ampTrigger.onTrue(new InstantCommand(() -> System.out.println("amp")));
-
-    // Amp
-    /*
-    ampTrigger.and(() -> SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON)
-      .whileTrue(new LEDsBlinkCommand(Color.kBlue, Color.kBlack, 0.5));
-    ampTrigger.and(() -> SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.OFF)
-      .whileTrue(new LEDsSolidColorCommand(Color.kBlue));
-    */
-    // Co-op
-    /*
-    coOpTrigger.and(() -> SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON)
-      .whileTrue(new LEDsBlinkCommand(Color.kOrange, Color.kBlack, 0.5));
-    coOpTrigger.and(() -> SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.OFF)
-      .whileTrue(new LEDsSolidColorCommand(Color.kOrange));
-    */
-    // Piece in sight
-    // Green
-
-    // Has Piece
-    posessesIndexedPieceTrigger.whileTrue(new LEDsBlinkWhenShooterOnCommand(Color.kBlue, Color.kBlack, 0.5));
   }
 
 	/** This function is run once each time the robot enters autonomous mode. */
@@ -349,15 +316,12 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
     setDriverStationData();
     ledsSubsystem24.setColor(0, 0, 0);
-
-    //DRIVETRAIN_SUBSYSTEM.setAngleToHoldToCurrentPosition();
-    
-  
   }
 
   /** This function is called periodically during teleoperated mode. */
   @Override
   public void teleopPeriodic() {
+    this.runLedLogic();
   }
 
   /** This function is called once each time the robot enters test mode. */
@@ -378,6 +342,35 @@ public class Robot extends TimedRobot {
   private void setDriverStationData() {
     allianceColor = DriverStation.getAlliance().orElseGet(() -> Alliance.Blue);
     AUTO_CHOOSER.BuildAutoChooser(allianceColor);
+  }
+
+  private void runLedLogic() {
+    boolean shooterAtSpeed = SHOOTER_SUBSYSTEM.shooterUpToSpeed();
+    boolean aimedAtGoal = false;
+    boolean posessesIndexedPiece = INTAKE_SUBSYSTEM.getPossesesIndexedPiece();
+    boolean robotSeesNote = Robot.LIMELIGHT_PICKUP.hasVisionTargetBuffered()
+      && INTAKE_TARGET_STATE == IntakeTargetState.GROUND
+      && Robot.INTAKE_SUBSYSTEM.driverCanIntake();
+
+    if (shooterAtSpeed) {
+      // blink
+    } else {
+      // solid
+    }
+
+    if (robotSeesNote) {
+      // orange
+    } else if (posessesIndexedPiece) {
+      if (aimedAtGoal) {
+        // green
+      } else {
+        // blue
+      }
+    } else if (INTAKE_SUBSYSTEM.hasPieceAnywhere()) {
+      // purple
+    } else {
+      // black
+    }
   }
 
   private void configureButtonBindings() {
