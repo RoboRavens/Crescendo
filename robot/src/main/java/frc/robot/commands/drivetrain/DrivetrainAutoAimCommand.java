@@ -13,7 +13,7 @@ import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.util.Slew;
 
 public class DrivetrainAutoAimCommand extends Command {
-    public PIDController _autoAlignRotationPID = new PIDController(0.15,  0, .2);
+    public PIDController _autoAlignRotationPID = new PIDController(0.15,  0, 1);
     public PIDController _yPID = new PIDController(.022, 0, .02);
     private ChassisSpeeds _chassisSpeeds = new ChassisSpeeds(0,0,0);
     private double _velocityXSlewRate = DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / Constants.SLEW_FRAMES_TO_MAX_X_VELOCITY;
@@ -45,20 +45,25 @@ public class DrivetrainAutoAimCommand extends Command {
         double r = getAngularVelocityForAlignment();
         double txMaxValue = 27;
         double tx = Robot.LIMELIGHT_PICKUP.getBufferedTx();
+        double ta = Robot.LIMELIGHT_PICKUP.getBufferedTa();
 
         var proportion = (txMaxValue - Math.abs(tx)) / txMaxValue;
         double minSpeed = 0;
         double additionalSpeed = 3;
         
-        var txSign = Math.copySign(1, tx);
-        double y = _yPID.calculate(Math.min(Math.abs(tx), txMaxValue / 2));
-        y = y * txSign;
+        //var txSign = Math.copySign(1, tx);
+        //double y = _yPID.calculate(Math.min(Math.abs(tx), txMaxValue / 2));
+        //y = y * txSign;
 
         SmartDashboard.putNumber("limelight pickup angular velocity", r);
+        SmartDashboard.putNumber("limelight pickup ta", ta);
+
+        // double distanceFromTargetTurnReduction =  0.8 / ta;
+        // r = r * distanceFromTargetTurnReduction;
 
         var targetChassisSpeeds = new ChassisSpeeds(
-            Robot.DRIVE_CONTROLLER.getLeftTriggerAxis() * (minSpeed + (proportion * additionalSpeed)), // x translation
-            Robot.DRIVE_CONTROLLER.getLeftTriggerAxis() * y, // y translation
+            minSpeed + (proportion * additionalSpeed), // x translation
+            0, // y translation
             r // rotation
            // a // The angle of the robot as measured by a gyroscope.
         );

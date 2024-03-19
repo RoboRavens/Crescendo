@@ -7,6 +7,7 @@ package frc.robot.commands.wrist;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
+import frc.robot.util.arm.LimbSetpoint;
 
 public class WristDefaultCommand extends Command {
   private Timer _acquiesceTimer = new Timer();
@@ -32,7 +33,9 @@ public class WristDefaultCommand extends Command {
   public void execute() {
     if (_acquiesced == false && _acquiesceTimer.get() > 3) {
       _acquiesced = true;
-      Robot.WRIST_SUBSYSTEM.goToPosition(Robot.WRIST_SUBSYSTEM.getPosition());
+      if (Robot.WRIST_SUBSYSTEM.getTargetPosition() == LimbSetpoint.GROUND_PICKUP.getWristRotationPosition()) {
+        Robot.WRIST_SUBSYSTEM.stopWristRotation();
+      }
     }
   }
 

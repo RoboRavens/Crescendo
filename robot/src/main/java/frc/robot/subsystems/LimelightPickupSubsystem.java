@@ -10,15 +10,18 @@ public class LimelightPickupSubsystem extends SubsystemBase {
   private NetworkTable _baseNetworkTable;
   private NetworkTableEntry tx;
   private NetworkTableEntry tv;
+  private NetworkTableEntry ta;
 
   private Timer _bufferedTvTimer = new Timer();
   private boolean _bufferedTv;
   private double _bufferedTx;
+  private double _bufferedTa;
 
   public LimelightPickupSubsystem(String tableName) {
     _baseNetworkTable = NetworkTableInstance.getDefault().getTable(tableName);
     tx = _baseNetworkTable.getEntry("tx");
     tv = _baseNetworkTable.getEntry("tv");
+    ta = _baseNetworkTable.getEntry("ta");
     _bufferedTvTimer.start();
   }
 
@@ -27,6 +30,7 @@ public class LimelightPickupSubsystem extends SubsystemBase {
       _bufferedTvTimer.reset();
       _bufferedTv = true;
       _bufferedTx = this.getTx();
+      _bufferedTa = this.getTa();
     } else if (_bufferedTvTimer.get() > .25) {
       _bufferedTv = false;
     }
@@ -46,5 +50,13 @@ public class LimelightPickupSubsystem extends SubsystemBase {
 
   public double getBufferedTx() {
     return _bufferedTx;
+  }
+
+  private double getTa() {
+    return ta.getDouble(0.0);
+  }
+
+  public double getBufferedTa() {
+    return _bufferedTa;
   }
 }
