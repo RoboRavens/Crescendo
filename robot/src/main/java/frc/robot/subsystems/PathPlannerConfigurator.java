@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.commands.compound.LimbGoToSetpointCommand;
+import frc.robot.commands.elbow.ElbowGoToPositionCommand;
 import frc.robot.commands.intake.FeedWithSensorCommand;
 import frc.robot.commands.intake.IntakeDefaultCommand;
 import frc.robot.commands.intake.IntakeWithSensorAutoCommand;
@@ -35,7 +36,7 @@ public class PathPlannerConfigurator extends SubsystemBase {
     NamedCommands.registerCommand("LimbGoToGN1and2ScorePositionCommand", LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SIX_NOTE_AUTO_GN_1_AND_2_SCORING_SETPOINT));
     NamedCommands.registerCommand("LimbGoToGN3ScorePositionCommand", LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SIX_NOTE_AUTO_GN_3_SCORING_SETPOINT));
     NamedCommands.registerCommand("LimbGoToGN4And5ScorePositionCommand", LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SIX_NOTE_AUTO_GN_4_and_5_SCORING_SETPOINT));
-    NamedCommands.registerCommand("LimbStartConfigUpCommand", LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.START_CONFIG_UP));
+    NamedCommands.registerCommand("LimbStartConfigUpCommand", new ElbowGoToPositionCommand(LimbSetpoint.START_CONFIG_UP.getElbowRotationPosition())); // not a LimbSetpoint to optimize for time
     NamedCommands.registerCommand("LimbGoToArmUpShotCommand", LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.DEFENDED_SPEAKER_SCORING));
     NamedCommands.registerCommand("SouthCenterLimbGoToPreloadSetpointCommand", LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SOUTH_CENTER_PRELOAD));
     
