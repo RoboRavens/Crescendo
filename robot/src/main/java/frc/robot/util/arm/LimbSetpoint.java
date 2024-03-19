@@ -11,21 +11,21 @@ import frc.robot.util.Constants.ElbowConstants;
 import frc.robot.util.Constants.WristConstants;
 
 public class LimbSetpoint {
-    public static LimbSetpoint GROUND_PICKUP = new LimbSetpoint("Ground Pickup", ElbowConstants.DEGREES_FLOOR_PICKUP, WristConstants.DEGREES_FLOOR_PICKUP);
-    public static LimbSetpoint SPEAKER_SCORING = new LimbSetpoint("Speaker Scoring", ElbowConstants.DEGREES_SPEAKER_SCORING, WristConstants.DEGREES_SPEAKER_SCORING);
-    public static LimbSetpoint DEFENDED_SPEAKER_SCORING = new LimbSetpoint("Defended Speaker Scoring", ElbowConstants.DEGREES_START_CONFIG, WristConstants.DEGREES_DEFENDED_SCORING);
-    public static LimbSetpoint AMP_SCORING = new LimbSetpoint("Amp Scoring", ElbowConstants.DEGREES_AMP_SCORE, WristConstants.DEGREES_AMP_SCORE);
-    public static LimbSetpoint TRAP_SCORING = new LimbSetpoint("Trap Scoring", ElbowConstants.DEGREES_TRAP_SCORE, WristConstants.DEGREES_TRAP_SCORE);
-    public static LimbSetpoint SOURCE_INTAKE = new LimbSetpoint("DualSource Intake", ElbowConstants.DEGREES_SOURCE_LOAD, WristConstants.DEGREES_SOURCE_LOAD);
-    public static LimbSetpoint TRAP_SOURCE_INTAKE = new LimbSetpoint("TrapSource Intake", ElbowConstants.DEGREES_TRAP_LOAD_FROM_SOURCE, WristConstants.DEGREES_TRAP_LOAD_FROM_SOURCE);
-    public static LimbSetpoint SIX_NOTE_AUTO_GN_1_AND_2_SCORING_SETPOINT = new LimbSetpoint("Six Note Auto GN 1 And 2 Scoring Setpoint", ElbowConstants.DEGREES_FLOOR_PICKUP, WristConstants.DEGREES_SIX_NOTE_AUTO_GN_1_AND_2);
-    public static LimbSetpoint SIX_NOTE_AUTO_GN_3_SCORING_SETPOINT = new LimbSetpoint("Six Note Auto GN 3 Scoring Setpoint", ElbowConstants.DEGREES_FLOOR_PICKUP, WristConstants.DEGREES_SIX_NOTE_AUTO_GN_3);
-    public static LimbSetpoint SIX_NOTE_AUTO_GN_4_and_5_SCORING_SETPOINT = new LimbSetpoint("Six Note Auto GN 4 and 5 Scoring Setpoint", ElbowConstants.DEGREES_FLOOR_PICKUP, WristConstants.DEGREES_SIX_NOTE_AUTO_GN_4_AND_5);
-    public static LimbSetpoint SIX_NOTE_AUTO_PRELOAD_SCORING_SETPOINT = new LimbSetpoint("Six Note Auto Preload Scoring Setpoint", ElbowConstants.DEGREES_FLOOR_PICKUP, WristConstants.DEGREES_SIX_NOTE_PRELOAD);
-    public static LimbSetpoint START_CONFIG_UP = new LimbSetpoint("Start Config Up", ElbowConstants.DEGREES_START_CONFIG_UP, WristConstants.DEGREES_DEFENDED_SCORING);    
-    public static LimbSetpoint SOUTH_CENTER_PRELOAD = new LimbSetpoint("South Center Preload", ElbowConstants.DEGREES_SOUTH_CENTER_PRELOAD, WristConstants.DEGREES_DEFENDED_SCORING);  
-    public static LimbSetpoint PODIUM_SCORING = new LimbSetpoint("Podium Scoring", ElbowConstants.DEGREES_FLOOR_PICKUP, Robot.SHOOTER_SUBSYSTEM.getShooterAngleMapDown(WristConstants.DISTANCE_METERS_PODIUM));
-    public static LimbSetpoint STARTING_LINE_SCORING = new LimbSetpoint("Starting Line Scoring", ElbowConstants.DEGREES_FLOOR_PICKUP, Robot.SHOOTER_SUBSYSTEM.getShooterAngleMapDown(WristConstants.DISTANCE_METERS_STARTING_LINE));
+    public static final LimbSetpoint GROUND_PICKUP = new LimbSetpoint("Ground Pickup", ElbowConstants.DEGREES_FLOOR_PICKUP, WristConstants.DEGREES_FLOOR_PICKUP);
+    public static final LimbSetpoint SPEAKER_SCORING = new LimbSetpoint("Speaker Scoring", ElbowConstants.DEGREES_SPEAKER_SCORING, WristConstants.DEGREES_SPEAKER_SCORING);
+    public static final LimbSetpoint DEFENDED_SPEAKER_SCORING = new LimbSetpoint("Defended Speaker Scoring", ElbowConstants.DEGREES_START_CONFIG, WristConstants.DEGREES_DEFENDED_SCORING);
+    public static final LimbSetpoint AMP_SCORING = new LimbSetpoint("Amp Scoring", ElbowConstants.DEGREES_AMP_SCORE, WristConstants.DEGREES_AMP_SCORE);
+    public static final LimbSetpoint TRAP_SCORING = new LimbSetpoint("Trap Scoring", ElbowConstants.DEGREES_TRAP_SCORE, WristConstants.DEGREES_TRAP_SCORE);
+    public static final LimbSetpoint SOURCE_INTAKE = new LimbSetpoint("DualSource Intake", ElbowConstants.DEGREES_SOURCE_LOAD, WristConstants.DEGREES_SOURCE_LOAD);
+    public static final LimbSetpoint TRAP_SOURCE_INTAKE = new LimbSetpoint("TrapSource Intake", ElbowConstants.DEGREES_TRAP_LOAD_FROM_SOURCE, WristConstants.DEGREES_TRAP_LOAD_FROM_SOURCE);
+    public static final LimbSetpoint SIX_NOTE_AUTO_GN_1_AND_2_SCORING_SETPOINT = new LimbSetpoint("Six Note Auto GN 1 And 2 Scoring Setpoint", ElbowConstants.DEGREES_FLOOR_PICKUP, WristConstants.DEGREES_SIX_NOTE_AUTO_GN_1_AND_2);
+    public static final LimbSetpoint SIX_NOTE_AUTO_GN_3_SCORING_SETPOINT = new LimbSetpoint("Six Note Auto GN 3 Scoring Setpoint", ElbowConstants.DEGREES_FLOOR_PICKUP, WristConstants.DEGREES_SIX_NOTE_AUTO_GN_3);
+    public static final LimbSetpoint SIX_NOTE_AUTO_GN_4_and_5_SCORING_SETPOINT = new LimbSetpoint("Six Note Auto GN 4 and 5 Scoring Setpoint", ElbowConstants.DEGREES_FLOOR_PICKUP, WristConstants.DEGREES_SIX_NOTE_AUTO_GN_4_AND_5);
+    public static final LimbSetpoint SIX_NOTE_AUTO_PRELOAD_SCORING_SETPOINT = new LimbSetpoint("Six Note Auto Preload Scoring Setpoint", ElbowConstants.DEGREES_FLOOR_PICKUP, WristConstants.DEGREES_SIX_NOTE_PRELOAD);
+    public static final LimbSetpoint START_CONFIG_UP = new LimbSetpoint("Start Config Up", ElbowConstants.DEGREES_START_CONFIG_UP, WristConstants.DEGREES_DEFENDED_SCORING);    
+    public static final LimbSetpoint SOUTH_CENTER_PRELOAD = new LimbSetpoint("South Center Preload", ElbowConstants.DEGREES_SOUTH_CENTER_PRELOAD, WristConstants.DEGREES_DEFENDED_SCORING);  
+    public static final LimbSetpoint PODIUM_SCORING = new LimbSetpoint("Podium Scoring", ElbowConstants.DEGREES_FLOOR_PICKUP, Robot.SHOOTER_SUBSYSTEM.getShooterAngleMapDown(WristConstants.DISTANCE_METERS_PODIUM));
+    public static final LimbSetpoint STARTING_LINE_SCORING = new LimbSetpoint("Starting Line Scoring", ElbowConstants.DEGREES_FLOOR_PICKUP, Robot.SHOOTER_SUBSYSTEM.getShooterAngleMapDown(WristConstants.DISTANCE_METERS_STARTING_LINE));
 
     private String _name;
     private double _elbowRotationDegrees;

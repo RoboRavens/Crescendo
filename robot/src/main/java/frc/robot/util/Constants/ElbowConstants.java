@@ -39,8 +39,8 @@ public class ElbowConstants {
   public static final double JOYSTICK_CONTROL_SCALING_FACTOR = 0.15;
 
 
-  public static double MOTOR_POWER_FEEDFORWARD_AT_HORIZONTAL = .025;
-  public static double MOTOR_POWER_DIRECTION_TO_GO_UP_FROM_HORIZONTAL = -1;
+  public static final double MOTOR_POWER_FEEDFORWARD_AT_HORIZONTAL = .025;
+  public static final double MOTOR_POWER_DIRECTION_TO_GO_UP_FROM_HORIZONTAL = -1;
 
   public static Slot0Configs getSlot0Configs() {
     var slot0Config = new Slot0Configs();
