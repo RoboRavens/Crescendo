@@ -13,7 +13,7 @@ import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.util.Slew;
 
 public class DrivetrainAutoAimCommand extends Command {
-    public PIDController _autoAlignRotationPID = new PIDController(0.15,  0, 1);
+    public PIDController _autoAlignRotationPID = new PIDController(0.17,  0, 4);
     public PIDController _yPID = new PIDController(.022, 0, .02);
     private ChassisSpeeds _chassisSpeeds = new ChassisSpeeds(0,0,0);
     private double _velocityXSlewRate = DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / Constants.SLEW_FRAMES_TO_MAX_X_VELOCITY;
