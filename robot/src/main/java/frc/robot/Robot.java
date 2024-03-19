@@ -145,6 +145,7 @@ public class Robot extends TimedRobot {
   public static boolean cutPower = false;
   public static SelectedShotTargetState SELECTED_SHOT_TARGET_STATE = SelectedShotTargetState.SUBWOOFER_SHOT;
   public static LimelightOverrideState LIMELIGHT_OVERRIDE_STATE = LimelightOverrideState.OVERRIDE_OFF;
+  public static boolean autoRotationAlignEnabled = false;
 
   @Override
   public void robotPeriodic() {
@@ -206,8 +207,15 @@ public class Robot extends TimedRobot {
     new Trigger(() -> DRIVE_CONTROLLER.getLeftTriggerAxis() > .1
       && Robot.LIMELIGHT_PICKUP.hasVisionTargetBuffered()
       && INTAKE_TARGET_STATE == IntakeTargetState.GROUND
-      && Robot.INTAKE_SUBSYSTEM.driverCanIntake())
+      && Robot.INTAKE_SUBSYSTEM.driverCanIntake()
+      && Robot.INTAKE_SUBSYSTEM.hasPieceAnywhere() == false)
     .whileTrue(DRIVETRAIN_AUTO_AIM_COMMAND.alongWith(new IntakeWithSensorTeleopCommand()));
+
+    // The autoRotationAlignEnabled boolean is used in the drivetrain subsystem to enable rotation align without restricting x and y control
+    new Trigger(() -> DRIVE_CONTROLLER.getLeftTriggerAxis() > .1
+      && Robot.INTAKE_SUBSYSTEM.hasPieceAnywhere())
+    .onTrue(new InstantCommand(() -> autoRotationAlignEnabled = true))
+    .onFalse(new InstantCommand(() -> autoRotationAlignEnabled = false));
 
     configureDriveControllerBindings();
     configureAutomatedBehaviorBindings();
