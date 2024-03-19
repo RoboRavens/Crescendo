@@ -38,6 +38,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Robot;
+import frc.robot.util.Constants.Constants;
 import frc.robot.util.field.FieldConstants;
 import frc.util.AngularPositionHolder;
 // import frc.robot.commands.drivetrain.RavenSwerveControllerCommand;
@@ -501,12 +502,43 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
   }
 
   public double getDistanceFromSpeaker() {
-    if(Robot.allianceColor == Alliance.Blue) {
+    if (Robot.allianceColor == Alliance.Blue) {
       return Math.sqrt(Math.pow((getPoseX()-FieldConstants.BLUE_SPEAKER_X),2)+Math.pow((getPoseY()-FieldConstants.BLUE_SPEAKER_Y),2));
     }
     else {
       return Math.sqrt(Math.pow((getPoseX()-FieldConstants.RED_SPEAKER_X),2)+Math.pow((getPoseY()-FieldConstants.RED_SPEAKER_Y),2));
     }
+  }
+
+  public double getYOffsetFromSpeaker() {
+    return getPoseY() - FieldConstants.BLUE_SPEAKER_X;
+  }
+
+  /**
+   * @return angle offset from the amp-side edge of the speaker in radians
+   */
+  public double getAngleOffsetFromAmpEdgeOfSpeaker() {
+    double yPositionOfAmpEdgeOfSpeaker = getYOffsetFromSpeaker() + Constants.MAXIMUM_OFFSET_FROM_CENTER_OF_SPEAKER_METERS;
+    return Math.asin(yPositionOfAmpEdgeOfSpeaker / getDistanceFromSpeaker());
+  }
+
+  /**
+   * @return angle offset from the source-side edge of the speaker in radians
+   */
+  public double getAngleOffsetFromSourceEdgeOfSpeaker() {
+    double yPositionOfAmpEdgeOfSpeaker = getYOffsetFromSpeaker() - Constants.MAXIMUM_OFFSET_FROM_CENTER_OF_SPEAKER_METERS;
+    return Math.asin(yPositionOfAmpEdgeOfSpeaker / getDistanceFromSpeaker());
+  }
+
+  /**
+   * @return angle offset from the center of the speaker in radians
+   */
+  public double getAngleOffsetFromCenterOfSpeaker() {
+    return Math.asin(getYOffsetFromSpeaker() / getDistanceFromSpeaker());
+  }
+
+  public boolean getIsRobotRotationInSpeakerRange() {
+    return getAngleOffsetFromAmpEdgeOfSpeaker() < 0 && getAngleOffsetFromSourceEdgeOfSpeaker() > 0; // This means the robot's angle intercepts with the speaker
   }
 
   // @Override
