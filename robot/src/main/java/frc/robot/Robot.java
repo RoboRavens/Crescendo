@@ -60,6 +60,7 @@ import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.ElbowSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LEDsSubsystem24;
+import frc.robot.subsystems.LimelightPickupSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.PathPlannerConfigurator;
 import frc.robot.subsystems.PoseEstimatorSubsystem;
@@ -96,7 +97,7 @@ import frc.util.StateManagement.TrapSourceLaneTargetState;
  * directory.
  */
 public class Robot extends TimedRobot {
-  public static final LimelightSubsystem LIMELIGHT_PICKUP = new LimelightSubsystem("limelight-pickup");
+  public static final LimelightPickupSubsystem LIMELIGHT_PICKUP = new LimelightPickupSubsystem("limelight-pickup");
   public static final LimelightSubsystem LIMELIGHT_LEFT = new LimelightSubsystem("limelight-left");
   public static final LimelightSubsystem LIMELIGHT_RIGHT = new LimelightSubsystem("limelight-right");
   public static final LimelightSubsystem LIMELIGHT_BACK = new LimelightSubsystem("limelight-back");
@@ -197,13 +198,13 @@ public class Robot extends TimedRobot {
 
     AUTO_CHOOSER.ShowTab();
 
-    new Trigger(() -> Robot.LIMELIGHT_PICKUP.getTv() == 1
+    new Trigger(() -> Robot.LIMELIGHT_PICKUP.hasVisionTargetBuffered()
       && INTAKE_TARGET_STATE == IntakeTargetState.GROUND
       && Robot.INTAKE_SUBSYSTEM.driverCanIntake())
     .whileTrue(new LEDsSolidColorCommand(Color.kOrange));
     
     new Trigger(() -> DRIVE_CONTROLLER.getLeftTriggerAxis() > .1
-      && Robot.LIMELIGHT_PICKUP.getTv() == 1
+      && Robot.LIMELIGHT_PICKUP.hasVisionTargetBuffered()
       && INTAKE_TARGET_STATE == IntakeTargetState.GROUND
       && Robot.INTAKE_SUBSYSTEM.driverCanIntake())
     .whileTrue(DRIVETRAIN_AUTO_AIM_COMMAND.alongWith(new IntakeWithSensorTeleopCommand()));

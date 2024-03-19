@@ -33,6 +33,7 @@ public class ElbowConstants {
   public static final double RADIANS_SOURCE_LOAD = Math.toRadians(DEGREES_SOURCE_LOAD);
   public static final double RADIANS_TRAP_SCORE = Math.toRadians(DEGREES_TRAP_SCORE);
   public static final double RADIANS_START_CONFIG = Math.toRadians(DEGREES_START_CONFIG);
+  
   public static final double IS_AT_SETPOINT_BUFFER = 0.6;
 
   public static final double JOYSTICK_CONTROL_SCALING_FACTOR = 0.15;
