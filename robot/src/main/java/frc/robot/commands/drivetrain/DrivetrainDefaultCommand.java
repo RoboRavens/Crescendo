@@ -1,5 +1,6 @@
 package frc.robot.commands.drivetrain;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
@@ -19,6 +20,7 @@ public class DrivetrainDefaultCommand extends Command {
     private double _velocityXSlewRate = DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / Constants.SLEW_FRAMES_TO_MAX_X_VELOCITY;
     private double _velocityYSlewRate = DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / Constants.SLEW_FRAMES_TO_MAX_Y_VELOCITY;
     private double _angularSlewRate = DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND / Constants.SLEW_FRAMES_TO_MAX_ANGULAR_VELOCITY;
+    public PIDController _scoringRotationAlignPID = new PIDController(0.17,  0, 4);
 
     private Timer _xingTimer = new Timer();
 
@@ -65,6 +67,13 @@ public class DrivetrainDefaultCommand extends Command {
 
                 r = AngularPositionHolder.GetInstance().getAngularVelocity(r, a.getRadians());
 
+                if (Robot.autoRotationAlignEnabled) {
+                    double currentRotation = Robot.DRIVETRAIN_SUBSYSTEM.getPoseRotation().getRadians();
+                    double rotationOffsetFromCenterOfSpeaker = Robot.DRIVETRAIN_SUBSYSTEM.getAngleOffsetFromCenterOfSpeaker();
+                    double targetRotation = currentRotation - rotationOffsetFromCenterOfSpeaker;
+                    r = getAngularVelocityForAlignment(targetRotation);
+                }
+
                 var targetChassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
                     x, // x translation
                     y, // y translation
@@ -78,11 +87,6 @@ public class DrivetrainDefaultCommand extends Command {
                 _chassisSpeeds = targetChassisSpeeds;
 
                 Robot.DRIVETRAIN_SUBSYSTEM.drive(targetChassisSpeeds);
-            }
-        }
-        else if (Robot.DRIVETRAIN_STATE == DrivetrainState.ROBOT_ALIGN) {
-            if (Robot.OVERALL_STATE == OverallState.LOADED_TRANSIT) {
-               
             }
         }
     }
@@ -145,27 +149,27 @@ public class DrivetrainDefaultCommand extends Command {
     //     return xSpeed;
     // }
 
-    // private double getAngularVelocityForAlignment(double targetRotation) {
-    //     // Assumes that the robot's initial rotation (0) is aligned with the scoring nodes
-    //     double currentRotation = Robot.DRIVE_TRAIN_SUBSYSTEM.getOdometryRotation().getRadians();
-    //     double rotationOffset = currentRotation - targetRotation;
-    //     //SmartDashboard.putNumber("Rotation Offset", rotationOffset);
-    //     double angularVelocity = _scoringRotationAlignPID
-    //     .calculate(rotationOffset) 
-    //     * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
-    //     double velocityDirection = angularVelocity < 0 ? -1 : 1;
-    //     boolean isWithinTwoHundredthsRadianOfTargetRotation = currentRotation > targetRotation - 0.02 && currentRotation < targetRotation + 0.02;
-    //     //SmartDashboard.putBoolean("isWithinTwoHundredthsRadianOfTargetRotation", isWithinTwoHundredthsRadianOfTargetRotation);
-    //     // If the angular velocity is greater than the max angular velocity, set it to the max angular velocity
-    //     if (Math.abs(angularVelocity) > DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND) {
-    //         return DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * velocityDirection;
-    //     }
-    //     // If the angular velocity is less than 0.4 and the robot is not within 0.02 radians of 0 degrees, set the velocity to 0.4
-    //     else if (Math.abs(angularVelocity) < 0.4 && isWithinTwoHundredthsRadianOfTargetRotation == false) {
-    //         return 0.4 * velocityDirection;
-    //     }
-    //     return angularVelocity; // angular velocity
-    // }
+    private double getAngularVelocityForAlignment(double targetRotation) {
+        // Assumes that the robot's initial rotation (0) is aligned with the scoring nodes
+        double currentRotation = Robot.DRIVETRAIN_SUBSYSTEM.getOdometryRotation().getRadians();
+        double rotationOffset = currentRotation - targetRotation;
+        //SmartDashboard.putNumber("Rotation Offset", rotationOffset);
+        double angularVelocity = _scoringRotationAlignPID
+        .calculate(rotationOffset) 
+        * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
+        double velocityDirection = angularVelocity < 0 ? -1 : 1;
+        boolean isWithinTwoHundredthsRadianOfTargetRotation = currentRotation > targetRotation - 0.02 && currentRotation < targetRotation + 0.02;
+        //SmartDashboard.putBoolean("isWithinTwoHundredthsRadianOfTargetRotation", isWithinTwoHundredthsRadianOfTargetRotation);
+        // If the angular velocity is greater than the max angular velocity, set it to the max angular velocity
+        if (Math.abs(angularVelocity) > DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND) {
+            return DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * velocityDirection;
+        }
+        // If the angular velocity is less than 0.4 and the robot is not within 0.02 radians of 0 degrees, set the velocity to 0.4
+        else if (Math.abs(angularVelocity) < 0.4 && isWithinTwoHundredthsRadianOfTargetRotation == false) {
+            return 0.4 * velocityDirection;
+        }
+        return angularVelocity; // angular velocity
+    }
 
     @Override
     public void end(boolean interrupted) {
