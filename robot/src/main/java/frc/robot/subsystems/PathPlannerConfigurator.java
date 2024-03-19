@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.commands.compound.LimbGoToSetpointCommand;
 import frc.robot.commands.intake.FeedWithSensorCommand;
+import frc.robot.commands.intake.IntakeDefaultCommand;
+import frc.robot.commands.intake.IntakeWithSensorAutoCommand;
 import frc.robot.commands.intake.IntakeWithSensorCommand;
 import frc.robot.commands.shooter.StartShooterCommand;
 import frc.robot.commands.wrist.WristGoToPositionCommand;
@@ -25,7 +27,8 @@ public class PathPlannerConfigurator extends SubsystemBase {
   /** Creates a new PathPlannerConfigurator. */
   public PathPlannerConfigurator() {
     NamedCommands.registerCommand("StartShooterCommand", new StartShooterCommand());
-    NamedCommands.registerCommand("IntakeNoteCommand", new IntakeWithSensorCommand());
+    NamedCommands.registerCommand("IntakeNoteCommand", new IntakeWithSensorAutoCommand());
+    NamedCommands.registerCommand("IntakeDefaultCommand", new IntakeDefaultCommand());
     NamedCommands.registerCommand("FeedNoteCommand", new FeedWithSensorCommand());
     NamedCommands.registerCommand("LimbGoToGroundSetpointCommand", LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.GROUND_PICKUP));
     NamedCommands.registerCommand("LimbGoToPreloadNoteScorePositionCommand", LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SIX_NOTE_AUTO_PRELOAD_SCORING_SETPOINT));
