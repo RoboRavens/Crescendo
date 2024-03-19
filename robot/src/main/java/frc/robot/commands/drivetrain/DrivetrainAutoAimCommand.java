@@ -14,6 +14,7 @@ import frc.util.Slew;
 
 public class DrivetrainAutoAimCommand extends Command {
     public PIDController _autoAlignRotationPID = new PIDController(0.15,  0, 0);
+    public PIDController _yPID = new PIDController(.35, 0, 0);
     private ChassisSpeeds _chassisSpeeds = new ChassisSpeeds(0,0,0);
     private double _velocityXSlewRate = DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / Constants.SLEW_FRAMES_TO_MAX_X_VELOCITY;
     private double _velocityYSlewRate = DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / Constants.SLEW_FRAMES_TO_MAX_Y_VELOCITY;
@@ -40,8 +41,10 @@ public class DrivetrainAutoAimCommand extends Command {
     @Override
     public void execute() {
         double r = getAngularVelocityForAlignment();
-        double tx = Math.toRadians(LimelightHelpers.getTX("limelight-pickup"));
         double txMaxValue = 27;
+        double tx = LimelightHelpers.getTX("limelight-pickup");
+
+        //if (Math.abs(tx))
 
         var proportion = (txMaxValue - Math.abs(tx)) / txMaxValue;
         double minSpeed = 0;
