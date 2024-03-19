@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -42,6 +43,7 @@ import frc.robot.commands.intake.FeedWithSensorCommand;
 import frc.robot.commands.intake.IntakeWithSensorCommand;
 import frc.robot.commands.intake.IntakeWithSensorTeleopCommand;
 import frc.robot.commands.leds.LEDsBlinkCommand;
+import frc.robot.commands.leds.LEDsBlinkWhenShooterOnCommand;
 import frc.robot.commands.leds.LEDsRainbowCommand;
 import frc.robot.commands.leds.LEDsSolidColorCommand;
 import frc.robot.commands.shooter.ShootCommand;
@@ -194,8 +196,17 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData(WRIST_SUBSYSTEM);
 
     AUTO_CHOOSER.ShowTab();
+
+    new Trigger(() -> Robot.LIMELIGHT_PICKUP.getTv() == 1
+      && INTAKE_TARGET_STATE == IntakeTargetState.GROUND
+      && Robot.INTAKE_SUBSYSTEM.driverCanIntake())
+    .whileTrue(new LEDsSolidColorCommand(Color.kOrange));
     
-    new Trigger(() -> DRIVE_CONTROLLER.getLeftTriggerAxis() > .1 && Robot.LIMELIGHT_PICKUP.getTv() == 1).whileTrue(DRIVETRAIN_AUTO_AIM_COMMAND);
+    new Trigger(() -> DRIVE_CONTROLLER.getLeftTriggerAxis() > .1
+      && Robot.LIMELIGHT_PICKUP.getTv() == 1
+      && INTAKE_TARGET_STATE == IntakeTargetState.GROUND
+      && Robot.INTAKE_SUBSYSTEM.driverCanIntake())
+    .whileTrue(DRIVETRAIN_AUTO_AIM_COMMAND.alongWith(new IntakeWithSensorTeleopCommand()));
 
     configureDriveControllerBindings();
     configureAutomatedBehaviorBindings();
@@ -277,32 +288,32 @@ public class Robot extends TimedRobot {
     new Trigger(() -> LIMELIGHT_OVERRIDE_STATE == LimelightOverrideState.OVERRIDE_ON && SELECTED_SHOT_TARGET_STATE == SelectedShotTargetState.PODIUM_SHOT)
       .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.PODIUM_SCORING));
 
-    var ampTrigger = new Trigger(() -> LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.AMP_SIGNAL);
-    var coOpTrigger = new Trigger(() -> LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.CO_OP_SIGNAL);
-    var noDashboardLEDsAndHasPieceTrigger = new Trigger(() -> LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.NONE && SHOOTER_SUBSYSTEM.hasPiece());
+    // var ampTrigger = new Trigger(() -> LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.AMP_SIGNAL);
+    // var coOpTrigger = new Trigger(() -> LED_SIGNAL_TARGET_STATE == LEDSignalTargetState.CO_OP_SIGNAL);
+    var hasPieceAnywhereTrigger = new Trigger(() -> INTAKE_SUBSYSTEM.hasPieceAnywhere());
+    var posessesIndexedPieceTrigger = new Trigger(() -> INTAKE_SUBSYSTEM.getPossesesIndexedPiece());
     
-    ampTrigger.onTrue(new InstantCommand(() -> System.out.println("amp")));
+    // ampTrigger.onTrue(new InstantCommand(() -> System.out.println("amp")));
 
     // Amp
+    /*
     ampTrigger.and(() -> SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON)
       .whileTrue(new LEDsBlinkCommand(Color.kBlue, Color.kBlack, 0.5));
     ampTrigger.and(() -> SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.OFF)
       .whileTrue(new LEDsSolidColorCommand(Color.kBlue));
-    
+    */
     // Co-op
+    /*
     coOpTrigger.and(() -> SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON)
       .whileTrue(new LEDsBlinkCommand(Color.kOrange, Color.kBlack, 0.5));
     coOpTrigger.and(() -> SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.OFF)
       .whileTrue(new LEDsSolidColorCommand(Color.kOrange));
-
+    */
     // Piece in sight
     // Green
 
     // Has Piece
-    noDashboardLEDsAndHasPieceTrigger.and(() -> SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON)
-      .whileTrue(new LEDsBlinkCommand(Color.kRed, Color.kBlack, 0.5));
-    noDashboardLEDsAndHasPieceTrigger.and(() -> SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.OFF)
-      .whileTrue(new LEDsSolidColorCommand(Color.kRed));
+    posessesIndexedPieceTrigger.whileTrue(new LEDsBlinkWhenShooterOnCommand(Color.kBlue, Color.kBlack, 0.5));
   }
 
 	/** This function is run once each time the robot enters autonomous mode. */

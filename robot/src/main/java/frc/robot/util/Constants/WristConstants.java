@@ -14,33 +14,39 @@ public class WristConstants {
 
     public static final double IS_AT_SETPOINT_BUFFER = .2;
 
+    public static final double WRIST_DEGREES_PER_INCREMENT = 2.5;
+
     // these constants show degrees from floor pickup and are relative to the arm (not relative to the field)
     // values from onshape need to have their sign inverted
     // as degrees get bigger (right d-pad), the shooting angle becomes less (note hits the speaker at lower height)
     public static double DEGREES_FLOOR_PICKUP = 0.0;
-    public static double DEGREES_AMP_SCORE = 3;
+    public static double DEGREES_AMP_SCORE = -16.2;
     public static double DEGREES_TRAP_LOAD_FROM_SOURCE = 20;
-    public static double DEGREES_SOURCE_LOAD = 54.979414;
+    public static double DEGREES_SOURCE_LOAD = 50;
     public static double DEGREES_TRAP_SCORE = 40;
     public static double DEGREES_DEFENDED_SCORING = -39;
-    public static double DEGREES_SPEAKER_SCORING = 9.0;
+    public static double DEGREES_SPEAKER_SCORING = 0.0;
 
     // AUTO MODE ANGLES
     public static double DEGREES_SIX_NOTE_AUTO_GN_1_AND_2 = -19.7;
     public static double DEGREES_SIX_NOTE_AUTO_GN_3 = -31.4;
     public static double DEGREES_SIX_NOTE_AUTO_GN_4_AND_5 = -35;
     public static double DEGREES_SIX_NOTE_PRELOAD = -6;
-    public static double DEGREES_PODIUM_SCORE = 0;
-    public static double DEGREES_STARTING_LINE_SCORE = 0;
+
+    // distance in meters from speaker to back bumper
+    public static double DISTANCE_METERS_STARTING_LINE = 2.032;
+    public static double DISTANCE_METERS_PODIUM = 2.3368;
 
     public static final double JOYSTICK_CONTROL_SCALING_FACTOR = .1;
+
+    public static double DEGREES_DOWNWARD_MOTION_BUFFER = 15;
 
 
     public static Slot0Configs getSlot0Configs() {
         var slot0Config = new Slot0Configs();
         slot0Config.kP = 5;
-        slot0Config.kI = 0;
-        slot0Config.kD = 0;
+        slot0Config.kI = 1;
+        slot0Config.kD = 1.5;
         return slot0Config;
     }
 }

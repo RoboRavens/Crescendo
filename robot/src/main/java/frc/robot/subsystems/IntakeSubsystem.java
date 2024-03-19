@@ -14,7 +14,7 @@ import frc.robot.RobotMap;
 import frc.robot.util.Constants.IntakeConstants;
 
 public class IntakeSubsystem extends SubsystemBase {
-  private boolean _hasIndexedPiece = true;
+  private boolean _possesesIndexedPiece = true;
   private boolean _finishedIndexingForward = true;
 
   private BufferedDigitalInput _pieceSensorIntake = new BufferedDigitalInput(RobotMap.INTAKE_INTAKE_SENSOR_DIO_PORT, 3, false,
@@ -93,22 +93,22 @@ public class IntakeSubsystem extends SubsystemBase {
   
 
   public void updatePieceIndexer() {
-    if (intakeHasPiece() == false) {
+    if (hasPieceAnywhere() == false) {
       clearIndexBooleans();
     }
   }
 
   public void clearIndexBooleans() {
-    setHasIndexedPiece(false);
+    setPossesesIndexedPiece(false);
     setFinishedIndexingForward(false);
   }
 
-  public void setHasIndexedPiece(boolean hasIndexedPiece) {
-    _hasIndexedPiece = hasIndexedPiece;
+  public void setPossesesIndexedPiece(boolean hasIndexedPiece) {
+    _possesesIndexedPiece = hasIndexedPiece;
   }
 
-  public boolean getHasIndexedPiece() {
-    return _hasIndexedPiece;
+  public boolean getPossesesIndexedPiece() {
+    return _possesesIndexedPiece;
   }
 
   public void setFinishedIndexingForward(boolean finishedIndexingForward) {
@@ -119,10 +119,14 @@ public class IntakeSubsystem extends SubsystemBase {
     return _finishedIndexingForward;
   }
 
+  public boolean hasPieceAnywhere() {
+    return this.intakeHasPiece()
+      || this.feederHasPiece()
+      || Robot.SHOOTER_SUBSYSTEM.hasPiece();
+  }
+
   public boolean driverCanIntake() {
-    return _pieceSensorIntake.get() == false
-      && _pieceSensorFeeder.get() == false
-      && Robot.SHOOTER_SUBSYSTEM.hasPiece() == false;
+    return this.hasPieceAnywhere() == false;
   }
 
   @Override
@@ -131,6 +135,8 @@ public class IntakeSubsystem extends SubsystemBase {
     _pieceSensorFeeder.maintainState();
     SmartDashboard.putBoolean("Intake Piece", this.intakeHasPiece());
     SmartDashboard.putBoolean("Feeder Piece", this.feederHasPiece());
+    SmartDashboard.putBoolean("Intake Posesses Index Piece", this.getPossesesIndexedPiece());
+    SmartDashboard.putBoolean("Intake Finished Index Forward", this.getFinishedIndexingForward());
 
     updatePieceIndexer();
   }

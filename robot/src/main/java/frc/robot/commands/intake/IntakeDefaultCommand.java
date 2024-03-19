@@ -20,12 +20,12 @@ public class IntakeDefaultCommand extends Command {
     // The finish condition is when we have already finished indexing forward, and the shooter no longer has a piece.
     // This means the piece got to the shooter and was then backed out from it.
     if (Robot.INTAKE_SUBSYSTEM.getFinishedIndexingForward() == true && Robot.SHOOTER_SUBSYSTEM.hasPiece() == false) {
-        Robot.INTAKE_SUBSYSTEM.setHasIndexedPiece(true);
+        Robot.INTAKE_SUBSYSTEM.setPossesesIndexedPiece(true);
         System.out.println("Intake default command: indexed piece");
     }
 
     // No need to index if the piece has already been indexed, or there's no piece at all.
-    if (Robot.INTAKE_SUBSYSTEM.getHasIndexedPiece() == true || Robot.INTAKE_SUBSYSTEM.driverCanIntake()) {
+    if (Robot.INTAKE_SUBSYSTEM.getPossesesIndexedPiece() == true || Robot.INTAKE_SUBSYSTEM.driverCanIntake()) {
         Robot.INTAKE_SUBSYSTEM.stop();
     }
     else {
@@ -34,7 +34,7 @@ public class IntakeDefaultCommand extends Command {
         if (Robot.SHOOTER_SUBSYSTEM.hasPiece()) {
             Robot.INTAKE_SUBSYSTEM.setFinishedIndexingForward(true);
             Robot.INTAKE_SUBSYSTEM.indexPieceBackward();
-            System.out.println("Intake default command: index piece backward");
+            // System.out.println("Intake default command: index piece backward");
         }
         else {
             if (Robot.INTAKE_SUBSYSTEM.feederHasPiece()) {

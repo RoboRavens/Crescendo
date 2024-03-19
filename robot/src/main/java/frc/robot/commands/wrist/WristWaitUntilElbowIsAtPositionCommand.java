@@ -4,47 +4,40 @@
 
 package frc.robot.commands.wrist;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
+import frc.robot.subsystems.ElbowSubsystem;
+import frc.robot.util.Constants.ElbowConstants;
 
-public class WristDefaultCommand extends Command {
-  private Timer _acquiesceTimer = new Timer();
-  private boolean _acquiesced = false;
-
+public class WristWaitUntilElbowIsAtPositionCommand extends Command {
   /** Creates a new WristDefaultCommand. */
-  public WristDefaultCommand() {
+  double _elbowTargetPosition;
+  public WristWaitUntilElbowIsAtPositionCommand(double elbowTargetPositionDegrees) {
+    _elbowTargetPosition = ElbowSubsystem.getPositionFromRadians(Math.toRadians(elbowTargetPositionDegrees));
     addRequirements(Robot.WRIST_SUBSYSTEM);
-    _acquiesceTimer.start();
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    System.out.println("WristDefaultCommand initialize");
+    System.out.println("WristWaitUntilElbowIsAtPositionCommand initialize");
     Robot.WRIST_SUBSYSTEM.goToPosition(Robot.WRIST_SUBSYSTEM.getTargetPosition());
-    _acquiesceTimer.reset();
-    _acquiesced = false;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (_acquiesced == false && _acquiesceTimer.get() > 3) {
-      _acquiesced = true;
-      Robot.WRIST_SUBSYSTEM.goToPosition(Robot.WRIST_SUBSYSTEM.getPosition());
-    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    System.out.println("WristDefaultCommand end");
+    System.out.println("WristWaitUntilElbowIsAtPositionCommand end");
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return Math.abs(Robot.ELBOW_SUBSYSTEM.getPosition() - _elbowTargetPosition) <= ElbowConstants.IS_AT_SETPOINT_BUFFER;
   }
 }

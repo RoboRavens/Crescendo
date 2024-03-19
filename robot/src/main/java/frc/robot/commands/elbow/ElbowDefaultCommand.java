@@ -4,10 +4,14 @@
 
 package frc.robot.commands.elbow;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
 
 public class ElbowDefaultCommand extends Command {
+  private Timer _acquiesceTimer = new Timer();
+  private boolean _acquiesced = false;
+
   /** Creates a new ElbowHoldPositionCommand. */
   public ElbowDefaultCommand() {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -19,11 +23,18 @@ public class ElbowDefaultCommand extends Command {
   public void initialize() {
     System.out.println("ElbowDefaultCommand: initialize");
     Robot.ELBOW_SUBSYSTEM.goToPosition(Robot.ELBOW_SUBSYSTEM.getTargetPosition());
+    _acquiesceTimer.reset();
+    _acquiesced = false;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    if (_acquiesced == false && _acquiesceTimer.get() > 3) {
+      _acquiesced = true;
+      Robot.ELBOW_SUBSYSTEM.goToPosition(Robot.ELBOW_SUBSYSTEM.getPosition());
+    }
+  }
 
   // Called once the command ends or is interrupted.
   @Override
