@@ -362,6 +362,9 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
     var roll = this.getRoll();
     SmartDashboard.putNumber("roll", roll);
     SmartDashboard.putNumber("Gyroscope rotation (degrees)", getGyroscopeRotation().getDegrees());
+
+    SmartDashboard.putNumber("Distance From Speaker", this.getDistanceFromSpeaker());
+    SmartDashboard.putBoolean("Rotation In Speaker Range", this.getIsRobotRotationInSpeakerRange());
   }
 
   // public boolean drivetrainIsAtTargetCoordinates() {
@@ -511,7 +514,8 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
   }
 
   public double getYOffsetFromSpeaker() {
-    return getPoseY() - FieldConstants.BLUE_SPEAKER_X;
+    var speakerY = Robot.allianceColor == Alliance.Blue ? FieldConstants.BLUE_SPEAKER_Y : FieldConstants.RED_SPEAKER_Y;
+    return getPoseY() - speakerY;
   }
 
   /**

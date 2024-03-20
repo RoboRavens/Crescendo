@@ -15,7 +15,7 @@ public class ClimberSubsystem extends SubsystemBase {
   private CANSparkMax _climberMotor;
 
   /** Creates a new ClimberSubsystem. */
-  public ClimberSubsystem(int deviceID) {
+  public ClimberSubsystem(int deviceID, boolean reverse) {
     Timer _timer = new Timer();
     _timer.start();
     System.out.println("ClimberSubsystem ID " + deviceID + " starting motor config at time " + _timer.get());
@@ -25,6 +25,7 @@ public class ClimberSubsystem extends SubsystemBase {
     System.out.println("ClimberSubsystem ID " + deviceID + " restored factory defaults at time " + _timer.get());
     _climberMotor.setIdleMode(IdleMode.kBrake);
     System.out.println("ClimberSubsystem ID " + deviceID + " set idle mode to brake at time " + _timer.get());
+    _climberMotor.setInverted(reverse);
   }
 
   public void setPower(double power) {

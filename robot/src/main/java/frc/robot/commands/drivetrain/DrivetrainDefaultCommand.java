@@ -65,14 +65,15 @@ public class DrivetrainDefaultCommand extends Command {
                 y = y * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND * cutPower;
                 r = r * Constants.DRIVE_MAX_TURN_RADIANS_PER_SECOND * cutPower;
 
-                r = AngularPositionHolder.GetInstance().getAngularVelocity(r, a.getRadians());
-
                 if (Robot.autoRotationAlignEnabled) {
                     double currentRotation = Robot.DRIVETRAIN_SUBSYSTEM.getPoseRotation().getRadians();
                     double rotationOffsetFromCenterOfSpeaker = Robot.DRIVETRAIN_SUBSYSTEM.getAngleOffsetFromCenterOfSpeaker();
                     double targetRotation = currentRotation - rotationOffsetFromCenterOfSpeaker;
                     r = getAngularVelocityForAlignment(targetRotation);
                 }
+
+                // angular position holder only acts if r == 0
+                r = AngularPositionHolder.GetInstance().getAngularVelocity(r, a.getRadians());
 
                 var targetChassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
                     x, // x translation

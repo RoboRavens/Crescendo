@@ -114,6 +114,22 @@ public class ShooterSubsystem extends SubsystemBase {
         this._rightTargetSpeed = _rightTargetSpeed;
     }
 
+    public boolean shooterUpToSpeed() {
+        return this.leftShooterAtSpeed() && this.rightShooterAtSpeed();
+    }
+
+    private boolean leftShooterAtSpeed() {
+        double currentLeftSpeed = _leftTalonFX.getVelocity().getValueAsDouble();
+        double absDiff = Math.abs(_leftTargetSpeed - currentLeftSpeed);
+        return absDiff < ShooterConstants.IS_AT_TARGET_SPEED_BUFFER;
+    }
+
+    private boolean rightShooterAtSpeed() {
+        double currentRightSpeed = _rightTalonFX.getVelocity().getValueAsDouble();
+        double absDiff = Math.abs(_rightTargetSpeed - currentRightSpeed);
+        return absDiff < ShooterConstants.IS_AT_TARGET_SPEED_BUFFER;
+    }
+
     public double getShootingAngleFormula(double distance, double shooterHeightMeters) {
         double denumerator = 2 * ShooterConstants.GRAVITY_ACCELERATION * Math.pow(distance, 2);
         double numerator1 = 2 * Math.pow(ShooterConstants.INITIAL_NOTE_SPEED, 2) * distance;
@@ -149,5 +165,8 @@ public class ShooterSubsystem extends SubsystemBase {
     
     SmartDashboard.putNumber("Shooter Target Left Diff", _leftTargetSpeed - currentLeftSpeed);
     SmartDashboard.putNumber("Shooter Target Right Diff", _rightTargetSpeed - currentRightSpeed);
+
+    SmartDashboard.putBoolean("Shooter Left At Speed", this.leftShooterAtSpeed());
+    SmartDashboard.putBoolean("Shooter Right At Speed", this.rightShooterAtSpeed());
   }
 }

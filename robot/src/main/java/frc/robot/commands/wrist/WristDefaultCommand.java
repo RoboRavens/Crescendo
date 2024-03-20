@@ -34,7 +34,7 @@ public class WristDefaultCommand extends Command {
     if (_acquiesced == false && _acquiesceTimer.get() > 3) {
       _acquiesced = true;
       if (Robot.WRIST_SUBSYSTEM.getTargetPosition() == LimbSetpoint.GROUND_PICKUP.getWristRotationPosition()) {
-        Robot.WRIST_SUBSYSTEM.stopWristRotation();
+        // Robot.WRIST_SUBSYSTEM.stopWristRotation();
       }
     }
   }
