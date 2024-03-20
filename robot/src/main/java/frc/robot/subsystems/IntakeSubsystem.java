@@ -53,7 +53,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public void reverseIntake() {
-    this.setPowerManually(IntakeConstants.INTAKE_MOTOR_SPEED * -1);
+    this.setPowerManually(IntakeConstants.INTAKE_REVERSE_MOTOR_SPEED);
   }
 
   public void startIntakeFeeder() {

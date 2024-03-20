@@ -347,7 +347,7 @@ public class Robot extends TimedRobot {
       LED_SUBSYSTEM.setPattern(LEDsPattern.Solid);
     }
 
-    if (shooterAtSpeed && hasPieceAnywhere) {
+    if (shooterAtSpeed && !hasPieceAnywhere) {
       LED_SUBSYSTEM.setColor(Color.kYellow);
     } else if (robotSeesNote) {
       LED_SUBSYSTEM.setColor(Color.kOrange);

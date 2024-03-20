@@ -8,6 +8,7 @@ package frc.robot.util.Constants;
 public class IntakeConstants {
 
     public static final double INTAKE_MOTOR_SPEED = .5;
+    public static final double INTAKE_REVERSE_MOTOR_SPEED = -.2;
     public static final double INTAKE_MOTOR_TELEOP_SPEED = .5;
     public static final double INTAKE_FEEDER_SPEED = 1;
     public static final double INTAKE_MOTOR_STOP = 0;
@@ -19,6 +20,6 @@ public class IntakeConstants {
     public static final double MAX_INTAKE_RPM = 8000;
     public static final double PRE_SHOOTER_REV_REVERSE_SPEED = .4;
     public static final double INTAKE_INDEX_PIECE_FORWARD_MOTOR_SPEED = 0.05;
-    public static final double INTAKE_INDEX_PIECE_BACKWARD_MOTOR_SPEED = 0.015;
+    public static final double INTAKE_INDEX_PIECE_BACKWARD_MOTOR_SPEED = 0.022;
     public static final double INTAKE_SPEED_BEFORE_FEEDER_SENSOR = 0.35;
 }
