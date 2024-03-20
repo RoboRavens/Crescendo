@@ -7,8 +7,9 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.util.Constants.IntakeConstants;
 import frc.robot.util.Constants.LEDsConstants;
 
 public class LEDsSubsystem24 extends SubsystemBase {
@@ -19,25 +20,99 @@ public class LEDsSubsystem24 extends SubsystemBase {
   }
 
   private AddressableLED m_led = new AddressableLED(0);
-  boolean blinkOn = false;
-  Timer timer = new Timer();
+  boolean m_blinkOn = false;
+  Timer m_blinkTimer = new Timer();
   AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(LEDsConstants.TOTAL_LEDS_STRIP_LENGTH);
   double m_rainbowFirstPixelHue = 0;
-  int m_value = 0;
+  int m_rainbowValue = 0;
 
-    @Override
+  private LEDsPattern m_pattern;
+  private Color m_colorToBe;
+  private Color m_currentColor;
+
+  public LEDsSubsystem24() {
+    m_blinkTimer.reset();
+    m_blinkTimer.start();
+
+    m_led.setLength(m_ledBuffer.getLength());
+    m_led.start();
+  }
+
+  @Override
   public void periodic() {
-
+    switch (m_pattern) {
+      case Rainbow:
+        this.rainbowLeds();
+        break;
+      case Blinking:
+        this.blinkLEDsColor(m_colorToBe, Color.kBlack);
+      case Solid:
+        this.ledsSolidColorEfficiently(m_colorToBe);
+      default:
+        break;
+    }
   }
 
-  public void setPattern() {
-
+  public void setPattern(LEDsPattern pattern) {
+    m_pattern = pattern;
   }
 
-  public void setColor() {
-
+  public void setColor(Color color) {
+    m_colorToBe = color;
   }
 
+  // only updates buffer if color has changed
+  private void ledsSolidColorEfficiently(Color color) {
+    if (m_currentColor != color) {
+      int r = (int)(color.red * 255.0);
+      int g = (int)(color.green * 255.0);
+      int b = (int)(color.blue * 255.0);
+      SmartDashboard.putString("LED Color", color.toString());
+      SmartDashboard.putString("LED RGB", r + ":" + g + ":" + b);
+      this.ledsSolidColor(r,g,b);
+      m_currentColor = color;
+    }
+  }
+
+  // sets all the leds to the same color
+  private void ledsSolidColor(int red, int green, int blue) {
+    for (int i = 0; i < m_ledBuffer.getLength(); i++) {
+      m_ledBuffer.setRGB(i, red, green, blue);
+    }
+
+    m_led.setData(m_ledBuffer);
+  }
+
+  private void blinkLEDsColor(Color colorOn, Color colorOff) {
+    if (m_blinkTimer.get() >= 0.25) {
+      var color = m_blinkOn ? colorOn : colorOff;
+      this.ledsSolidColorEfficiently(color);
+      m_blinkTimer.reset();
+    }
+  }
+
+  // sets the leds to a rainbow based off the total length of the leds
+  private void rainbowLeds() {
+    m_currentColor = null;
+    SmartDashboard.putString("LED Color", "rainbow");
+    SmartDashboard.putString("LED RGB", "rainbow");
+    double hueMin = 110.5;
+    double hueMax = 133;
+    for (int i = 0; i < m_ledBuffer.getLength(); i++) {
+      final int hue = (int) Math.round((m_rainbowFirstPixelHue + (i * hueMin / m_ledBuffer.getLength())) % hueMax);
+      m_ledBuffer.setHSV(i, hue, 255, m_rainbowValue);
+    }
+
+    if (m_rainbowValue < 255) {
+      m_rainbowValue += 25;
+    }
+    m_rainbowFirstPixelHue += 0.5;
+    m_rainbowFirstPixelHue %= hueMax;
+
+    m_led.setData(m_ledBuffer);
+  }
+
+  /*
   public void setInputAngle(double inputAngle) {
     for (var i = 0; i < m_ledBuffer.getLength(); i++) {
       m_ledBuffer.setHSV(i, (int) inputAngle / 2, 255, 255);
@@ -81,25 +156,12 @@ public class LEDsSubsystem24 extends SubsystemBase {
     }
   }
 
-  public LEDsSubsystem24() {
-    timer.reset();
-    timer.start();
-
-    m_led.setLength(m_ledBuffer.getLength());
-    m_led.start();
-  }
-
   public void setColor(int r, int g, int b) {
-
     for (var i = 0; i < m_ledBuffer.getLength(); i++) {
-
       m_ledBuffer.setRGB(i, r, g, b);
     }
-    m_led.setData(m_ledBuffer);
-  }
 
-  public void setData(AddressableLEDBuffer ledBuffer) {
-    m_led.setData(ledBuffer);
+    m_led.setData(m_ledBuffer);
   }
 
   // sets every other led to a different color
@@ -116,18 +178,18 @@ public class LEDsSubsystem24 extends SubsystemBase {
   public void ledsBlinkThenStop(int redInC1, int greenInC1, int blueInC1, int redInC2, int greenInC2, int blueInC2) {
     int timesBlinked = 0;
 
-    if (timer.get() >= 0.25) {
+    if (m_blinkTimer.get() >= 0.25) {
       // toggle state
-      if (blinkOn) {
-        blinkOn = false;
+      if (m_blinkOn) {
+        m_blinkOn = false;
       } else {
-        blinkOn = true;
+        m_blinkOn = true;
       }
-      timer.reset();
+      m_blinkTimer.reset();
     }
 
     if (timesBlinked < 10) {
-      if (blinkOn == true) {
+      if (m_blinkOn == true) {
         for (int i = 0; i < m_ledBuffer.getLength(); i++) {
           m_ledBuffer.setRGB(i, redInC1, greenInC1, blueInC1);
         }
@@ -150,17 +212,17 @@ public class LEDsSubsystem24 extends SubsystemBase {
 
   // blinks the LEDs on and off every second
   public void ledsBlinkColors(int redInC1, int greenInC1, int blueInC1, int redInC2, int greenInC2, int blueInC2) {
-    if (timer.get() >= 1) {
+    if (m_blinkTimer.get() >= 1) {
       // toggle state
-      if (blinkOn) {
-        blinkOn = false;
+      if (m_blinkOn) {
+        m_blinkOn = false;
       } else {
-        blinkOn = true;
+        m_blinkOn = true;
       }
-      timer.reset();
+      m_blinkTimer.reset();
     }
 
-    if (blinkOn == true) {
+    if (m_blinkOn == true) {
       for (int i = 0; i < m_ledBuffer.getLength(); i++) {
         m_ledBuffer.setRGB(i, redInC1, greenInC1, blueInC1);
       }
@@ -169,24 +231,6 @@ public class LEDsSubsystem24 extends SubsystemBase {
         m_ledBuffer.setRGB(i, redInC2, greenInC2, blueInC2);
       }
     }
-    setData(m_ledBuffer);
-  }
-
-  // sets the leds to a rainbow based off the total length of the leds
-  public void rainbowLeds() {
-    double hueMin = 110.5;
-    double hueMax = 133;
-    for (int i = 0; i < m_ledBuffer.getLength(); i++) {
-      final int hue = (int) Math.round((m_rainbowFirstPixelHue + (i * hueMin / m_ledBuffer.getLength())) % hueMax);
-      m_ledBuffer.setHSV(i, hue, 255, m_value);
-    }
-
-    if (m_value < 255) {
-      m_value += 25;
-    }
-    m_rainbowFirstPixelHue += 0.5;
-    m_rainbowFirstPixelHue %= hueMax;
-
     setData(m_ledBuffer);
   }
 
@@ -212,13 +256,5 @@ public class LEDsSubsystem24 extends SubsystemBase {
 
     setData(m_ledBuffer);
   }
-
-  // sets all the leds to the same color
-  public void ledsSolidColor(int red, int green, int blue) {
-    for (int i = 0; i < m_ledBuffer.getLength(); i++) {
-      m_ledBuffer.setRGB(i, red, green, blue);
-    }
-
-    setData(m_ledBuffer);
-  }
+  */
 }

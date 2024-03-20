@@ -14,6 +14,8 @@ public class ShooterConstants {
     public static final double rmaxRPM = 210; // shooter wheel rotations per second
     public static final double rShooterVelocityPercentage = .57;
 
+    public static final double IS_AT_TARGET_SPEED_BUFFER = 20;
+
     public static final double INITIAL_NOTE_SPEED = 20; // in m/s
     public static final double GRAVITY_ACCELERATION = 9.81;
     public static final double SPEAKER_HEIGHT_METERS = 2.047801077;

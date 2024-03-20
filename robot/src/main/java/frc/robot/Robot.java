@@ -9,47 +9,34 @@ import java.util.function.BooleanSupplier;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.controls.ButtonCode;
-import frc.controls.OperatorController;
 import frc.controls.ButtonCode.Buttons;
 import frc.controls.ButtonCode.Toggle;
+import frc.controls.OperatorController;
 import frc.robot.commands.compound.LimbGoToSetpointCommand;
-import frc.robot.commands.elbow.ElbowMoveManuallyCommand;
-import frc.robot.commands.elbow.ElbowOffsetCommand;
 import frc.robot.commands.drivetrain.DriveTwoInchesCommand;
 import frc.robot.commands.drivetrain.DrivetrainAutoAimCommand;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
 import frc.robot.commands.elbow.ElbowDefaultCommand;
-import frc.robot.commands.elbow.ElbowGoToPositionCommand;
 import frc.robot.commands.elbow.ElbowMoveManuallyCommand;
-import frc.robot.commands.intake.IntakeCommand;
-import frc.robot.commands.intake.IntakeDefaultCommand;
-import frc.robot.commands.intake.IntakePreShooterRevCommand;
-import frc.robot.commands.intake.IntakeReverseCommand;
-import frc.robot.commands.intake.FeedCommand;
+import frc.robot.commands.elbow.ElbowOffsetCommand;
 import frc.robot.commands.intake.FeedWithSensorCommand;
-import frc.robot.commands.intake.IntakeWithSensorCommand;
+import frc.robot.commands.intake.IntakeDefaultCommand;
+import frc.robot.commands.intake.IntakeReverseCommand;
 import frc.robot.commands.intake.IntakeWithSensorTeleopCommand;
-import frc.robot.commands.leds.LEDsBlinkCommand;
-import frc.robot.commands.leds.LEDsBlinkWhenShooterOnCommand;
-import frc.robot.commands.leds.LEDsRainbowCommand;
-import frc.robot.commands.leds.LEDsSolidColorCommand;
-import frc.robot.commands.shooter.ShootCommand;
 import frc.robot.commands.shooter.StartShooterCommand;
 import frc.robot.commands.wrist.WristDefaultCommand;
-import frc.robot.commands.wrist.WristGoToPositionCommand;
 import frc.robot.commands.wrist.WristGoToSpeakerAngleCommand;
 import frc.robot.commands.wrist.WristMoveManuallyCommand;
 import frc.robot.commands.wrist.WristOffsetCommand;
@@ -68,11 +55,9 @@ import frc.robot.subsystems.ReactDashSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TeleopDashboardSubsystem;
 import frc.robot.subsystems.WristSubsystem;
+import frc.robot.subsystems.LEDsSubsystem24.LEDsPattern;
 import frc.robot.util.Constants.Constants;
-import frc.robot.util.Constants.ElbowConstants;
-import frc.robot.util.Constants.WristConstants;
 import frc.robot.util.arm.LimbSetpoint;
-import frc.util.StateManagement;
 import frc.util.StateManagement.ArmUpTargetState;
 import frc.util.StateManagement.ClimbPositionTargetState;
 import frc.util.StateManagement.DrivetrainState;
@@ -117,13 +102,12 @@ public class Robot extends TimedRobot {
   public static final ShooterSubsystem SHOOTER_SUBSYSTEM = new ShooterSubsystem();
   public static final ElbowSubsystem ELBOW_SUBSYSTEM = new ElbowSubsystem();
   public static final WristSubsystem WRIST_SUBSYSTEM = new WristSubsystem();
-  public static final LEDsSubsystem24 ledsSubsystem24 = new LEDsSubsystem24();
+  public static final LEDsSubsystem24 LED_SUBSYSTEM = new LEDsSubsystem24();
   public static final PathPlannerConfigurator PATH_PLANNER_CONFIGURATOR = new PathPlannerConfigurator();
   public static final IntakeDefaultCommand INTAKE_DEFAULT_COMMAND = new IntakeDefaultCommand();
-  public static final LEDsRainbowCommand LEDS_RAINBOW_COMMAND = new LEDsRainbowCommand();
   public static final WristSetPowerCommand WRIST_SET_POWER_COMMAND = new WristSetPowerCommand();
-  public static final ClimberSubsystem LEFT_CLIMBER_SUBSYSTEM = new ClimberSubsystem(RobotMap.LEFT_CLIMBER_MOTOR);
-  public static final ClimberSubsystem RIGHT_CLIMBER_SUBSYSTEM = new ClimberSubsystem(RobotMap.RIGHT_CLIMBER_MOTOR);
+  public static final ClimberSubsystem LEFT_CLIMBER_SUBSYSTEM = new ClimberSubsystem(RobotMap.LEFT_CLIMBER_MOTOR, true);
+  public static final ClimberSubsystem RIGHT_CLIMBER_SUBSYSTEM = new ClimberSubsystem(RobotMap.RIGHT_CLIMBER_MOTOR, false);
 
   // DEFAULT COMMANDS
   public static final DrivetrainDefaultCommand DRIVETRAIN_DEFAULT_COMMAND = new DrivetrainDefaultCommand();
@@ -169,17 +153,6 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Arm Command", ELBOW_SUBSYSTEM);
     SmartDashboard.putData("Intake Command", INTAKE_SUBSYSTEM);
     SmartDashboard.putData("Shooter Command", SHOOTER_SUBSYSTEM);
-
-    /*
-    if (SHOOTER_SUBSYSTEM.hasPiece()) {
-      LIMELIGHT_SUBSYSTEM_ONE.turnLedOn();
-      ledsSubsystem24.setColor(50, 168, 82);
-    }
-    else {
-      LIMELIGHT_SUBSYSTEM_ONE.turnLedOff();
-      ledsSubsystem24.setColor(0, 0, 0);
-    }
-    */
   }
 
   /**
@@ -295,7 +268,8 @@ public class Robot extends TimedRobot {
 	/** This function is run once each time the robot enters autonomous mode. */
   @Override
   public void autonomousInit() {
-    ledsSubsystem24.setColor(0, 0, 0);
+    LED_SUBSYSTEM.setPattern(LEDsPattern.Solid);
+    LED_SUBSYSTEM.setColor(Color.kBlack);
     setDriverStationData();
     // PathPlannerTrajectory traj = exampleChoreoTraj.getTrajectory(new
     // ChassisSpeeds(0, 0, 0), new Rotation2d(0, 0));
@@ -323,7 +297,6 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     setDriverStationData();
-    ledsSubsystem24.setColor(0, 0, 0);
   }
 
   /** This function is called periodically during teleoperated mode. */
@@ -335,7 +308,8 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters test mode. */
   @Override
   public void testInit() {
-    ledsSubsystem24.setColor(0, 0, 0);
+    LED_SUBSYSTEM.setPattern(LEDsPattern.Solid);
+    LED_SUBSYSTEM.setColor(Color.kBlack);
   }
 
   /** This function is called periodically during test mode. */
@@ -354,30 +328,33 @@ public class Robot extends TimedRobot {
 
   private void runLedLogic() {
     boolean shooterAtSpeed = SHOOTER_SUBSYSTEM.shooterUpToSpeed();
-    boolean aimedAtGoal = false;
+    boolean hasPieceAnywhere = INTAKE_SUBSYSTEM.hasPieceAnywhere();
+    boolean aimedAtGoal = DRIVETRAIN_SUBSYSTEM.getIsRobotRotationInSpeakerRange();
     boolean posessesIndexedPiece = INTAKE_SUBSYSTEM.getPossesesIndexedPiece();
     boolean robotSeesNote = Robot.LIMELIGHT_PICKUP.hasVisionTargetBuffered()
       && INTAKE_TARGET_STATE == IntakeTargetState.GROUND
       && Robot.INTAKE_SUBSYSTEM.driverCanIntake();
 
     if (shooterAtSpeed) {
-      // blink
+      LED_SUBSYSTEM.setPattern(LEDsPattern.Blinking);
     } else {
-      // solid
+      LED_SUBSYSTEM.setPattern(LEDsPattern.Solid);
     }
 
-    if (robotSeesNote) {
-      // orange
+    if (shooterAtSpeed && hasPieceAnywhere) {
+      LED_SUBSYSTEM.setColor(Color.kYellow);
+    } else if (robotSeesNote) {
+      LED_SUBSYSTEM.setColor(Color.kOrange);
     } else if (posessesIndexedPiece) {
       if (aimedAtGoal) {
-        // green
+        LED_SUBSYSTEM.setColor(Color.kGreen);
       } else {
-        // blue
+        LED_SUBSYSTEM.setColor(Color.kBlue);
       }
-    } else if (INTAKE_SUBSYSTEM.hasPieceAnywhere()) {
-      // purple
+    } else if (hasPieceAnywhere) {
+      LED_SUBSYSTEM.setColor(Color.kPurple);
     } else {
-      // black
+      LED_SUBSYSTEM.setColor(Color.kBlack);
     }
   }
 
@@ -458,7 +435,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    ledsSubsystem24.rainbowLeds();
+    LED_SUBSYSTEM.setPattern(LEDsPattern.Rainbow);
   }
 
   private void setNonButtonDependentOverallStates() {
