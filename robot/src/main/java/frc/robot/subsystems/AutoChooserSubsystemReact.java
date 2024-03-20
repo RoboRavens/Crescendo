@@ -105,6 +105,10 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
       new AutoMode("B14: Amp Side Center Optimized Auto",
       () -> new PathPlannerAuto("Amp Side Center Optimized Auto"))
     );
+    this.addOption(
+      new AutoMode("B15: 5 Note Center Note First Auto",
+      () -> new PathPlannerAuto("5 Note Center Note First Auto"))
+    );
 
     // RED SIDE
     this.addRedDefault(
@@ -162,6 +166,10 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
     this.addOption(
       new AutoMode("R14: Amp Side Center Optimized Auto",
       () -> new PathPlannerAuto("Amp Side Center Optimized Auto"))
+    );
+    this.addOption(
+      new AutoMode("R15: 5 Note Center Note First Auto",
+      () -> new PathPlannerAuto("5 Note Center Note First Auto"))
     );
   }
 

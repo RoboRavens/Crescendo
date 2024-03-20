@@ -1,0 +1,100 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.37,
+        "y": 5.56
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.0283806616115356,
+        "y": 5.152768080143863
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.9066934025451485,
+        "y": 4.8248646568619815
+      },
+      "prevControl": {
+        "x": 2.377877042188964,
+        "y": 4.874441190645374
+      },
+      "nextControl": {
+        "x": 3.2814401720101576,
+        "y": 4.789732147224637
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 4.007512037848611,
+        "y": 4.8248646568619815
+      },
+      "prevControl": {
+        "x": 3.715649256056785,
+        "y": 4.847906455424495
+      },
+      "nextControl": {
+        "x": 4.452523826588308,
+        "y": 4.789732147224637
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.412812423342392,
+        "y": 4.473539560488536
+      },
+      "prevControl": {
+        "x": 4.959035209188498,
+        "y": 4.5695308942518595
+      },
+      "nextControl": {
+        "x": 6.021775923723031,
+        "y": 4.34472035848494
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.907220607593853,
+        "y": 4.11050362756931
+      },
+      "prevControl": {
+        "x": 6.583896077920542,
+        "y": 4.262744502664469
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 2.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "5 Note Center Note First",
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}
