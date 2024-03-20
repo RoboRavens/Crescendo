@@ -1,22 +1,23 @@
 package frc.robot.util.Constants;
 
 public class ShooterConstants {
-    
+    // every 1 % power is roughly 150 RPM or 2.5 RPS
     public static final double lkP = 0.11;
     public static final double lkI = 0;
     public static final double lkD = 0;
-    public static final double lmaxRPM = 240; // shooter wheel rotations per second
-    public static final double lShooterVelocityPercentage = .60;
-    public static final double TARGET_RPS_RIGHT = lmaxRPM * lShooterVelocityPercentage;
+    public static final double FF_FOR_TARGET_LEFT = .37;
+    public static final double TARGET_RPS_LEFT = 96; // lmaxRPM * lShooterVelocityPercentage;
+    public static final double ACTUAL_PID_RPS_FOR_SOME_REASON_LEFT = 71;
 
+    // right shooter is slightly stronger, every 1 % power is roughly 150 RPM or 2.5 RPS
     public static final double rkP = 0.11;
     public static final double rkI = 0;
     public static final double rkD = 0;
-    public static final double rmaxRPM = 210; // shooter wheel rotations per second
-    public static final double rShooterVelocityPercentage = .57;
-    public static final double TARGET_RPS_LEFT = rmaxRPM * rShooterVelocityPercentage;
+    public static final double FF_FOR_TARGET_RIGHT = .56;
+    public static final double TARGET_RPS_RIGHT = 144; // rmaxRPM * rShooterVelocityPercentage;
+    public static final double ACTUAL_PID_RPS_FOR_SOME_REASON_RIGHT = 110;
 
-    public static final double IS_AT_TARGET_SPEED_BUFFER = 20;
+    public static final double IS_AT_TARGET_SPEED_BUFFER = 10;
 
     public static final double INITIAL_NOTE_SPEED = 20; // in m/s
     public static final double GRAVITY_ACCELERATION = 9.81;

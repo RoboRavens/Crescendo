@@ -61,7 +61,7 @@ public class OperatorController {
         _operatorController.leftTrigger().and(_operatorController.povRight()).onTrue(new WristIncrementPositionCommand());
         _operatorController.leftTrigger().and(_operatorController.povLeft()).onTrue(new WristDecrementPositionCommand());
         _operatorController.leftTrigger().negate().and(_operatorController.povDown()).onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SPEAKER_SCORING));
-        _operatorController.leftTrigger().negate().and(_operatorController.povUp()).onTrue(new ShooterTestingCommand());
+        _operatorController.leftTrigger().negate().and(_operatorController.povUp()).whileTrue(new ShooterTestingCommand());
 
         _operatorController.leftTrigger().and(_operatorController.rightTrigger()).and(_operatorController.start()).whileTrue(new ElbowSuspendLimitsCommand());
         _operatorController.leftTrigger().and(_operatorController.rightTrigger()).and(_operatorController.back()).whileTrue(new WristSuspendLimitsCommand());
