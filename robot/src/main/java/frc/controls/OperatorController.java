@@ -16,6 +16,7 @@ import frc.robot.commands.elbow.ElbowDecrementPositionCommand;
 import frc.robot.commands.elbow.ElbowIncrementPositionCommand;
 import frc.robot.commands.elbow.ElbowMoveWithJoystickCommand;
 import frc.robot.commands.elbow.ElbowSuspendLimitsCommand;
+import frc.robot.commands.shooter.ShooterTestingCommand;
 import frc.robot.commands.shooter.StartShooterCommand;
 import frc.robot.commands.wrist.WristDecrementPositionCommand;
 import frc.robot.commands.wrist.WristIncrementPositionCommand;
@@ -46,8 +47,6 @@ public class OperatorController {
         .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SOURCE_INTAKE));
         _operatorController.a()
         .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.GROUND_PICKUP));
-        _operatorController.leftTrigger().negate().and(_operatorController.povDown())
-            .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SPEAKER_SCORING));
         _operatorController.leftTrigger().and(_operatorController.rightBumper())
         .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.START_CONFIG_UP));
 
@@ -59,10 +58,11 @@ public class OperatorController {
    
         _operatorController.leftTrigger().and(_operatorController.povUp()).onTrue(new ElbowIncrementPositionCommand());
         _operatorController.leftTrigger().and(_operatorController.povDown()).onTrue(new ElbowDecrementPositionCommand());
-
         _operatorController.leftTrigger().and(_operatorController.povRight()).onTrue(new WristIncrementPositionCommand());
         _operatorController.leftTrigger().and(_operatorController.povLeft()).onTrue(new WristDecrementPositionCommand());
-        
+        _operatorController.leftTrigger().negate().and(_operatorController.povDown()).onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SPEAKER_SCORING));
+        _operatorController.leftTrigger().negate().and(_operatorController.povUp()).onTrue(new ShooterTestingCommand());
+
         _operatorController.leftTrigger().and(_operatorController.rightTrigger()).and(_operatorController.start()).whileTrue(new ElbowSuspendLimitsCommand());
         _operatorController.leftTrigger().and(_operatorController.rightTrigger()).and(_operatorController.back()).whileTrue(new WristSuspendLimitsCommand());
 

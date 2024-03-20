@@ -20,8 +20,6 @@ public class ShooterSubsystem extends SubsystemBase {
     private TalonFX _rightTalonFX = new TalonFX(RobotMap.SHOOTER_RIGHT_MOTOR_CAN_ID);
     private InterpolatingDoubleTreeMap shooterAngleMapUp = new InterpolatingDoubleTreeMap();
     private InterpolatingDoubleTreeMap shooterAngleMapDown = new InterpolatingDoubleTreeMap();
-    private double _leftTargetSpeed;
-    private double _rightTargetSpeed;
     final VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
 
 
@@ -45,6 +43,7 @@ public class ShooterSubsystem extends SubsystemBase {
         _rightTalonFX.getConfigurator().apply(talonFXConfiguration);
         _leftTalonFX.setNeutralMode(NeutralModeValue.Coast);
         _rightTalonFX.setNeutralMode(NeutralModeValue.Coast);
+        _leftTalonFX.setInverted(true);
 
         _leftTalonFX.getConfigurator().apply(leftSlot0Configs);
         _rightTalonFX.getConfigurator().apply(rightSlot0Configs);
@@ -98,36 +97,32 @@ public class ShooterSubsystem extends SubsystemBase {
         return angle;
     }
 
-    public double getLeftTargetSpeed() {
-        return _leftTargetSpeed;
-    }
-
-    public void setLeftTargetSpeed(double _leftTargetSpeed) {
-        this._leftTargetSpeed = _leftTargetSpeed;
-    }
-
-    public double getRightTargetSpeed() {
-        return _rightTargetSpeed;
-    }
-
-    public void setRightTargetSpeed(double _rightTargetSpeed) {
-        this._rightTargetSpeed = _rightTargetSpeed;
-    }
-
     public boolean shooterUpToSpeed() {
         return this.leftShooterAtSpeed() && this.rightShooterAtSpeed();
     }
 
     private boolean leftShooterAtSpeed() {
-        double currentLeftSpeed = _leftTalonFX.getVelocity().getValueAsDouble();
-        double absDiff = Math.abs(_leftTargetSpeed - currentLeftSpeed);
-        return absDiff < ShooterConstants.IS_AT_TARGET_SPEED_BUFFER;
+        // double targetSpeed = ShooterConstants.TARGET_RPS_LEFT;
+        double currentLeftSpeed = this.getLeftRpm();
+        return currentLeftSpeed > 50;
+        // double absDiff = Math.abs(targetSpeed - currentLeftSpeed);
+        // return absDiff < ShooterConstants.IS_AT_TARGET_SPEED_BUFFER;
     }
 
     private boolean rightShooterAtSpeed() {
-        double currentRightSpeed = _rightTalonFX.getVelocity().getValueAsDouble();
-        double absDiff = Math.abs(_rightTargetSpeed - currentRightSpeed);
-        return absDiff < ShooterConstants.IS_AT_TARGET_SPEED_BUFFER;
+        // double targetSpeed = ShooterConstants.TARGET_RPS_RIGHT;
+        double currentRightSpeed = this.getRightRpm();
+        return currentRightSpeed > 50;
+        // double absDiff = Math.abs(targetSpeed - currentRightSpeed);
+        // return absDiff < ShooterConstants.IS_AT_TARGET_SPEED_BUFFER;
+    }
+
+    private double getLeftRpm() {
+        return _leftTalonFX.getVelocity().getValueAsDouble();
+    }
+
+    private double getRightRpm() {
+        return _rightTalonFX.getVelocity().getValueAsDouble();
     }
 
     public double getShootingAngleFormula(double distance, double shooterHeightMeters) {
@@ -141,30 +136,28 @@ public class ShooterSubsystem extends SubsystemBase {
         return shootingAngle;
     }
 
-    private double _maxLeftSpeed;
-    private double _maxRightSpeed;
-
   @Override
   public void periodic(){
     _shooterPieceSensor.maintainState();
     SmartDashboard.putBoolean("Shooter Piece", this.hasPiece());
-    /*
-    _maxLeftSpeed = Math.max(_maxLeftSpeed, Math.abs(_leftTalonFX.getVelocity().getValueAsDouble()));
-    _maxRightSpeed = Math.max(_maxRightSpeed, Math.abs(_rightTalonFX.getVelocity().getValueAsDouble()));
-    SmartDashboard.putNumber("Shooter Max Left Speed", _maxLeftSpeed);
-    SmartDashboard.putNumber("Shooter Max Right Speed", _maxRightSpeed);
-    */
 
-    SmartDashboard.putNumber("Shooter Target Left Speed", _leftTargetSpeed);
-    SmartDashboard.putNumber("Shooter Target Right Speed", _rightTargetSpeed);
+    double leftMaxSpeed = SmartDashboard.getNumber("Shooter Max Left Speed", 0);
+    double rightMaxSpeed = SmartDashboard.getNumber("Shooter Max Right Speed", 0);
+    leftMaxSpeed = Math.max(leftMaxSpeed, Math.abs(_leftTalonFX.getVelocity().getValueAsDouble()));
+    rightMaxSpeed = Math.max(rightMaxSpeed, Math.abs(_rightTalonFX.getVelocity().getValueAsDouble()));
+    SmartDashboard.putNumber("Shooter Max Left Speed", leftMaxSpeed);
+    SmartDashboard.putNumber("Shooter Max Right Speed", rightMaxSpeed);
 
-    double currentLeftSpeed = _leftTalonFX.getVelocity().getValueAsDouble();
-    double currentRightSpeed = _rightTalonFX.getVelocity().getValueAsDouble();
+    SmartDashboard.putNumber("Shooter Target Left Speed", ShooterConstants.TARGET_RPS_LEFT);
+    SmartDashboard.putNumber("Shooter Target Right Speed", ShooterConstants.TARGET_RPS_RIGHT);
+
+    double currentLeftSpeed = this.getLeftRpm();
+    double currentRightSpeed = this.getRightRpm();
     SmartDashboard.putNumber("Shooter Current Left Speed", currentLeftSpeed);
     SmartDashboard.putNumber("Shooter Current Right Speed", currentRightSpeed);
     
-    SmartDashboard.putNumber("Shooter Target Left Diff", _leftTargetSpeed - currentLeftSpeed);
-    SmartDashboard.putNumber("Shooter Target Right Diff", _rightTargetSpeed - currentRightSpeed);
+    SmartDashboard.putNumber("Shooter Target Left Diff", ShooterConstants.TARGET_RPS_LEFT - currentLeftSpeed);
+    SmartDashboard.putNumber("Shooter Target Right Diff", ShooterConstants.TARGET_RPS_RIGHT - currentRightSpeed);
 
     SmartDashboard.putBoolean("Shooter Left At Speed", this.leftShooterAtSpeed());
     SmartDashboard.putBoolean("Shooter Right At Speed", this.rightShooterAtSpeed());

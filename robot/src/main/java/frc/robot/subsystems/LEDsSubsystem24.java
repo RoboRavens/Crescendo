@@ -46,8 +46,10 @@ public class LEDsSubsystem24 extends SubsystemBase {
         break;
       case Blinking:
         this.blinkLEDsColor(m_colorToBe, Color.kBlack);
+        break;
       case Solid:
         this.ledsSolidColorEfficiently(m_colorToBe);
+        break;
       default:
         break;
     }
@@ -63,7 +65,7 @@ public class LEDsSubsystem24 extends SubsystemBase {
 
   // only updates buffer if color has changed
   private void ledsSolidColorEfficiently(Color color) {
-    if (m_currentColor != color) {
+    //if (m_currentColor != color) {
       int r = (int)(color.red * 255.0);
       int g = (int)(color.green * 255.0);
       int b = (int)(color.blue * 255.0);
@@ -71,7 +73,7 @@ public class LEDsSubsystem24 extends SubsystemBase {
       SmartDashboard.putString("LED RGB", r + ":" + g + ":" + b);
       this.ledsSolidColor(r,g,b);
       m_currentColor = color;
-    }
+    //}
   }
 
   // sets all the leds to the same color

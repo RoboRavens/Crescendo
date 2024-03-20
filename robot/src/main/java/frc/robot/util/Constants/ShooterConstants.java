@@ -6,13 +6,15 @@ public class ShooterConstants {
     public static final double lkI = 0;
     public static final double lkD = 0;
     public static final double lmaxRPM = 240; // shooter wheel rotations per second
-    public static final double lShooterVelocityPercentage = -.60;
+    public static final double lShooterVelocityPercentage = .60;
+    public static final double TARGET_RPS_RIGHT = lmaxRPM * lShooterVelocityPercentage;
 
     public static final double rkP = 0.11;
     public static final double rkI = 0;
     public static final double rkD = 0;
     public static final double rmaxRPM = 210; // shooter wheel rotations per second
     public static final double rShooterVelocityPercentage = .57;
+    public static final double TARGET_RPS_LEFT = rmaxRPM * rShooterVelocityPercentage;
 
     public static final double IS_AT_TARGET_SPEED_BUFFER = 20;
 

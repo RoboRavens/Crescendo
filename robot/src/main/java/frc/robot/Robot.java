@@ -358,7 +358,7 @@ public class Robot extends TimedRobot {
     } else if (hasPieceAnywhere) {
       LED_SUBSYSTEM.setColor(Color.kPurple);
     } else {
-      LED_SUBSYSTEM.setColor(Color.kBlack);
+      LED_SUBSYSTEM.setColor(Color.kDarkSlateGray);
     }
   }
 
