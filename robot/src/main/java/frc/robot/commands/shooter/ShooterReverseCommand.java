@@ -6,6 +6,8 @@ package frc.robot.commands.shooter;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
+import frc.robot.util.Constants.ShooterConstants;
+import frc.robot.util.Constants.ShooterConstants;
 import frc.util.StateManagement.ShooterRevTargetState;
 
 public class ShooterReverseCommand extends Command {
@@ -18,7 +20,7 @@ public class ShooterReverseCommand extends Command {
   @Override
   public void initialize() {
     System.out.println("ShooterReverseCommand: Init");
-    Robot.SHOOTER_SUBSYSTEM.setPowerManually(-0.1);
+    Robot.SHOOTER_SUBSYSTEM.setPowerManually(ShooterConstants.REVERSE_SPEED_PERCENTAGE);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

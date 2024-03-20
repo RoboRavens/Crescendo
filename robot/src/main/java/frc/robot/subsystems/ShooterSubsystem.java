@@ -115,11 +115,11 @@ public class ShooterSubsystem extends SubsystemBase {
         return absDiff < ShooterConstants.IS_AT_TARGET_SPEED_BUFFER;
     }
 
-    private double getLeftRpm() {
+    public double getLeftRpm() {
         return _leftTalonFX.getVelocity().getValueAsDouble();
     }
 
-    private double getRightRpm() {
+    public double getRightRpm() {
         return _rightTalonFX.getVelocity().getValueAsDouble();
     }
 
