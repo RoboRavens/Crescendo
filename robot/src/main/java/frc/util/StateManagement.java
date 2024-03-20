@@ -77,7 +77,8 @@ public class StateManagement {
     }
     public enum DrivetrainState {
         FREEHAND,
-        ROBOT_ALIGN
+        ROBOT_ALIGN,
+        
     }
     // TODO: Set this state
     public enum LimelightDetectsNoteState {

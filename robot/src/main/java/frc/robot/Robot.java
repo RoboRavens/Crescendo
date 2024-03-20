@@ -35,6 +35,7 @@ import frc.robot.commands.intake.FeedWithSensorCommand;
 import frc.robot.commands.intake.IntakeDefaultCommand;
 import frc.robot.commands.intake.IntakeReverseCommand;
 import frc.robot.commands.intake.IntakeWithSensorTeleopCommand;
+import frc.robot.commands.shooter.ShooterReverseCommand;
 import frc.robot.commands.shooter.StartShooterCommand;
 import frc.robot.commands.wrist.WristDefaultCommand;
 import frc.robot.commands.wrist.WristGoToSpeakerAngleCommand;
@@ -227,6 +228,9 @@ public class Robot extends TimedRobot {
     new Trigger(() -> DRIVE_CONTROLLER.getXButton())
       .whileTrue(new IntakeReverseCommand());
 
+    new Trigger(() -> DRIVE_CONTROLLER.getXButton())
+      .whileTrue(new ShooterReverseCommand().onlyIf(() -> SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.OFF));
+
     COMMAND_DRIVE_CONTROLLER.povRight().toggleOnTrue(new DriveTwoInchesCommand('R'));
     COMMAND_DRIVE_CONTROLLER.povUp().toggleOnTrue(new DriveTwoInchesCommand('F'));
     COMMAND_DRIVE_CONTROLLER.povDown().toggleOnTrue(new DriveTwoInchesCommand('B'));
@@ -400,7 +404,9 @@ public class Robot extends TimedRobot {
 
     BUTTON_CODE.getButton(Buttons.SHOOTER_REV)
       .whileTrue(new StartShooterCommand());
-      // .whileTrue(new IntakePreShooterRevCommand().andThen(new StartShooterCommand()));
+
+    BUTTON_CODE.getButton(Buttons.SHOOTER_REV)
+      .onTrue(new InstantCommand(() -> SHOOTER_REV_TARGET_STATE = ShooterRevTargetState.ON));
 
     BUTTON_CODE.getSwitch(Toggle.SHOOTER_ANGLE_FROM_DISTANCE)
       .whileTrue(new WristGoToSpeakerAngleCommand());
