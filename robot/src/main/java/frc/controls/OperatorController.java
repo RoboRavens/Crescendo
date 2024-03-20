@@ -23,6 +23,7 @@ import frc.robot.commands.wrist.WristIncrementPositionCommand;
 import frc.robot.commands.wrist.WristMoveWithJoystickCommand;
 import frc.robot.commands.wrist.WristSuspendLimitsCommand;
 import frc.robot.util.arm.LimbSetpoint;
+import frc.util.StateManagement.ArmUpTargetState;
 import frc.util.StateManagement.ShooterRevTargetState;
 
 /** Add your docs here. */
