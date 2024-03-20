@@ -339,11 +339,11 @@ public class Robot extends TimedRobot {
       && INTAKE_TARGET_STATE == IntakeTargetState.GROUND
       && Robot.INTAKE_SUBSYSTEM.driverCanIntake();
 
-    //if (shooterAtSpeed) {
-    //  LED_SUBSYSTEM.setPattern(LEDsPattern.Blinking);
-    //} else {
+    if (shooterAtSpeed) {
+      LED_SUBSYSTEM.setPattern(LEDsPattern.Blinking);
+    } else {
       LED_SUBSYSTEM.setPattern(LEDsPattern.Solid);
-    //}
+    }
 
     if (shooterAtSpeed && hasPieceAnywhere) {
       LED_SUBSYSTEM.setColor(Color.kYellow);
