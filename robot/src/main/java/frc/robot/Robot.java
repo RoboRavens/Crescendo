@@ -228,7 +228,9 @@ public class Robot extends TimedRobot {
     new Trigger(() -> DRIVE_CONTROLLER.getXButton())
       .whileTrue(new IntakeReverseCommand());
 
-    new Trigger(() -> DRIVE_CONTROLLER.getXButton() && SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.OFF)
+    new Trigger(() -> DRIVE_CONTROLLER.getXButton() 
+      && SHOOTER_SUBSYSTEM.getLeftRpm() < 5 
+      && SHOOTER_SUBSYSTEM.getRightRpm() < 5)
       .whileTrue(new ShooterReverseCommand());
 
     COMMAND_DRIVE_CONTROLLER.povRight().toggleOnTrue(new DriveTwoInchesCommand('R'));

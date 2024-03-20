@@ -23,6 +23,7 @@ public class ShooterConstants {
     public static final double SPEAKER_HEIGHT_METERS = 2.047801077;
 
     public static final double MAX_SHOOTER_SPEED = 5;
+    public static final double REVERSE_SPEED_PERCENTAGE = 0.2;
 
     public static final double[][] SHOOTER_ANGLE_PAIRS_UP ={
         {0,90},
