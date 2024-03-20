@@ -16,7 +16,6 @@ import frc.robot.commands.elbow.ElbowDecrementPositionCommand;
 import frc.robot.commands.elbow.ElbowIncrementPositionCommand;
 import frc.robot.commands.elbow.ElbowMoveWithJoystickCommand;
 import frc.robot.commands.elbow.ElbowSuspendLimitsCommand;
-import frc.robot.commands.shooter.ShooterTestingCommand;
 import frc.robot.commands.shooter.StartShooterCommand;
 import frc.robot.commands.wrist.WristDecrementPositionCommand;
 import frc.robot.commands.wrist.WristIncrementPositionCommand;
@@ -58,17 +57,40 @@ public class OperatorController {
    
         _operatorController.leftTrigger().and(_operatorController.povUp()).onTrue(new ElbowIncrementPositionCommand());
         _operatorController.leftTrigger().and(_operatorController.povDown()).onTrue(new ElbowDecrementPositionCommand());
+
         _operatorController.leftTrigger().and(_operatorController.povRight()).onTrue(new WristIncrementPositionCommand());
         _operatorController.leftTrigger().and(_operatorController.povLeft()).onTrue(new WristDecrementPositionCommand());
-        _operatorController.leftTrigger().negate().and(_operatorController.povDown()).onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SPEAKER_SCORING));
-        _operatorController.leftTrigger().negate().and(_operatorController.povUp()).onTrue(new ShooterTestingCommand());
-
+        
         _operatorController.leftTrigger().and(_operatorController.rightTrigger()).and(_operatorController.start()).whileTrue(new ElbowSuspendLimitsCommand());
         _operatorController.leftTrigger().and(_operatorController.rightTrigger()).and(_operatorController.back()).whileTrue(new WristSuspendLimitsCommand());
 
-        _operatorController.leftTrigger().negate().and(() -> Math.abs(_operatorController.getLeftY()) > .1)
-        .whileTrue(new SetClimberToPowerCommand(() -> _operatorController.getLeftY() * -1, Robot.LEFT_CLIMBER_SUBSYSTEM));
-        _operatorController.leftTrigger().negate().and(() -> Math.abs(_operatorController.getRightY()) > .1)
-        .whileTrue(new SetClimberToPowerCommand(() -> _operatorController.getRightY() * -1, Robot.RIGHT_CLIMBER_SUBSYSTEM));
+        // Both hooks up
+        _operatorController.leftTrigger().negate().and(_operatorController.povUp()).whileTrue(
+            new SetClimberToPowerCommand(() -> 0.5, Robot.LEFT_CLIMBER_SUBSYSTEM)
+            .alongWith(new SetClimberToPowerCommand(() -> 0.5, Robot.RIGHT_CLIMBER_SUBSYSTEM))
+        );
+
+        // Both hooks down
+        _operatorController.leftTrigger().negate().and(_operatorController.povDown()).whileTrue(
+            new SetClimberToPowerCommand(() -> -0.5, Robot.LEFT_CLIMBER_SUBSYSTEM)
+            .alongWith(new SetClimberToPowerCommand(() -> -0.5, Robot.RIGHT_CLIMBER_SUBSYSTEM))
+        );
+
+        // Left hook up, right hook down
+        _operatorController.leftTrigger().negate().and(_operatorController.povLeft()).whileTrue(
+            new SetClimberToPowerCommand(() -> 0.5, Robot.LEFT_CLIMBER_SUBSYSTEM)
+            .alongWith(new SetClimberToPowerCommand(() -> -0.5, Robot.RIGHT_CLIMBER_SUBSYSTEM))
+        );
+
+        // Right hook up, left hook down
+        _operatorController.leftTrigger().negate().and(_operatorController.povRight()).whileTrue(
+            new SetClimberToPowerCommand(() -> 0.5, Robot.RIGHT_CLIMBER_SUBSYSTEM)
+            .alongWith(new SetClimberToPowerCommand(() -> -0.5, Robot.LEFT_CLIMBER_SUBSYSTEM))
+        );
+
+        // _operatorController.leftTrigger().negate().and(() -> Math.abs(_operatorController.getLeftY()) > .1)
+        // .whileTrue(new SetClimberToPowerCommand(() -> _operatorController.getLeftY() * -1, Robot.LEFT_CLIMBER_SUBSYSTEM));
+        // _operatorController.leftTrigger().negate().and(() -> Math.abs(_operatorController.getRightY()) > .1)
+        // .whileTrue(new SetClimberToPowerCommand(() -> _operatorController.getRightY() * -1, Robot.RIGHT_CLIMBER_SUBSYSTEM));
     }
 }
