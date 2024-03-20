@@ -38,6 +38,7 @@ import frc.robot.commands.intake.IntakeWithSensorTeleopCommand;
 import frc.robot.commands.shooter.ShooterReverseCommand;
 import frc.robot.commands.shooter.StartShooterCommand;
 import frc.robot.commands.wrist.WristDefaultCommand;
+import frc.robot.commands.wrist.WristGoToPositionCommand;
 import frc.robot.commands.wrist.WristGoToSpeakerAngleCommand;
 import frc.robot.commands.wrist.WristMoveManuallyCommand;
 import frc.robot.commands.wrist.WristOffsetCommand;
@@ -58,6 +59,7 @@ import frc.robot.subsystems.TeleopDashboardSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 import frc.robot.subsystems.LEDsSubsystem24.LEDsPattern;
 import frc.robot.util.Constants.Constants;
+import frc.robot.util.Constants.WristConstants;
 import frc.robot.util.arm.LimbSetpoint;
 import frc.util.StateManagement.ArmUpTargetState;
 import frc.util.StateManagement.ClimbPositionTargetState;
@@ -269,6 +271,9 @@ public class Robot extends TimedRobot {
 
     new Trigger(() -> LIMELIGHT_OVERRIDE_STATE == LimelightOverrideState.OVERRIDE_ON && SELECTED_SHOT_TARGET_STATE == SelectedShotTargetState.PODIUM_SHOT)
       .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.PODIUM_SCORING));
+
+    new Trigger(() -> ARM_UP_TARGET_STATE == ArmUpTargetState.FREE && Robot.INTAKE_SUBSYSTEM.hasPieceAnywhere() == false)
+      .onTrue(new WristGoToPositionCommand(WristConstants.DEGREES_FLOOR_PICKUP));
   }
 
 	/** This function is run once each time the robot enters autonomous mode. */
