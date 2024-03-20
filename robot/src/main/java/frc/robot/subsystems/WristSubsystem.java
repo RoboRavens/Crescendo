@@ -143,6 +143,10 @@ public class WristSubsystem extends SubsystemBase {
     this.setTargetPosition(setpoint);
   }
 
+  public void goToDegrees(double degrees) {
+    this.goToPosition(WristSubsystem.getPositionFromRadians(Math.toRadians(degrees)));
+  }
+
   public void incrementTargetPosition() {
     double currentTargetDegrees = WristSubsystem.getDegreesFromPosition(targetPosition);
     double newTargetDegrees = currentTargetDegrees + WristConstants.WRIST_DEGREES_PER_INCREMENT;

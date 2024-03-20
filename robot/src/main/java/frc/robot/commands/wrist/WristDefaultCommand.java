@@ -5,18 +5,17 @@
 package frc.robot.commands.wrist;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
-import frc.robot.util.arm.LimbSetpoint;
 
 public class WristDefaultCommand extends Command {
-  private Timer _acquiesceTimer = new Timer();
-  private boolean _acquiesced = false;
+  private static String DASHBOARD_KEY = "Wrist Target Override Degrees";
+  private double _prevDegreesFromDashboard = 0;
 
   /** Creates a new WristDefaultCommand. */
   public WristDefaultCommand() {
     addRequirements(Robot.WRIST_SUBSYSTEM);
-    _acquiesceTimer.start();
   }
 
   // Called when the command is initially scheduled.
@@ -24,18 +23,16 @@ public class WristDefaultCommand extends Command {
   public void initialize() {
     System.out.println("WristDefaultCommand initialize");
     Robot.WRIST_SUBSYSTEM.goToPosition(Robot.WRIST_SUBSYSTEM.getTargetPosition());
-    _acquiesceTimer.reset();
-    _acquiesced = false;
+    _prevDegreesFromDashboard = Robot.WRIST_SUBSYSTEM.getDegrees();
+    SmartDashboard.putNumber(DASHBOARD_KEY, _prevDegreesFromDashboard);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (_acquiesced == false && _acquiesceTimer.get() > 3) {
-      _acquiesced = true;
-      if (Robot.WRIST_SUBSYSTEM.getTargetPosition() == LimbSetpoint.GROUND_PICKUP.getWristRotationPosition()) {
-        // Robot.WRIST_SUBSYSTEM.stopWristRotation();
-      }
+    double newTargetDegrees = SmartDashboard.getNumber(DASHBOARD_KEY, _prevDegreesFromDashboard);
+    if (_prevDegreesFromDashboard != newTargetDegrees) {
+      Robot.WRIST_SUBSYSTEM.goToDegrees(newTargetDegrees);
     }
   }
 
