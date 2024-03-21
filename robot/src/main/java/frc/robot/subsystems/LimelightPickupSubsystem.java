@@ -18,7 +18,7 @@ public class LimelightPickupSubsystem extends SubsystemBase {
   private double _bufferedTa;
 
   public LimelightPickupSubsystem(String tableName) {
-    _baseNetworkTable = NetworkTableInstance.getDefault().getTable(tableName);
+    _baseNetworkTable = NetworkTableInstance.getDefault().getTable("limelight-pickup");
     tx = _baseNetworkTable.getEntry("tx");
     tv = _baseNetworkTable.getEntry("tv");
     ta = _baseNetworkTable.getEntry("ta");
