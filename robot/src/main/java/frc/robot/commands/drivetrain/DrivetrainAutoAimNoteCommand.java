@@ -12,7 +12,7 @@ import frc.robot.Robot;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.util.Slew;
 
-public class DrivetrainAutoAimCommand extends Command {
+public class DrivetrainAutoAimNoteCommand extends Command {
     public PIDController _autoAlignRotationPID = new PIDController(0.17,  0, 4);
     public PIDController _yPID = new PIDController(.022, 0, .02);
     private ChassisSpeeds _chassisSpeeds = new ChassisSpeeds(0,0,0);
@@ -22,7 +22,7 @@ public class DrivetrainAutoAimCommand extends Command {
 
     public boolean CutPower = false;
 
-    public DrivetrainAutoAimCommand() {
+    public DrivetrainAutoAimNoteCommand() {
         addRequirements(Robot.DRIVETRAIN_SUBSYSTEM);
         _autoAlignRotationPID.enableContinuousInput(-Math.PI, Math.PI);
     }
