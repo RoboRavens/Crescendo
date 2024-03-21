@@ -343,6 +343,7 @@ public class Robot extends TimedRobot {
   // methods.
   private void setDriverStationData() {
     allianceColor = DriverStation.getAlliance().orElseGet(() -> Alliance.Blue);
+    LIMELIGHT_BACK.setTargetTag(allianceColor);
     AUTO_CHOOSER.BuildAutoChooser(allianceColor);
   }
 

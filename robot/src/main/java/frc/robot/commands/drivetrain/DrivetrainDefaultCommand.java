@@ -14,6 +14,7 @@ import frc.util.AngularPositionHolder;
 import frc.util.Deadband;
 import frc.util.Slew;
 import frc.util.StateManagement.DrivetrainState;
+import frc.util.StateManagement.LimelightOverrideState;
 import frc.util.StateManagement.OverallState;
 
 public class DrivetrainDefaultCommand extends Command {
@@ -52,55 +53,39 @@ public class DrivetrainDefaultCommand extends Command {
         r = Deadband.adjustValueToZero(r, Constants.JOYSTICK_DEADBAND);
         
         // The angle of the robot as measured by a gyroscope. The robot's angle is considered to be zero when it is facing directly away from your alliance station wall.        
-        Rotation2d robotRotationDegrees = Robot.DRIVETRAIN_SUBSYSTEM.getOdometryRotation();
+        Rotation2d robotRotation = Robot.DRIVETRAIN_SUBSYSTEM.getOdometryRotation();
         
         // If no joystick input OR robot is being auto-driven, reset the x-ing timer.
         if ((x == 0 && y == 0 && r == 0) == false || (Robot.DRIVETRAIN_STATE != DrivetrainState.FREEHAND)) {
             _xingTimer.reset();
         }
 
-        if (Robot.DRIVETRAIN_STATE == DrivetrainState.FREEHAND) {
-            if (_xingTimer.get() >= Constants.DRIVETRAIN_HOLD_POSITION_TIMER_THRESHOLD) {
-                Robot.DRIVETRAIN_SUBSYSTEM.holdPosition();
-            } else {
-                double cutPower = Robot.cutPower ? 0.5 : 1;
-                x = x * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND * cutPower;
-                y = y * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND * cutPower;
-                r = r * Constants.DRIVE_MAX_TURN_RADIANS_PER_SECOND * cutPower;
-
-                // angular position holder only acts if r == 0
-                r = AngularPositionHolder.GetInstance().getAngularVelocity(r, robotRotationDegrees.getRadians());
-
-                var targetChassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-                    x, // x translation
-                    y, // y translation
-                    r, // rotation
-                    robotRotationDegrees // The angle of the robot as measured by a gyroscope.
-                );
-
-                targetChassisSpeeds.vxMetersPerSecond = Slew.GetSlewedTarget(_velocityXSlewRate, targetChassisSpeeds.vxMetersPerSecond, _chassisSpeeds.vxMetersPerSecond);
-                targetChassisSpeeds.vyMetersPerSecond = Slew.GetSlewedTarget(_velocityYSlewRate, targetChassisSpeeds.vyMetersPerSecond, _chassisSpeeds.vyMetersPerSecond);
-                targetChassisSpeeds.omegaRadiansPerSecond = Slew.GetSlewedTarget(_angularSlewRate, targetChassisSpeeds.omegaRadiansPerSecond, _chassisSpeeds.omegaRadiansPerSecond);
-                _chassisSpeeds = targetChassisSpeeds;
-
-                Robot.DRIVETRAIN_SUBSYSTEM.drive(targetChassisSpeeds);
-            }
-        }
-        else if (Robot.DRIVETRAIN_STATE == DrivetrainState.ROBOT_ALIGN) {
+        
+        if (_xingTimer.get() >= Constants.DRIVETRAIN_HOLD_POSITION_TIMER_THRESHOLD) {
+            Robot.DRIVETRAIN_SUBSYSTEM.holdPosition();
+        } else {
             double cutPower = Robot.cutPower ? 0.5 : 1;
             x = x * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND * cutPower;
             y = y * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND * cutPower;
+            r = r * Constants.DRIVE_MAX_TURN_RADIANS_PER_SECOND * cutPower;
 
-            r = getAngularVelocityForAlignmentFromRadiansOffset(Robot.DRIVETRAIN_SUBSYSTEM.getTargetRadiansForCenterOfSpeakerTx());
+            // From the docs it sounds like this boolean will ONLY be true if it sees
+            // the priority tag, but we will have to double check to be certain.
+            if (Robot.DRIVETRAIN_STATE == DrivetrainState.ROBOT_ALIGN && Robot.LIMELIGHT_BACK.hasVisionTargetBoolean()) {
+                var txDegrees = Robot.LIMELIGHT_BACK.getBufferedTx();
+                var targetAngleDegrees = robotRotation.getDegrees() - txDegrees;
+                var targetAngleRadians = Math.toRadians(targetAngleDegrees);
+                r = getAngularVelocityForAlignment(targetAngleRadians);
+            }
 
             // angular position holder only acts if r == 0
-            r = AngularPositionHolder.GetInstance().getAngularVelocity(r, robotRotationDegrees.getRadians());
+            r = AngularPositionHolder.GetInstance().getAngularVelocity(r, robotRotation.getRadians());
 
             var targetChassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
                 x, // x translation
                 y, // y translation
                 r, // rotation
-                robotRotationDegrees // The angle of the robot as measured by a gyroscope.
+                robotRotation // The angle of the robot as measured by a gyroscope.
             );
 
             targetChassisSpeeds.vxMetersPerSecond = Slew.GetSlewedTarget(_velocityXSlewRate, targetChassisSpeeds.vxMetersPerSecond, _chassisSpeeds.vxMetersPerSecond);
@@ -110,6 +95,7 @@ public class DrivetrainDefaultCommand extends Command {
 
             Robot.DRIVETRAIN_SUBSYSTEM.drive(targetChassisSpeeds);
         }
+        
     }
 
     // public double getYVelocity(Translation2d target) {
