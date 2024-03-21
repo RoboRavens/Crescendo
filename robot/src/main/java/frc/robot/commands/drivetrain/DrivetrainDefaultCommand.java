@@ -78,10 +78,15 @@ public class DrivetrainDefaultCommand extends Command {
               // the priority tag, but we will have to double check to be certain.
               if (Robot.LIMELIGHT_BACK.hasVisionTargetBoolean()) {
                 var txDegrees = Robot.LIMELIGHT_BACK.getTx();
+                SmartDashboard.putNumber("txDegrees", txDegrees);
                 var targetAngleDegrees = robotRotation.getDegrees() - txDegrees;
+                SmartDashboard.putNumber("targetAngleDegrees", targetAngleDegrees);
                 _bufferedTargetAngle = Math.toRadians(targetAngleDegrees);
+                SmartDashboard.putNumber("_bufferedTargetAngle", _bufferedTargetAngle);
                 _bufferedTargetAngleTimer.reset();
               }
+
+              SmartDashboard.putNumber("_bufferedTargetAngleTimer", _bufferedTargetAngleTimer.get());
 
               // track to the last known target rotation for .5 seconds after losing vision of the target
               if (_bufferedTargetAngleTimer.get() < .5) {
