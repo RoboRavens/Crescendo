@@ -316,11 +316,11 @@ class App extends React.Component<{}, {
     NT_CORE.createTopic<string>('/ReactDash/Teleop/rpub/selectedSourceLane', NetworkTablesTypeInfos.kString)
     .subscribe((value: string | null) => this.handleSourceSelection(value ?? this.state.selectedSourceLane), true);
     NT_CORE.createTopic<string>('/ReactDash/Teleop/rpub/signalSelection', NetworkTablesTypeInfos.kString)
-    .subscribe((value: string | null) => this.handleSignalSelection(value ?? this.state.signalSelection), true);
+    .subscribe((value: string | null) => this.handleSignalSelectionFromRobot(value ?? this.state.signalSelection), true);
     NT_CORE.createTopic<boolean>('/ReactDash/Teleop/rpub/startShooter', NetworkTablesTypeInfos.kString)
     .subscribe((value: boolean | null) => this.handleStartShooterToggle(value ?? this.state.startShooter), true);
     NT_CORE.createTopic<string>('/ReactDash/Teleop/rpub/selectedShotType', NetworkTablesTypeInfos.kString)
-    .subscribe((value: string | null) => this.handleShotSelection(value ?? this.state.selectedShotType), true);
+    .subscribe((value: string | null) => this.handleShotSelectionFromRobot(value ?? this.state.selectedShotType), true);
     NT_CORE.createTopic<boolean>('/ReactDash/Teleop/rpub/limelightOverride', NetworkTablesTypeInfos.kString)
     .subscribe((value: boolean | null) => this.handleLLOverride(value ?? this.state.limelightOverride), true);
     
@@ -360,48 +360,34 @@ class App extends React.Component<{}, {
     });
   }
 
-  handleSignalSelection(type: string) {
-    const deselectedButton : boolean = type == this.state.signalSelection
-    const currentSelectedButton = window.document.getElementById(type);
-    if (deselectedButton) {
-      if (currentSelectedButton != null) currentSelectedButton.style.backgroundColor = "#262b32";
-      topics.signalSelectionPub?.setValue("NONE");
-      this.setState({
-        signalSelection: "NONE"
-      });
-      return;
-    }
-    if (currentSelectedButton != null) currentSelectedButton.style.backgroundColor = "#43a5ff";
-    const previouslySelectedButton = window.document.getElementById(this.state.signalSelection)
-    if (previouslySelectedButton != null) {
-      previouslySelectedButton.style.backgroundColor = "#262b32";
-    }
-    topics.signalSelectionPub?.setValue(type);
+  handleSignalSelectionFromRobot(type: string) {
     this.setState({
       signalSelection: type
     });
   }
-  
-  handleShotSelection(type: string) {
-    const deselectedButton : boolean = type == this.state.selectedShotType
-    const currentSelectedButton = window.document.getElementById(type);
-    if (deselectedButton) {
-      if (currentSelectedButton != null) currentSelectedButton.style.backgroundColor = "#262b32";
-      topics.selectedShotTypePub?.setValue("NONE");
-      this.setState({
-        selectedShotType: "NONE"
-      });
-      return;
-    }
-    if (currentSelectedButton != null) currentSelectedButton.style.backgroundColor = "#43a5ff";
-    const previouslySelectedButton = window.document.getElementById(this.state.selectedShotType)
-    if (previouslySelectedButton != null) {
-      previouslySelectedButton.style.backgroundColor = "#262b32";
-    }
-    topics.selectedShotTypePub?.setValue(type);
+
+  handleSignalSelection(type: string) {
+    const deselectedButton : boolean = type === this.state.signalSelection
+    const newType : string = deselectedButton ? "NONE" : type;
+    this.setState({
+      signalSelection: newType
+    });
+    topics.signalSelectionPub?.setValue(newType);
+  }
+
+  handleShotSelectionFromRobot(type: string) {
     this.setState({
       selectedShotType: type
     });
+  }
+  
+  handleShotSelection(type: string) {
+    const deselectedButton : boolean = type === this.state.selectedShotType
+    const newType : string = deselectedButton ? "NONE" : type;
+    this.setState({
+      selectedShotType: newType
+    });
+    topics.selectedShotTypePub?.setValue(newType);
   }
 
   handleLLOverride(override: boolean) {
@@ -544,13 +530,13 @@ class App extends React.Component<{}, {
                       </Stack>            
                       <Stack height={'100'} direction={'row'} spacing={2} marginTop={2} marginLeft={2} width={"100%"}>
                         <Stack>
-                          <Item id="SUBWOOFER_SHOT" onClick={() => this.handleShotSelection("SUBWOOFER_SHOT")}><p>Subwoofer</p></Item>
+                          <Item style={{backgroundColor: this.state.selectedShotType === "SUBWOOFER_SHOT" ? "#43a5ff" : "#262b32"}} onClick={() => this.handleShotSelection("SUBWOOFER_SHOT")}><p>Subwoofer</p></Item>
                         </Stack>
                         <Stack>
-                          <Item id="STARTING_LINE_SHOT" onClick={() => this.handleShotSelection("STARTING_LINE_SHOT")}><p>Starting Line</p></Item>
+                          <Item style={{backgroundColor: this.state.selectedShotType === "STARTING_LINE_SHOT" ? "#43a5ff" : "#262b32"}} onClick={() => this.handleShotSelection("STARTING_LINE_SHOT")}><p>Starting Line</p></Item>
                         </Stack>
                         <Stack>
-                          <Item id="PODIUM_SHOT" onClick={() => this.handleShotSelection("PODIUM_SHOT")}><p>Podium</p></Item>
+                          <Item style={{backgroundColor: this.state.selectedShotType === "PODIUM_SHOT" ? "#43a5ff" : "#262b32"}} onClick={() => this.handleShotSelection("PODIUM_SHOT")}><p>Podium</p></Item>
                         </Stack>
                       </Stack>
                     </Grid>
@@ -588,14 +574,14 @@ class App extends React.Component<{}, {
                     <Grid item>
                       <Stack>
                         <Stack marginTop={2} marginLeft={2}>
-                          <p style={{marginBottom: 0}}>Robot Signaling</p>    
+                          <p style={{marginBottom: 0}}>Robot Signaling</p>
                         </Stack>             
                         <Stack height={'100'} direction={'row'} spacing={2} marginTop={2} marginLeft={2} width={"100%"}>
-                          <Item id="CO_OP_SIGNAL" onClick={(e) => this.handleSignalSelection("CO_OP_SIGNAL")}>
+                          <Item style={{backgroundColor: this.state.signalSelection === "CO_OP_SIGNAL" ? "#43a5ff" : "#262b32"}} onClick={(e) => this.handleSignalSelection("CO_OP_SIGNAL")}>
                             <p>Co-Op</p>                        
                             <img width="80" height="80" src="./handshake.svg"/>
                           </Item>
-                          <Item id="AMP_SIGNAL" onClick={(e) => this.handleSignalSelection("AMP_SIGNAL")}>
+                          <Item style={{backgroundColor: this.state.signalSelection === "AMP_SIGNAL" ? "#43a5ff" : "#262b32"}} onClick={(e) => this.handleSignalSelection("AMP_SIGNAL")}>
                             <p>Amp</p>
                             <Timer style={{fontSize: 80}}/>
                           </Item>

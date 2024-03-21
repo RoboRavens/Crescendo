@@ -78,8 +78,10 @@ public class TeleopDashboardSubsystem extends SubsystemBase {
       _armUpPub.set(Robot.ARM_UP_TARGET_STATE.toString() == "UP");
       _intakePub.set(Robot.INTAKE_TARGET_STATE.toString());
       _sourceLanePub.set(Robot.TRAP_SOURCE_LANE_TARGET_STATE.toString());
-      // _signalSelectionPub.set(Robot.LED_SIGNAL_TARGET_STATE.toString());
+      _signalSelectionPub.set(Robot.LED_SIGNAL_TARGET_STATE.toString());
       _startShooterPub.set(Robot.SHOOTER_REV_TARGET_STATE.toString() == "ON");
+      _shotSelectionPub.set(Robot.SELECTED_SHOT_TARGET_STATE.toString());
+      _limelightOverridePub.set(Robot.LIMELIGHT_OVERRIDE_STATE == LimelightOverrideState.OVERRIDE_ON);
     }
 
     // Update the robot target states
