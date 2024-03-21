@@ -4,9 +4,11 @@
 
 package frc.controls;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.commands.climber.SetClimberToPowerCommand;
@@ -24,6 +26,7 @@ import frc.robot.commands.wrist.WristMoveWithJoystickCommand;
 import frc.robot.commands.wrist.WristSuspendLimitsCommand;
 import frc.robot.util.arm.LimbSetpoint;
 import frc.util.StateManagement.ArmUpTargetState;
+import frc.util.StateManagement.LimelightOverrideState;
 import frc.util.StateManagement.ShooterRevTargetState;
 
 /** Add your docs here. */
@@ -40,14 +43,27 @@ public class OperatorController {
                 Robot.ELBOW_SUBSYSTEM.resetPosition();
             }).ignoringDisable(true));
 
-        _operatorController.b()
-        .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.DEFENDED_SPEAKER_SCORING));
+        Trigger moveToWristScoringSelectionPositionTrigger = new Trigger(
+            () -> Robot.LIMELIGHT_OVERRIDE_STATE == LimelightOverrideState.OVERRIDE_ON
+            && Robot.ARM_UP_TARGET_STATE == ArmUpTargetState.FREE 
+            && Robot.INTAKE_SUBSYSTEM.hasPieceAnywhere() == true 
+            && DriverStation.isTeleop()
+        );
+
+        _operatorController.b().and(moveToWristScoringSelectionPositionTrigger)
+        .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.STARTING_LINE_SCORING));
         _operatorController.x()
-        .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.AMP_SCORING));
-        _operatorController.y()
-        .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SOURCE_INTAKE));
-        _operatorController.a()
-        .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.GROUND_PICKUP));
+        .onTrue(new InstantCommand(
+            () -> Robot.LIMELIGHT_OVERRIDE_STATE = 
+            Robot.LIMELIGHT_OVERRIDE_STATE == LimelightOverrideState.OVERRIDE_ON 
+                ? LimelightOverrideState.OVERRIDE_OFF
+                : LimelightOverrideState.OVERRIDE_ON
+        ));
+        _operatorController.y().and(moveToWristScoringSelectionPositionTrigger)
+        .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.PODIUM_SCORING));
+        _operatorController.a().and(moveToWristScoringSelectionPositionTrigger)
+        .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SPEAKER_SCORING));
+        
         _operatorController.leftTrigger().and(_operatorController.rightBumper())
         .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.START_CONFIG_UP));
 
