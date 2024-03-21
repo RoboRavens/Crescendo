@@ -86,8 +86,9 @@ public class LEDsSubsystem24 extends SubsystemBase {
   }
 
   private void blinkLEDsColor(Color colorOn, Color colorOff) {
-    if (m_blinkTimer.get() >= 0.25) {
+    if (m_blinkTimer.get() >= 0.1) {
       var color = m_blinkOn ? colorOn : colorOff;
+      m_blinkOn = !m_blinkOn;
       this.ledsSolidColorEfficiently(color);
       m_blinkTimer.reset();
     }

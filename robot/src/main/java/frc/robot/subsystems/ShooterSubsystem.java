@@ -54,16 +54,16 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public void runShooterAtTargetSpeed() {
         _leftTalonFX.setControl(m_request
-            .withVelocity(ShooterConstants.lmaxRPM * ShooterConstants.lShooterVelocityPercentage)
-            .withFeedForward(ShooterConstants.lShooterVelocityPercentage));
+            .withVelocity(ShooterConstants.TARGET_RPS_LEFT)
+            .withFeedForward(ShooterConstants.FF_FOR_TARGET_LEFT));
         _rightTalonFX.setControl(m_request
-            .withVelocity(ShooterConstants.rmaxRPM * ShooterConstants.rShooterVelocityPercentage)
-            .withFeedForward(ShooterConstants.rShooterVelocityPercentage));
+            .withVelocity(ShooterConstants.TARGET_RPS_RIGHT)
+            .withFeedForward(ShooterConstants.FF_FOR_TARGET_RIGHT));
     }
 
     public void setPowerManually(double speed) {
-        _leftTalonFX.set(speed * -1);
-        _rightTalonFX.set(speed * -1);
+        _leftTalonFX.set(speed);
+        _rightTalonFX.set(speed);
     }
 
     public void stopShooting() {
@@ -102,19 +102,17 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     private boolean leftShooterAtSpeed() {
-        // double targetSpeed = ShooterConstants.TARGET_RPS_LEFT;
+        double targetSpeed = ShooterConstants.ACTUAL_PID_RPS_FOR_SOME_REASON_LEFT;
         double currentLeftSpeed = this.getLeftRpm();
-        return currentLeftSpeed > 50;
-        // double absDiff = Math.abs(targetSpeed - currentLeftSpeed);
-        // return absDiff < ShooterConstants.IS_AT_TARGET_SPEED_BUFFER;
+        double absDiff = Math.abs(targetSpeed - currentLeftSpeed);
+        return absDiff < ShooterConstants.IS_AT_TARGET_SPEED_BUFFER;
     }
 
     private boolean rightShooterAtSpeed() {
-        // double targetSpeed = ShooterConstants.TARGET_RPS_RIGHT;
+        double targetSpeed = ShooterConstants.ACTUAL_PID_RPS_FOR_SOME_REASON_RIGHT;
         double currentRightSpeed = this.getRightRpm();
-        return currentRightSpeed > 50;
-        // double absDiff = Math.abs(targetSpeed - currentRightSpeed);
-        // return absDiff < ShooterConstants.IS_AT_TARGET_SPEED_BUFFER;
+        double absDiff = Math.abs(targetSpeed - currentRightSpeed);
+        return absDiff < ShooterConstants.IS_AT_TARGET_SPEED_BUFFER;
     }
 
     public double getLeftRpm() {

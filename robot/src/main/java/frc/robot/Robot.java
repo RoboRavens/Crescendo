@@ -38,6 +38,7 @@ import frc.robot.commands.intake.IntakeWithSensorTeleopCommand;
 import frc.robot.commands.shooter.ShooterReverseCommand;
 import frc.robot.commands.shooter.StartShooterCommand;
 import frc.robot.commands.wrist.WristDefaultCommand;
+import frc.robot.commands.wrist.WristGoToPositionCommand;
 import frc.robot.commands.wrist.WristGoToSpeakerAngleCommand;
 import frc.robot.commands.wrist.WristMoveManuallyCommand;
 import frc.robot.commands.wrist.WristOffsetCommand;
@@ -58,6 +59,7 @@ import frc.robot.subsystems.TeleopDashboardSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 import frc.robot.subsystems.LEDsSubsystem24.LEDsPattern;
 import frc.robot.util.Constants.Constants;
+import frc.robot.util.Constants.WristConstants;
 import frc.robot.util.arm.LimbSetpoint;
 import frc.util.StateManagement.ArmUpTargetState;
 import frc.util.StateManagement.ClimbPositionTargetState;
@@ -187,7 +189,7 @@ public class Robot extends TimedRobot {
     .onFalse(new InstantCommand(() -> autoRotationAlignEnabled = false));
 
     configureDriveControllerBindings();
-    configureAutomatedBehaviorBindings();
+    // configureAutomatedBehaviorBindings();
     configureButtonBindings();
     configureOverrideBindings();
     OperatorController.enable();
@@ -255,20 +257,23 @@ public class Robot extends TimedRobot {
 	}
 
   private void configureAutomatedBehaviorBindings() {
-    new Trigger(() -> SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON)
+    new Trigger(() -> SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON && DriverStation.isTeleop())
       .whileTrue(new StartShooterCommand());
 
-    new Trigger(() -> ARM_UP_TARGET_STATE == ArmUpTargetState.UP)
+    new Trigger(() -> ARM_UP_TARGET_STATE == ArmUpTargetState.UP && DriverStation.isTeleop())
       .whileTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.DEFENDED_SPEAKER_SCORING));
 
-    new Trigger(() -> LIMELIGHT_OVERRIDE_STATE == LimelightOverrideState.OVERRIDE_ON && SELECTED_SHOT_TARGET_STATE == SelectedShotTargetState.SUBWOOFER_SHOT)
+    new Trigger(() -> LIMELIGHT_OVERRIDE_STATE == LimelightOverrideState.OVERRIDE_ON && SELECTED_SHOT_TARGET_STATE == SelectedShotTargetState.SUBWOOFER_SHOT && DriverStation.isTeleop())
       .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SPEAKER_SCORING));
 
-    new Trigger(() -> LIMELIGHT_OVERRIDE_STATE == LimelightOverrideState.OVERRIDE_ON && SELECTED_SHOT_TARGET_STATE == SelectedShotTargetState.STARTING_LINE_SHOT)
+    new Trigger(() -> LIMELIGHT_OVERRIDE_STATE == LimelightOverrideState.OVERRIDE_ON && SELECTED_SHOT_TARGET_STATE == SelectedShotTargetState.STARTING_LINE_SHOT && DriverStation.isTeleop())
       .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.STARTING_LINE_SCORING));
 
-    new Trigger(() -> LIMELIGHT_OVERRIDE_STATE == LimelightOverrideState.OVERRIDE_ON && SELECTED_SHOT_TARGET_STATE == SelectedShotTargetState.PODIUM_SHOT)
+    new Trigger(() -> LIMELIGHT_OVERRIDE_STATE == LimelightOverrideState.OVERRIDE_ON && SELECTED_SHOT_TARGET_STATE == SelectedShotTargetState.PODIUM_SHOT && DriverStation.isTeleop())
       .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.PODIUM_SCORING));
+
+    new Trigger(() -> ARM_UP_TARGET_STATE == ArmUpTargetState.FREE && Robot.INTAKE_SUBSYSTEM.hasPieceAnywhere() == false && DriverStation.isTeleop())
+      .onTrue(new WristGoToPositionCommand(WristConstants.DEGREES_FLOOR_PICKUP));
   }
 
 	/** This function is run once each time the robot enters autonomous mode. */
@@ -308,6 +313,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during teleoperated mode. */
   @Override
   public void teleopPeriodic() {
+    SmartDashboard.putBoolean("auto rotation align enabled", autoRotationAlignEnabled);
     this.runLedLogic();
   }
 
@@ -347,7 +353,7 @@ public class Robot extends TimedRobot {
       LED_SUBSYSTEM.setPattern(LEDsPattern.Solid);
     }
 
-    if (shooterAtSpeed && hasPieceAnywhere) {
+    if (shooterAtSpeed && !hasPieceAnywhere) {
       LED_SUBSYSTEM.setColor(Color.kYellow);
     } else if (robotSeesNote) {
       LED_SUBSYSTEM.setColor(Color.kOrange);

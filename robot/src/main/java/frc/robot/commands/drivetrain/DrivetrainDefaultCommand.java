@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -66,10 +67,7 @@ public class DrivetrainDefaultCommand extends Command {
                 r = r * Constants.DRIVE_MAX_TURN_RADIANS_PER_SECOND * cutPower;
 
                 if (Robot.autoRotationAlignEnabled) {
-                    double currentRotation = Robot.DRIVETRAIN_SUBSYSTEM.getPoseRotation().getRadians();
-                    double rotationOffsetFromCenterOfSpeaker = Robot.DRIVETRAIN_SUBSYSTEM.getAngleOffsetFromCenterOfSpeaker();
-                    double targetRotation = currentRotation - rotationOffsetFromCenterOfSpeaker;
-                    r = getAngularVelocityForAlignment(targetRotation);
+                    r = getAngularVelocityForAlignment(Robot.DRIVETRAIN_SUBSYSTEM.getTargetRadiansForCenterOfSpeaker());
                 }
 
                 // angular position holder only acts if r == 0

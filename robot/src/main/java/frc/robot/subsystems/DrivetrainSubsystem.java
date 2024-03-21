@@ -364,7 +364,9 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
     SmartDashboard.putNumber("Gyroscope rotation (degrees)", getGyroscopeRotation().getDegrees());
 
     SmartDashboard.putNumber("Distance From Speaker", this.getDistanceFromSpeaker());
+    SmartDashboard.putNumber("Degrees Offset From Center Of Speaker", Math.toDegrees(this.getTargetRadiansForCenterOfSpeaker()));
     SmartDashboard.putBoolean("Rotation In Speaker Range", this.getIsRobotRotationInSpeakerRange());
+    SmartDashboard.putNumber("Y Offset From Speaker", this.getYOffsetFromSpeaker());
   }
 
   // public boolean drivetrainIsAtTargetCoordinates() {
@@ -505,17 +507,19 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
   }
 
   public double getDistanceFromSpeaker() {
+    var pose = Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose();
     if (Robot.allianceColor == Alliance.Blue) {
-      return Math.sqrt(Math.pow((getPoseX()-FieldConstants.BLUE_SPEAKER_X),2)+Math.pow((getPoseY()-FieldConstants.BLUE_SPEAKER_Y),2));
+      return Math.sqrt(Math.pow((pose.getX()-FieldConstants.BLUE_SPEAKER_X),2)+Math.pow((pose.getY()-FieldConstants.BLUE_SPEAKER_Y),2));
     }
     else {
-      return Math.sqrt(Math.pow((getPoseX()-FieldConstants.RED_SPEAKER_X),2)+Math.pow((getPoseY()-FieldConstants.RED_SPEAKER_Y),2));
+      return Math.sqrt(Math.pow((pose.getX()-FieldConstants.RED_SPEAKER_X),2)+Math.pow((pose.getY()-FieldConstants.RED_SPEAKER_Y),2));
     }
   }
 
   public double getYOffsetFromSpeaker() {
+    var pose = Robot.POSE_ESTIMATOR_SUBSYSTEM.getCurrentPose();
     var speakerY = Robot.allianceColor == Alliance.Blue ? FieldConstants.BLUE_SPEAKER_Y : FieldConstants.RED_SPEAKER_Y;
-    return getPoseY() - speakerY;
+    return pose.getY() - speakerY;
   }
 
   /**
@@ -537,7 +541,7 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
   /**
    * @return angle offset from the center of the speaker in radians
    */
-  public double getAngleOffsetFromCenterOfSpeaker() {
+  public double getTargetRadiansForCenterOfSpeaker() {
     return Math.asin(getYOffsetFromSpeaker() / getDistanceFromSpeaker());
   }
 
