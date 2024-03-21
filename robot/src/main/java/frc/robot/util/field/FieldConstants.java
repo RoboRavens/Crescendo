@@ -99,4 +99,7 @@ public class FieldConstants {
     public static final double RED_SPEAKER_X = 15.85;
     public static final double RED_SPEAKER_Y = 5.55;
 
+    public static final int RED_SPEAKER_CENTER_APRILTAG_ID = 4;
+    public static final int BLUE_SPEAKER_CENTER_APRILTAG_ID = 7;
+
 }

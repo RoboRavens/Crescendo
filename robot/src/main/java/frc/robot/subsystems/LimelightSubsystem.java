@@ -7,10 +7,12 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
 import frc.robot.Robot;
+import frc.robot.util.field.FieldConstants;
 
 public class LimelightSubsystem extends SubsystemBase {
   private NetworkTable _baseNetworkTable;
@@ -25,12 +27,16 @@ public class LimelightSubsystem extends SubsystemBase {
   private int camMode = 0;
 
   private NetworkTableEntry ledMode;
+  private NetworkTableEntry _tagId;
 
   private Timer _bufferedTvTimer = new Timer();
   private boolean _bufferedTv;
   private double _bufferedTx;
   private double _bufferedTy;
   private double _bufferedTa;
+
+  // Defaulting to blue speaker is as good as anything.
+  private int _currentTargetTag = FieldConstants.BLUE_SPEAKER_CENTER_APRILTAG_ID;
 
   public LimelightSubsystem(String tableName) {
     _tableName = tableName;
@@ -44,10 +50,15 @@ public class LimelightSubsystem extends SubsystemBase {
     cl = _baseNetworkTable.getEntry("cl");
 
     ledMode = _baseNetworkTable.getEntry("ledMode");
+    _tagId = _baseNetworkTable.getEntry("priorityid");
+
+    _tagId.setNumber(_currentTargetTag);
   }
 
   public void periodic() {
     // Pose2d robotPose = getPureLimelightRobotPose();
+    
+    _tagId.setNumber(_currentTargetTag);
 
     if (this.hasVisionTargetBoolean()) {
       _bufferedTvTimer.reset();
@@ -72,6 +83,15 @@ public class LimelightSubsystem extends SubsystemBase {
       SmartDashboard.putNumber(_tableName + "Rotation", 0);
     }
     */
+  }
+
+  public void setTargetTag(Alliance allianceColor) {
+    if (allianceColor == Alliance.Blue) {
+      this._currentTargetTag = FieldConstants.BLUE_SPEAKER_CENTER_APRILTAG_ID;
+    }
+    else if (allianceColor == Alliance.Red) {
+      this._currentTargetTag = FieldConstants.RED_SPEAKER_CENTER_APRILTAG_ID;
+    }
   }
 
   public double[] getLimelightBotpose() {
@@ -114,7 +134,7 @@ public class LimelightSubsystem extends SubsystemBase {
     return tv.getDouble(0);
   }
 
-  private boolean hasVisionTargetBoolean() {
+  public boolean hasVisionTargetBoolean() {
     return tv.getDouble(0) == 1;
   }
 
