@@ -26,10 +26,14 @@ public class DrivetrainDefaultCommand extends Command {
 
     private Timer _xingTimer = new Timer();
 
+    private Timer _bufferedTargetAngleTimer = new Timer();
+    private double _bufferedTargetAngle = 0;
+
     public boolean CutPower = false;
 
     public DrivetrainDefaultCommand() {
         addRequirements(Robot.DRIVETRAIN_SUBSYSTEM);
+        _bufferedTargetAngleTimer.start();
     }
 
     @Override
@@ -69,13 +73,20 @@ public class DrivetrainDefaultCommand extends Command {
             y = y * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND * cutPower;
             r = r * Constants.DRIVE_MAX_TURN_RADIANS_PER_SECOND * cutPower;
 
-            // From the docs it sounds like this boolean will ONLY be true if it sees
-            // the priority tag, but we will have to double check to be certain.
-            if (Robot.DRIVETRAIN_STATE == DrivetrainState.ROBOT_ALIGN && Robot.LIMELIGHT_BACK.hasVisionTargetBoolean()) {
-                var txDegrees = Robot.LIMELIGHT_BACK.getBufferedTx();
+            if (Robot.DRIVETRAIN_STATE == DrivetrainState.ROBOT_ALIGN) {
+              // From the docs it sounds like this boolean will ONLY be true if it sees
+              // the priority tag, but we will have to double check to be certain.
+              if (Robot.LIMELIGHT_BACK.hasVisionTargetBoolean()) {
+                var txDegrees = Robot.LIMELIGHT_BACK.getTx();
                 var targetAngleDegrees = robotRotation.getDegrees() - txDegrees;
-                var targetAngleRadians = Math.toRadians(targetAngleDegrees);
-                r = getAngularVelocityForAlignment(targetAngleRadians);
+                _bufferedTargetAngle = Math.toRadians(targetAngleDegrees);
+                _bufferedTargetAngleTimer.reset();
+              }
+
+              // track to the last known target rotation for .5 seconds after losing vision of the target
+              if (_bufferedTargetAngleTimer.get() < .5) {
+                r = getAngularVelocityForAlignment(_bufferedTargetAngle);
+              }
             }
 
             // angular position holder only acts if r == 0
