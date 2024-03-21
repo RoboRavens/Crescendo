@@ -36,7 +36,7 @@ public class LimelightSubsystem extends SubsystemBase {
   private double _bufferedTa;
 
   // Defaulting to blue speaker is as good as anything.
-  private int _currentTargetTag = 7;
+  private int _currentTargetTag = FieldConstants.BLUE_SPEAKER_CENTER_APRILTAG_ID;
 
   public LimelightSubsystem(String tableName) {
     _tableName = tableName;
