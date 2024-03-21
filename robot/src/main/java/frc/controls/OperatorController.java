@@ -27,6 +27,7 @@ import frc.robot.commands.wrist.WristSuspendLimitsCommand;
 import frc.robot.util.arm.LimbSetpoint;
 import frc.util.StateManagement.ArmUpTargetState;
 import frc.util.StateManagement.LimelightOverrideState;
+import frc.util.StateManagement.SelectedShotTargetState;
 import frc.util.StateManagement.ShooterRevTargetState;
 
 /** Add your docs here. */
@@ -43,15 +44,8 @@ public class OperatorController {
                 Robot.ELBOW_SUBSYSTEM.resetPosition();
             }).ignoringDisable(true));
 
-        Trigger moveToWristScoringSelectionPositionTrigger = new Trigger(
-            () -> Robot.LIMELIGHT_OVERRIDE_STATE == LimelightOverrideState.OVERRIDE_ON
-            && Robot.ARM_UP_TARGET_STATE == ArmUpTargetState.FREE 
-            && Robot.INTAKE_SUBSYSTEM.hasPieceAnywhere() == true 
-            && DriverStation.isTeleop()
-        );
-
-        _operatorController.b().and(moveToWristScoringSelectionPositionTrigger)
-        .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.STARTING_LINE_SCORING));
+        _operatorController.b()
+        .onTrue(new InstantCommand(() -> Robot.SELECTED_SHOT_TARGET_STATE = SelectedShotTargetState.STARTING_LINE_SHOT));
         _operatorController.x()
         .onTrue(new InstantCommand(
             () -> Robot.LIMELIGHT_OVERRIDE_STATE = 
@@ -59,10 +53,10 @@ public class OperatorController {
                 ? LimelightOverrideState.OVERRIDE_OFF
                 : LimelightOverrideState.OVERRIDE_ON
         ));
-        _operatorController.y().and(moveToWristScoringSelectionPositionTrigger)
-        .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.PODIUM_SCORING));
-        _operatorController.a().and(moveToWristScoringSelectionPositionTrigger)
-        .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SPEAKER_SCORING));
+        _operatorController.y()
+        .onTrue(new InstantCommand(() -> Robot.SELECTED_SHOT_TARGET_STATE = SelectedShotTargetState.PODIUM_SHOT));
+        _operatorController.a()
+        .onTrue(new InstantCommand(() -> Robot.SELECTED_SHOT_TARGET_STATE = SelectedShotTargetState.SUBWOOFER_SHOT));
         
         _operatorController.leftTrigger().and(_operatorController.rightBumper())
         .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.START_CONFIG_UP));
