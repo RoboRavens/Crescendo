@@ -51,9 +51,11 @@ public class DrivetrainDefaultCommand extends Command {
         y = Deadband.adjustValueToZero(y, Constants.JOYSTICK_DEADBAND);
         r = Deadband.adjustValueToZero(r, Constants.JOYSTICK_DEADBAND);
         
-        Rotation2d a = Robot.DRIVETRAIN_SUBSYSTEM.getOdometryRotation(); // The angle of the robot as measured by a gyroscope. The robot's angle is considered to be zero when it is facing directly away from your alliance station wall.        
+        // The angle of the robot as measured by a gyroscope. The robot's angle is considered to be zero when it is facing directly away from your alliance station wall.        
+        Rotation2d robotRotationDegrees = Robot.DRIVETRAIN_SUBSYSTEM.getOdometryRotation();
         
-        if ((x == 0 && y == 0 && r == 0) == false) {
+        // If no joystick input OR robot is being auto-driven, reset the x-ing timer.
+        if ((x == 0 && y == 0 && r == 0) == false || (Robot.DRIVETRAIN_STATE != DrivetrainState.FREEHAND)) {
             _xingTimer.reset();
         }
 
@@ -66,18 +68,14 @@ public class DrivetrainDefaultCommand extends Command {
                 y = y * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND * cutPower;
                 r = r * Constants.DRIVE_MAX_TURN_RADIANS_PER_SECOND * cutPower;
 
-                if (Robot.autoRotationAlignEnabled) {
-                    r = getAngularVelocityForAlignment(Robot.DRIVETRAIN_SUBSYSTEM.getTargetRadiansForCenterOfSpeaker());
-                }
-
                 // angular position holder only acts if r == 0
-                r = AngularPositionHolder.GetInstance().getAngularVelocity(r, a.getRadians());
+                r = AngularPositionHolder.GetInstance().getAngularVelocity(r, robotRotationDegrees.getRadians());
 
                 var targetChassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
                     x, // x translation
                     y, // y translation
                     r, // rotation
-                    a // The angle of the robot as measured by a gyroscope.
+                    robotRotationDegrees // The angle of the robot as measured by a gyroscope.
                 );
 
                 targetChassisSpeeds.vxMetersPerSecond = Slew.GetSlewedTarget(_velocityXSlewRate, targetChassisSpeeds.vxMetersPerSecond, _chassisSpeeds.vxMetersPerSecond);
@@ -87,6 +85,30 @@ public class DrivetrainDefaultCommand extends Command {
 
                 Robot.DRIVETRAIN_SUBSYSTEM.drive(targetChassisSpeeds);
             }
+        }
+        else if (Robot.DRIVETRAIN_STATE == DrivetrainState.ROBOT_ALIGN) {
+            double cutPower = Robot.cutPower ? 0.5 : 1;
+            x = x * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND * cutPower;
+            y = y * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND * cutPower;
+
+            r = getAngularVelocityForAlignmentFromRadiansOffset(Robot.DRIVETRAIN_SUBSYSTEM.getTargetRadiansForCenterOfSpeakerTx());
+
+            // angular position holder only acts if r == 0
+            r = AngularPositionHolder.GetInstance().getAngularVelocity(r, robotRotationDegrees.getRadians());
+
+            var targetChassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+                x, // x translation
+                y, // y translation
+                r, // rotation
+                robotRotationDegrees // The angle of the robot as measured by a gyroscope.
+            );
+
+            targetChassisSpeeds.vxMetersPerSecond = Slew.GetSlewedTarget(_velocityXSlewRate, targetChassisSpeeds.vxMetersPerSecond, _chassisSpeeds.vxMetersPerSecond);
+            targetChassisSpeeds.vyMetersPerSecond = Slew.GetSlewedTarget(_velocityYSlewRate, targetChassisSpeeds.vyMetersPerSecond, _chassisSpeeds.vyMetersPerSecond);
+            targetChassisSpeeds.omegaRadiansPerSecond = Slew.GetSlewedTarget(_angularSlewRate, targetChassisSpeeds.omegaRadiansPerSecond, _chassisSpeeds.omegaRadiansPerSecond);
+            _chassisSpeeds = targetChassisSpeeds;
+
+            Robot.DRIVETRAIN_SUBSYSTEM.drive(targetChassisSpeeds);
         }
     }
 
@@ -168,6 +190,12 @@ public class DrivetrainDefaultCommand extends Command {
             return 0.4 * velocityDirection;
         }
         return angularVelocity; // angular velocity
+    }
+
+    private double getAngularVelocityForAlignmentFromRadiansOffset(double radiansOffset) {
+        double targetRotation = Robot.DRIVETRAIN_SUBSYSTEM.getOdometryRotation().getRadians() + radiansOffset;
+
+        return getAngularVelocityForAlignment(targetRotation);
     }
 
     @Override

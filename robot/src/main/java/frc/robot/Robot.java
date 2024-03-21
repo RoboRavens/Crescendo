@@ -26,7 +26,7 @@ import frc.controls.ButtonCode.Toggle;
 import frc.controls.OperatorController;
 import frc.robot.commands.compound.LimbGoToSetpointCommand;
 import frc.robot.commands.drivetrain.DriveTwoInchesCommand;
-import frc.robot.commands.drivetrain.DrivetrainAutoAimCommand;
+import frc.robot.commands.drivetrain.DrivetrainAutoAimNoteCommand;
 import frc.robot.commands.drivetrain.DrivetrainDefaultCommand;
 import frc.robot.commands.elbow.ElbowDefaultCommand;
 import frc.robot.commands.elbow.ElbowMoveManuallyCommand;
@@ -96,7 +96,7 @@ public class Robot extends TimedRobot {
   public static final CommandXboxController COMMAND_DRIVE_CONTROLLER = new CommandXboxController(RobotMap.DRIVE_CONTROLLER_PORT);
   public static final XboxController DRIVE_CONTROLLER = COMMAND_DRIVE_CONTROLLER.getHID();
   public static DriverStation.Alliance allianceColor = Alliance.Blue;
-  public static final DrivetrainAutoAimCommand DRIVETRAIN_AUTO_AIM_COMMAND = new DrivetrainAutoAimCommand();
+  public static final DrivetrainAutoAimNoteCommand DRIVETRAIN_AUTO_AIM_NOTE_COMMAND = new DrivetrainAutoAimNoteCommand();
   public static final ReactDashSubsystem REACT_DASH_SUBSYSTEM = new ReactDashSubsystem();
   public static final AutoChooserSubsystemReact AUTO_CHOOSER = new AutoChooserSubsystemReact();
   public static final TeleopDashboardSubsystem TELEOP_DASHBOARD_SUBSYSTEM = new TeleopDashboardSubsystem();
@@ -180,7 +180,7 @@ public class Robot extends TimedRobot {
       && INTAKE_TARGET_STATE == IntakeTargetState.GROUND
       && Robot.INTAKE_SUBSYSTEM.driverCanIntake()
       && Robot.INTAKE_SUBSYSTEM.hasPieceAnywhere() == false)
-    .whileTrue(DRIVETRAIN_AUTO_AIM_COMMAND.alongWith(new IntakeWithSensorTeleopCommand()));
+    .whileTrue(DRIVETRAIN_AUTO_AIM_NOTE_COMMAND.alongWith(new IntakeWithSensorTeleopCommand()));
 
     // The autoRotationAlignEnabled boolean is used in the drivetrain subsystem to enable rotation align without restricting x and y control
     new Trigger(() -> DRIVE_CONTROLLER.getLeftTriggerAxis() > .1

@@ -545,6 +545,10 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
     return Math.asin(getYOffsetFromSpeaker() / getDistanceFromSpeaker());
   }
 
+  public double getTargetRadiansForCenterOfSpeakerTx() {
+    return Math.toRadians(Robot.LIMELIGHT_BACK.getBufferedTx());
+  }
+
   public boolean getIsRobotRotationInSpeakerRange() {
     return getAngleOffsetFromAmpEdgeOfSpeaker() < 0 && getAngleOffsetFromSourceEdgeOfSpeaker() > 0; // This means the robot's angle intercepts with the speaker
   }

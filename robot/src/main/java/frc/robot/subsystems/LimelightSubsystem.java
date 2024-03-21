@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
@@ -25,6 +26,12 @@ public class LimelightSubsystem extends SubsystemBase {
 
   private NetworkTableEntry ledMode;
 
+  private Timer _bufferedTvTimer = new Timer();
+  private boolean _bufferedTv;
+  private double _bufferedTx;
+  private double _bufferedTy;
+  private double _bufferedTa;
+
   public LimelightSubsystem(String tableName) {
     _tableName = tableName;
     _baseNetworkTable = NetworkTableInstance.getDefault().getTable(tableName);
@@ -40,7 +47,20 @@ public class LimelightSubsystem extends SubsystemBase {
   }
 
   public void periodic() {
-    Pose2d robotPose = getPureLimelightRobotPose();
+    // Pose2d robotPose = getPureLimelightRobotPose();
+
+    if (this.hasVisionTargetBoolean()) {
+      _bufferedTvTimer.reset();
+      _bufferedTv = true;
+      _bufferedTx = this.getTx();
+      _bufferedTx = this.getTy();
+      _bufferedTa = this.getTa();
+    } else if (_bufferedTvTimer.get() > .25) {
+      _bufferedTv = false;
+    }
+
+
+
     /*
     if (robotPose != null) {
       SmartDashboard.putNumber(_tableName + "PoseX", robotPose.getX());
@@ -94,6 +114,13 @@ public class LimelightSubsystem extends SubsystemBase {
     return tv.getDouble(0);
   }
 
+  private boolean hasVisionTargetBoolean() {
+    return tv.getDouble(0) == 1;
+  }
+
+  public boolean hasVisionTargetBuffered() {
+    return _bufferedTv;
+  }
 
   public double getCl() {
     return cl.getDouble(0.0);
@@ -107,12 +134,24 @@ public class LimelightSubsystem extends SubsystemBase {
     return tx.getDouble(0.0);
   }
 
+  public double getBufferedTx() {
+    return _bufferedTx;
+  }
+
   public double getTa() {
     return ta.getDouble(0.0);
   }
 
+  public double getBufferedTa() {
+    return _bufferedTa;
+  }
+
   public double getTy() {
     return ty.getDouble(0.0);
+  }
+
+  public double getBufferedTy() {
+    return _bufferedTy;
   }
 
   public double getTv() {
