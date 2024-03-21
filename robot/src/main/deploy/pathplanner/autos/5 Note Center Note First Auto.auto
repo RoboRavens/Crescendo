@@ -274,6 +274,12 @@
                     {
                       "type": "named",
                       "data": {
+                        "name": "LimbGoToGN3ScorePositionCommand"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
                         "name": "FeedNoteCommand"
                       }
                     }

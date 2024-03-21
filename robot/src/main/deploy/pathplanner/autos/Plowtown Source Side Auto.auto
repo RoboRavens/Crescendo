@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.72,
-      "y": 6.69
+      "x": 0.75,
+      "y": 4.41
     },
-    "rotation": 60.69
+    "rotation": -60.15999999999997
   },
   "command": {
     "type": "sequential",
@@ -34,7 +34,7 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "LimbGoToPreloadNoteScorePositionCommand"
+                        "name": "SouthCenterLimbGoToPreloadSetpointCommand"
                       }
                     },
                     {
@@ -47,6 +47,12 @@
                       "type": "deadline",
                       "data": {
                         "commands": [
+                          {
+                            "type": "path",
+                            "data": {
+                              "pathName": "PlowtownSourceSide1"
+                            }
+                          },
                           {
                             "type": "parallel",
                             "data": {
@@ -65,12 +71,6 @@
                                 }
                               ]
                             }
-                          },
-                          {
-                            "type": "path",
-                            "data": {
-                              "pathName": "SadvilleAmpSide1"
-                            }
                           }
                         ]
                       }
@@ -78,13 +78,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "SadvilleAmpSide2"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "FeedNoteCommand"
+                        "pathName": "PlowtownSourceSide2"
                       }
                     }
                   ]

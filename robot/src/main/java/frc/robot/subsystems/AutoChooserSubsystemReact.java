@@ -3,6 +3,8 @@ package frc.robot.subsystems;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.PubSubOption;
@@ -10,14 +12,13 @@ import edu.wpi.first.networktables.StringArrayPublisher;
 import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.networktables.StringSubscriber;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Robot;
 import frc.util.AutoMode;
-import com.pathplanner.lib.commands.PathPlannerAuto;
 
 public class AutoChooserSubsystemReact extends SubsystemBase {
   private final Map<String, AutoMode> _autos = new LinkedHashMap<>();
@@ -109,6 +110,14 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
       new AutoMode("B15: 5 Note Center Note First Auto",
       () -> new PathPlannerAuto("5 Note Center Note First Auto"))
     );
+    this.addOption(
+      new AutoMode("B16: Plowtown Source Side Auto",
+      () -> new PathPlannerAuto("Plowtown Source Side Auto"))
+    );
+    this.addOption(
+      new AutoMode("B17: Plowtown Source Side Path",
+      () -> new PathPlannerAuto("Plowtown Source Side Path"))
+    );
 
     // RED SIDE
     this.addRedDefault(
@@ -170,6 +179,14 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
     this.addOption(
       new AutoMode("R15: 5 Note Center Note First Auto",
       () -> new PathPlannerAuto("5 Note Center Note First Auto"))
+    );
+    this.addOption(
+      new AutoMode("R16: Plowtown Source Side Auto",
+      () -> new PathPlannerAuto("Plowtown Source Side Auto"))
+    );
+    this.addOption(
+      new AutoMode("R17: Plowtown Source Side Path",
+      () -> new PathPlannerAuto("Plowtown Source Side Path"))
     );
   }
 

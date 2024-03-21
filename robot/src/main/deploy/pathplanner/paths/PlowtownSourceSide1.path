@@ -33,11 +33,6 @@
       "waypointRelativePos": 0.65,
       "rotationDegrees": -35.0,
       "rotateFast": false
-    },
-    {
-      "waypointRelativePos": 0.95,
-      "rotationDegrees": 0.0,
-      "rotateFast": false
     }
   ],
   "constraintZones": [],
@@ -54,7 +49,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "Source Side Optimized",
+  "folder": "Plowtown Source Side",
   "previewStartingState": {
     "rotation": -60.15999999999997,
     "velocity": 0

@@ -32,6 +32,7 @@ public class WristConstants {
     public static final double DEGREES_SIX_NOTE_AUTO_GN_3 = -31.4;
     public static final double DEGREES_SIX_NOTE_AUTO_GN_4_AND_5 = -35;
     public static final double DEGREES_SIX_NOTE_PRELOAD = -6;
+    public static final double DEGREES_SOURCE_SIDE_AUTO_WING_SHOT = -31.4; // TODO: find the correct number of degrees
 
     // distance in meters from speaker to back bumper
     public static final double DISTANCE_METERS_STARTING_LINE = 2.032;

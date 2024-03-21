@@ -39,6 +39,7 @@ public class PathPlannerConfigurator extends SubsystemBase {
     NamedCommands.registerCommand("LimbStartConfigUpCommand", new ElbowGoToPositionCommand(LimbSetpoint.START_CONFIG_UP.getElbowRotationPosition())); // not a LimbSetpoint to optimize for time
     NamedCommands.registerCommand("LimbGoToArmUpShotCommand", LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.DEFENDED_SPEAKER_SCORING));
     NamedCommands.registerCommand("SouthCenterLimbGoToPreloadSetpointCommand", LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SOUTH_CENTER_PRELOAD));
+    NamedCommands.registerCommand("LimbGoToSourceSideAutoWingShot", LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SOURCE_SIDE_AUTO_WING_SHOT));
     
     // Configure AutoBuilder last
     AutoBuilder.configureHolonomic(

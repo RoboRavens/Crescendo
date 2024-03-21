@@ -88,7 +88,7 @@
                           {
                             "type": "named",
                             "data": {
-                              "name": "LimbGoToGN1and2ScorePositionCommand"
+                              "name": "LimbGoToSourceSideAutoWingShot"
                             }
                           }
                         ]
@@ -145,7 +145,7 @@
                           {
                             "type": "named",
                             "data": {
-                              "name": "LimbGoToGN1and2ScorePositionCommand"
+                              "name": "LimbGoToSourceSideAutoWingShot"
                             }
                           }
                         ]
