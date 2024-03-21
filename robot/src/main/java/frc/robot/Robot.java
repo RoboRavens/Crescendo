@@ -189,7 +189,7 @@ public class Robot extends TimedRobot {
     .onFalse(new InstantCommand(() -> autoRotationAlignEnabled = false));
 
     configureDriveControllerBindings();
-    configureAutomatedBehaviorBindings();
+    // configureAutomatedBehaviorBindings();
     configureButtonBindings();
     configureOverrideBindings();
     OperatorController.enable();
@@ -257,22 +257,22 @@ public class Robot extends TimedRobot {
 	}
 
   private void configureAutomatedBehaviorBindings() {
-    new Trigger(() -> SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON)
+    new Trigger(() -> SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON && DriverStation.isTeleop())
       .whileTrue(new StartShooterCommand());
 
-    new Trigger(() -> ARM_UP_TARGET_STATE == ArmUpTargetState.UP)
+    new Trigger(() -> ARM_UP_TARGET_STATE == ArmUpTargetState.UP && DriverStation.isTeleop())
       .whileTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.DEFENDED_SPEAKER_SCORING));
 
-    new Trigger(() -> LIMELIGHT_OVERRIDE_STATE == LimelightOverrideState.OVERRIDE_ON && SELECTED_SHOT_TARGET_STATE == SelectedShotTargetState.SUBWOOFER_SHOT)
+    new Trigger(() -> LIMELIGHT_OVERRIDE_STATE == LimelightOverrideState.OVERRIDE_ON && SELECTED_SHOT_TARGET_STATE == SelectedShotTargetState.SUBWOOFER_SHOT && DriverStation.isTeleop())
       .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SPEAKER_SCORING));
 
-    new Trigger(() -> LIMELIGHT_OVERRIDE_STATE == LimelightOverrideState.OVERRIDE_ON && SELECTED_SHOT_TARGET_STATE == SelectedShotTargetState.STARTING_LINE_SHOT)
+    new Trigger(() -> LIMELIGHT_OVERRIDE_STATE == LimelightOverrideState.OVERRIDE_ON && SELECTED_SHOT_TARGET_STATE == SelectedShotTargetState.STARTING_LINE_SHOT && DriverStation.isTeleop())
       .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.STARTING_LINE_SCORING));
 
-    new Trigger(() -> LIMELIGHT_OVERRIDE_STATE == LimelightOverrideState.OVERRIDE_ON && SELECTED_SHOT_TARGET_STATE == SelectedShotTargetState.PODIUM_SHOT)
+    new Trigger(() -> LIMELIGHT_OVERRIDE_STATE == LimelightOverrideState.OVERRIDE_ON && SELECTED_SHOT_TARGET_STATE == SelectedShotTargetState.PODIUM_SHOT && DriverStation.isTeleop())
       .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.PODIUM_SCORING));
 
-    new Trigger(() -> ARM_UP_TARGET_STATE == ArmUpTargetState.FREE && Robot.INTAKE_SUBSYSTEM.hasPieceAnywhere() == false)
+    new Trigger(() -> ARM_UP_TARGET_STATE == ArmUpTargetState.FREE && Robot.INTAKE_SUBSYSTEM.hasPieceAnywhere() == false && DriverStation.isTeleop())
       .onTrue(new WristGoToPositionCommand(WristConstants.DEGREES_FLOOR_PICKUP));
   }
 
@@ -313,6 +313,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during teleoperated mode. */
   @Override
   public void teleopPeriodic() {
+    SmartDashboard.putBoolean("auto rotation align enabled", autoRotationAlignEnabled);
     this.runLedLogic();
   }
 

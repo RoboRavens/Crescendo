@@ -7,17 +7,16 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 
 public class ElbowConstants {
 
-  public static final double ENCODER_POSITION_AT_GROUND_PICKUP = -0.376465;
+  public static final double ENCODER_POSITION_AT_GROUND_PICKUP = 0;
   public static final double ENCODER_POSITION_AT_HORIZONTAL = -5.27;
   public static final double ENCODER_POSITION_AT_VERTICAL = -35.51;
   public static final double ENCODER_LIMIT_RESET_BUFFER = .5;
-  public static final double ENCODER_POSITION_AT_STARTUP = -22.496582;
+  public static final double ENCODER_POSITION_AT_STARTUP = -23.093750;
   
   // DEGREES_FLOOR_PICKUP in onshape is 0, but -15.684524 in below table
   // all other values from onshape table have been reduced by 15 degrees
   // these constants show degrees from horizontal
-  // public static final double DEGREES_FLOOR_PICKUP = -15.684524;
-  public static final double DEGREES_FLOOR_PICKUP = -13.684524;
+  public static final double DEGREES_FLOOR_PICKUP = -15.684524;
   public static final double DEGREES_SPEAKER_SCORING = -13.684524;
   public static final double DEGREES_AMP_SCORE = 80;
   public static final double DEGREES_TRAP_LOAD_FROM_SOURCE = 35;

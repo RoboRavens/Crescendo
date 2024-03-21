@@ -36,7 +36,7 @@ public class ShooterConstants {
     public static final double[][] SHOOTER_ANGLE_PAIRS_DOWN ={
         {0.9144, 6},
         {1.181, 19.7},
-        {2.032, 29.7}, // start line + 3 degrees
+        {1.962, 16}, // start line; 77.25 inches
         {2.3368, 34.4}, // podium + 3 degrees
     };
 
