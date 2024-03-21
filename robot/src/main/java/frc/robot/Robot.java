@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -263,13 +264,20 @@ public class Robot extends TimedRobot {
     new Trigger(() -> ARM_UP_TARGET_STATE == ArmUpTargetState.UP && DriverStation.isTeleop())
       .whileTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.DEFENDED_SPEAKER_SCORING));
 
-    new Trigger(() -> LIMELIGHT_OVERRIDE_STATE == LimelightOverrideState.OVERRIDE_ON && SELECTED_SHOT_TARGET_STATE == SelectedShotTargetState.SUBWOOFER_SHOT && DriverStation.isTeleop())
+    Trigger moveToWristScoringSelectionPositionTrigger = new Trigger(
+      () -> LIMELIGHT_OVERRIDE_STATE == LimelightOverrideState.OVERRIDE_ON
+      && ARM_UP_TARGET_STATE == ArmUpTargetState.FREE 
+      && Robot.INTAKE_SUBSYSTEM.hasPieceAnywhere() == true 
+      && DriverStation.isTeleop()
+    );
+
+    new Trigger(() -> SELECTED_SHOT_TARGET_STATE == SelectedShotTargetState.SUBWOOFER_SHOT).and(moveToWristScoringSelectionPositionTrigger)
       .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SPEAKER_SCORING));
 
-    new Trigger(() -> LIMELIGHT_OVERRIDE_STATE == LimelightOverrideState.OVERRIDE_ON && SELECTED_SHOT_TARGET_STATE == SelectedShotTargetState.STARTING_LINE_SHOT && DriverStation.isTeleop())
+    new Trigger(() -> SELECTED_SHOT_TARGET_STATE == SelectedShotTargetState.STARTING_LINE_SHOT).and(moveToWristScoringSelectionPositionTrigger)
       .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.STARTING_LINE_SCORING));
 
-    new Trigger(() -> LIMELIGHT_OVERRIDE_STATE == LimelightOverrideState.OVERRIDE_ON && SELECTED_SHOT_TARGET_STATE == SelectedShotTargetState.PODIUM_SHOT && DriverStation.isTeleop())
+    new Trigger(() -> SELECTED_SHOT_TARGET_STATE == SelectedShotTargetState.PODIUM_SHOT).and(moveToWristScoringSelectionPositionTrigger)
       .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.PODIUM_SCORING));
 
     new Trigger(() -> ARM_UP_TARGET_STATE == ArmUpTargetState.FREE && Robot.INTAKE_SUBSYSTEM.hasPieceAnywhere() == false && DriverStation.isTeleop())
