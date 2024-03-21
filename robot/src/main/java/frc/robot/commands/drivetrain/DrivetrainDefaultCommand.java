@@ -22,7 +22,7 @@ public class DrivetrainDefaultCommand extends Command {
     private double _velocityXSlewRate = DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / Constants.SLEW_FRAMES_TO_MAX_X_VELOCITY;
     private double _velocityYSlewRate = DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / Constants.SLEW_FRAMES_TO_MAX_Y_VELOCITY;
     private double _angularSlewRate = DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND / Constants.SLEW_FRAMES_TO_MAX_ANGULAR_VELOCITY;
-    public PIDController _scoringRotationAlignPID = new PIDController(0.17,  0, 4);
+    public PIDController _scoringRotationAlignPID = new PIDController(7, 0, 2);
 
     private Timer _xingTimer = new Timer();
 
@@ -64,29 +64,35 @@ public class DrivetrainDefaultCommand extends Command {
             _xingTimer.reset();
         }
 
+        var txDegreesSD = Robot.LIMELIGHT_BACK.getTx();
+        SmartDashboard.putNumber("txDegrees", txDegreesSD);
+        var targetAngleDegreesSD = robotRotation.getDegrees() - txDegreesSD;
+        SmartDashboard.putNumber("targetAngleDegrees", targetAngleDegreesSD);
+        SmartDashboard.putNumber("_bufferedTargetAngle", _bufferedTargetAngle);
+        
+        SmartDashboard.putBoolean("LL BACK Has Target", Robot.LIMELIGHT_BACK.hasVisionTargetBoolean());
+
+              SmartDashboard.putNumber("_bufferedTargetAngleTimer", _bufferedTargetAngleTimer.get());
+
         
         if (_xingTimer.get() >= Constants.DRIVETRAIN_HOLD_POSITION_TIMER_THRESHOLD) {
             Robot.DRIVETRAIN_SUBSYSTEM.holdPosition();
         } else {
-            double cutPower = Robot.cutPower ? 0.5 : 1;
-            x = x * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND * cutPower;
-            y = y * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND * cutPower;
-            r = r * Constants.DRIVE_MAX_TURN_RADIANS_PER_SECOND * cutPower;
+            double cutPowerRotation = Robot.cutPower ? 0.5 : 1;
+            double cutPowerTranslation = Robot.cutPower ? 0.25 : 1;
+            x = x * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND * cutPowerTranslation;
+            y = y * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND * cutPowerTranslation;
+            r = r * Constants.DRIVE_MAX_TURN_RADIANS_PER_SECOND * cutPowerRotation;
 
             if (Robot.DRIVETRAIN_STATE == DrivetrainState.ROBOT_ALIGN) {
               // From the docs it sounds like this boolean will ONLY be true if it sees
               // the priority tag, but we will have to double check to be certain.
               if (Robot.LIMELIGHT_BACK.hasVisionTargetBoolean()) {
                 var txDegrees = Robot.LIMELIGHT_BACK.getTx();
-                SmartDashboard.putNumber("txDegrees", txDegrees);
                 var targetAngleDegrees = robotRotation.getDegrees() - txDegrees;
-                SmartDashboard.putNumber("targetAngleDegrees", targetAngleDegrees);
                 _bufferedTargetAngle = Math.toRadians(targetAngleDegrees);
-                SmartDashboard.putNumber("_bufferedTargetAngle", _bufferedTargetAngle);
                 _bufferedTargetAngleTimer.reset();
               }
-
-              SmartDashboard.putNumber("_bufferedTargetAngleTimer", _bufferedTargetAngleTimer.get());
 
               // track to the last known target rotation for .5 seconds after losing vision of the target
               if (_bufferedTargetAngleTimer.get() < .5) {
@@ -174,24 +180,13 @@ public class DrivetrainDefaultCommand extends Command {
 
     private double getAngularVelocityForAlignment(double targetRotation) {
         // Assumes that the robot's initial rotation (0) is aligned with the scoring nodes
+        SmartDashboard.putNumber("APH Target Rotation", targetRotation);
         double currentRotation = Robot.DRIVETRAIN_SUBSYSTEM.getOdometryRotation().getRadians();
         double rotationOffset = currentRotation - targetRotation;
-        //SmartDashboard.putNumber("Rotation Offset", rotationOffset);
-        double angularVelocity = _scoringRotationAlignPID
-        .calculate(rotationOffset) 
-        * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
-        double velocityDirection = angularVelocity < 0 ? -1 : 1;
-        boolean isWithinTwoHundredthsRadianOfTargetRotation = currentRotation > targetRotation - 0.02 && currentRotation < targetRotation + 0.02;
-        //SmartDashboard.putBoolean("isWithinTwoHundredthsRadianOfTargetRotation", isWithinTwoHundredthsRadianOfTargetRotation);
-        // If the angular velocity is greater than the max angular velocity, set it to the max angular velocity
-        if (Math.abs(angularVelocity) > DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND) {
-            return DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * velocityDirection;
-        }
-        // If the angular velocity is less than 0.4 and the robot is not within 0.02 radians of 0 degrees, set the velocity to 0.4
-        else if (Math.abs(angularVelocity) < 0.4 && isWithinTwoHundredthsRadianOfTargetRotation == false) {
-            return 0.4 * velocityDirection;
-        }
-        return angularVelocity; // angular velocity
+        SmartDashboard.putNumber("APH Rotation Offset", rotationOffset);
+        SmartDashboard.putNumber("APH Rotation Offset Degrees", Math.toDegrees(rotationOffset));
+        double angularVelocity = _scoringRotationAlignPID.calculate(rotationOffset);
+        return angularVelocity;
     }
 
     private double getAngularVelocityForAlignmentFromRadiansOffset(double radiansOffset) {

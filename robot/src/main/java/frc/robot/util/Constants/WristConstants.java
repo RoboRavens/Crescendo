@@ -45,8 +45,8 @@ public class WristConstants {
     public static Slot0Configs getSlot0Configs() {
         var slot0Config = new Slot0Configs();
         slot0Config.kP = 5;
-        slot0Config.kI = 1;
-        slot0Config.kD = 1.5;
+        slot0Config.kI = 0;
+        slot0Config.kD = .25;
         return slot0Config;
     }
 }

@@ -34,8 +34,8 @@ public class WristSubsystem extends SubsystemBase {
 
   public TalonFXConfiguration getTalonFXConfigurationObject() {
     var talonFXConfiguration = new TalonFXConfiguration();
-    talonFXConfiguration.MotionMagic.MotionMagicAcceleration = 100;
-    talonFXConfiguration.MotionMagic.MotionMagicCruiseVelocity = 20;
+    talonFXConfiguration.MotionMagic.MotionMagicAcceleration = 10;
+    talonFXConfiguration.MotionMagic.MotionMagicCruiseVelocity = 5;
     talonFXConfiguration.Slot0 = _pidConfig;
     
     talonFXConfiguration.MotorOutput.DutyCycleNeutralDeadband = .01;
