@@ -104,6 +104,7 @@ public class WristSubsystem extends SubsystemBase {
     var cosine = Math.cos(Math.toRadians(WristConstants.DEGREES_OFFSET_TO_VERTICAL)+totalAngle);
     double wristFeedForward =  WristConstants.MOTOR_POWER_FEEDFORWARD_AT_HORIZONTAL * cosine;
     SmartDashboard.putNumber("Wrist Cosine", cosine);
+    wristFeedForward = Math.round(wristFeedForward * 100) / 100.0; // round to two decimal places to reduce how often config is changed
     SmartDashboard.putNumber("Wrist Feed Forward", wristFeedForward);
     if (_pidConfig.kS != wristFeedForward) {
        _pidConfig.kS = wristFeedForward;
