@@ -128,6 +128,7 @@ public class ElbowSubsystem extends SubsystemBase {
     var staticFeedForward = this.getStaticFeedforwardFromRadians(angle);
 
     SmartDashboard.putNumber("Elbow Angle Degrees", Math.toDegrees(angle));
+    staticFeedForward = Math.round(staticFeedForward * 100) / 100.0; // round to two decimal places to reduce how often config is changed
     SmartDashboard.putNumber("Elbow Feedforward", staticFeedForward);
     if (_pidConfig.kS != staticFeedForward) {
       _pidConfig.kS = staticFeedForward;
