@@ -10,8 +10,10 @@ import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.ravenhardware.BufferedDigitalInput;
+import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.util.Constants.ShooterConstants;
+import frc.robot.util.Constants.WristConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
     private BufferedDigitalInput _shooterPieceSensor = new BufferedDigitalInput(RobotMap.SHOOTER_PIECE_SENSOR_DIO_PORT, 3, false,
@@ -20,6 +22,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private TalonFX _rightTalonFX = new TalonFX(RobotMap.SHOOTER_RIGHT_MOTOR_CAN_ID);
     private InterpolatingDoubleTreeMap shooterAngleMapUp = new InterpolatingDoubleTreeMap();
     private InterpolatingDoubleTreeMap shooterAngleMapDown = new InterpolatingDoubleTreeMap();
+    private InterpolatingDoubleTreeMap shooterAngleTyMapDown = new InterpolatingDoubleTreeMap();
     final VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
 
 
@@ -50,6 +53,7 @@ public class ShooterSubsystem extends SubsystemBase {
         
         populateShooterAngleMapUp();
         populateShooterAngleMapDown();
+        populateShooterAngleTyMapDown();
     }
 
     public void runShooterAtTargetSpeed() {
@@ -87,6 +91,12 @@ public class ShooterSubsystem extends SubsystemBase {
         }
     }
 
+    private void populateShooterAngleTyMapDown() {
+        for(int i=0; i<ShooterConstants.SHOOTER_ANGLE_FROM_TY_DOWN.length; i++){
+            shooterAngleTyMapDown.put(ShooterConstants.SHOOTER_ANGLE_FROM_TY_DOWN[i][0], ShooterConstants.SHOOTER_ANGLE_FROM_TY_DOWN[i][1]);
+        }
+    }
+
     public double getShooterAngleMapUp(double distance){
         double angle = shooterAngleMapUp.get(distance);
         return angle;
@@ -95,6 +105,17 @@ public class ShooterSubsystem extends SubsystemBase {
     public double getShooterAngleMapDown(double distance){
         double angle = shooterAngleMapDown.get(distance);
         return angle;
+    }
+
+    public double getShooterAngleTyMapDown(double ty) {
+        double angle = shooterAngleTyMapDown.get(ty);
+        return angle;
+    }
+
+    public boolean doesShotAngleMatchTyDown() {
+        double shotAngleFromTy = getShooterAngleTyMapDown(Robot.LIMELIGHT_BACK.getTy());
+        double currentDegrees = Robot.WRIST_SUBSYSTEM.getDegrees();
+        return Math.abs(currentDegrees - shotAngleFromTy) <= WristConstants.IS_AT_SHOT_ANGLE_BUFFER_DEGREES;
     }
 
     public boolean shooterUpToSpeed() {

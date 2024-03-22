@@ -350,7 +350,8 @@ public class Robot extends TimedRobot {
   private void runLedLogic() {
     boolean shooterAtSpeed = SHOOTER_SUBSYSTEM.shooterUpToSpeed();
     boolean hasPieceAnywhere = INTAKE_SUBSYSTEM.hasPieceAnywhere();
-    boolean aimedAtGoal = DRIVETRAIN_SUBSYSTEM.getIsRobotRotationInSpeakerRange();
+    boolean drivetrainAimedAtGoal = LIMELIGHT_BACK.isRobotAimedAtSpeaker();
+    boolean shooterAimedAtGoal = SHOOTER_SUBSYSTEM.doesShotAngleMatchTyDown();
     boolean posessesIndexedPiece = INTAKE_SUBSYSTEM.getPossesesIndexedPiece();
     boolean robotSeesNote = Robot.LIMELIGHT_PICKUP.hasVisionTargetBuffered()
       && INTAKE_TARGET_STATE == IntakeTargetState.GROUND
@@ -367,7 +368,7 @@ public class Robot extends TimedRobot {
     } else if (robotSeesNote) {
       LED_SUBSYSTEM.setColor(Color.kOrange);
     } else if (posessesIndexedPiece) {
-      if (aimedAtGoal) {
+      if (drivetrainAimedAtGoal && shooterAimedAtGoal) {
         LED_SUBSYSTEM.setColor(Color.kGreen);
       } else {
         LED_SUBSYSTEM.setColor(Color.kBlue);

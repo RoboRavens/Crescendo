@@ -13,6 +13,7 @@ public class WristConstants {
     public static final double ENCODER_POSITION_AT_STARTUP = 4.292480;
 
     public static final double IS_AT_SETPOINT_BUFFER = .2;
+    public static final double IS_AT_SHOT_ANGLE_BUFFER_DEGREES = 0.5;
 
     public static final double WRIST_DEGREES_PER_INCREMENT = 2.5;
 

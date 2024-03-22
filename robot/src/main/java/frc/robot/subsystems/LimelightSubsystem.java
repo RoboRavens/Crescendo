@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
 import frc.robot.Robot;
+import frc.robot.util.Constants.Constants;
 import frc.robot.util.field.FieldConstants;
 
 public class LimelightSubsystem extends SubsystemBase {
@@ -128,6 +129,10 @@ public class LimelightSubsystem extends SubsystemBase {
     }
 
     return null;
+  }  
+
+  public boolean isRobotAimedAtSpeaker() {
+    return Math.abs(getTx()) < Constants.TX_CLOSE_TO_SPEAKER_THRESHOLD_DEGREES;
   }
 
   public double hasVisionTarget() {

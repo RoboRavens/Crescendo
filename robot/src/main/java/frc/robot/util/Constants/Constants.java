@@ -5,6 +5,7 @@ public class Constants {
     public static final double STATE_STANDARD_DEVIATION = .1;
     public static final double STARTING_VISION_STANDARD_DEVIATION = .9;
     public static final double MINIMUM_VISION_STANDARD_DEVIATION = .05;
+    public static final double TX_CLOSE_TO_SPEAKER_THRESHOLD_DEGREES = 5;
 
     // Control
     public static final double JOYSTICK_DEADBAND = .1;
