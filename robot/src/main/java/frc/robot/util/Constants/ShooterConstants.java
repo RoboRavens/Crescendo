@@ -40,5 +40,14 @@ public class ShooterConstants {
         {2.3368, 34.4}, // podium + 3 degrees
     };
 
+    public static final double[][] SHOOTER_ANGLE_FROM_TY_DOWN = {
+        {22.175, 0}, // 11 inches
+        {15.1, 12}, // 24 inches
+        {10.8, 17}, // 36 inches
+        {5.693221, 20}, // 53 inches
+        {2.45, 22}, // 69 inches
+        {-1.310349, 24}, // 91 inches
+    };
+
     public static final double SHOOTER_STOP_DELAY = 1;
 }

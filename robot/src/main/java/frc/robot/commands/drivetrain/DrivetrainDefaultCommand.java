@@ -66,6 +66,7 @@ public class DrivetrainDefaultCommand extends Command {
 
         var txDegreesSD = Robot.LIMELIGHT_BACK.getTx();
         SmartDashboard.putNumber("txDegrees", txDegreesSD);
+        SmartDashboard.putNumber("tyDegrees", Robot.LIMELIGHT_BACK.getTy());
         var targetAngleDegreesSD = robotRotation.getDegrees() - txDegreesSD;
         SmartDashboard.putNumber("targetAngleDegrees", targetAngleDegreesSD);
         SmartDashboard.putNumber("_bufferedTargetAngle", _bufferedTargetAngle);

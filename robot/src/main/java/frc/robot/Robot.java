@@ -280,8 +280,8 @@ public class Robot extends TimedRobot {
     new Trigger(() -> SELECTED_SHOT_TARGET_STATE == SelectedShotTargetState.PODIUM_SHOT).and(moveToWristScoringSelectionPositionTrigger)
       .onTrue(new InstantCommand(() -> System.out.println("podium shot")).andThen(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.PODIUM_SCORING)));
 
-    new Trigger(() -> ARM_UP_TARGET_STATE == ArmUpTargetState.FREE && Robot.INTAKE_SUBSYSTEM.hasPieceAnywhere() == false && DriverStation.isTeleop())
-      .onTrue(new WristGoToPositionCommand(WristConstants.DEGREES_FLOOR_PICKUP));
+    // new Trigger(() -> ARM_UP_TARGET_STATE == ArmUpTargetState.FREE && Robot.INTAKE_SUBSYSTEM.hasPieceAnywhere() == false && DriverStation.isTeleop())
+    //   .onTrue(new WristGoToPositionCommand(WristConstants.DEGREES_FLOOR_PICKUP));
   }
 
 	/** This function is run once each time the robot enters autonomous mode. */
