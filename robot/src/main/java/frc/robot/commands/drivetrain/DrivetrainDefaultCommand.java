@@ -3,8 +3,8 @@ package frc.robot.commands.drivetrain;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
@@ -14,8 +14,6 @@ import frc.util.AngularPositionHolder;
 import frc.util.Deadband;
 import frc.util.Slew;
 import frc.util.StateManagement.DrivetrainState;
-import frc.util.StateManagement.LimelightOverrideState;
-import frc.util.StateManagement.OverallState;
 
 public class DrivetrainDefaultCommand extends Command {
     private ChassisSpeeds _chassisSpeeds = new ChassisSpeeds(0,0,0);
@@ -28,6 +26,7 @@ public class DrivetrainDefaultCommand extends Command {
 
     private Timer _bufferedTargetAngleTimer = new Timer();
     private double _bufferedTargetAngle = 0;
+    private boolean _visionAligned = false;
 
     public boolean CutPower = false;
 
@@ -72,9 +71,8 @@ public class DrivetrainDefaultCommand extends Command {
         SmartDashboard.putNumber("_bufferedTargetAngle", _bufferedTargetAngle);
         
         SmartDashboard.putBoolean("LL BACK Has Target", Robot.LIMELIGHT_BACK.hasVisionTargetBoolean());
-
-              SmartDashboard.putNumber("_bufferedTargetAngleTimer", _bufferedTargetAngleTimer.get());
-
+        SmartDashboard.putNumber("_bufferedTargetAngleTimer", _bufferedTargetAngleTimer.get());
+        boolean visionAligned = false;
         
         if (_xingTimer.get() >= Constants.DRIVETRAIN_HOLD_POSITION_TIMER_THRESHOLD) {
             Robot.DRIVETRAIN_SUBSYSTEM.holdPosition();
@@ -97,6 +95,8 @@ public class DrivetrainDefaultCommand extends Command {
 
               // track to the last known target rotation for .5 seconds after losing vision of the target
               if (_bufferedTargetAngleTimer.get() < .5) {
+                var diff = Math.toDegrees(_bufferedTargetAngle) - robotRotation.getDegrees();
+                visionAligned = Math.abs(diff) < Constants.VISION_ALIGNED_TX_BUFFER_DEGREES;
                 r = getAngularVelocityForAlignment(_bufferedTargetAngle);
               }
             }
@@ -119,6 +119,7 @@ public class DrivetrainDefaultCommand extends Command {
             Robot.DRIVETRAIN_SUBSYSTEM.drive(targetChassisSpeeds);
         }
         
+        _visionAligned = visionAligned;
     }
 
     // public double getYVelocity(Translation2d target) {
@@ -190,22 +191,27 @@ public class DrivetrainDefaultCommand extends Command {
         return angularVelocity;
     }
 
-    private double getAngularVelocityForAlignmentFromRadiansOffset(double radiansOffset) {
-        double targetRotation = Robot.DRIVETRAIN_SUBSYSTEM.getOdometryRotation().getRadians() + radiansOffset;
+    // private double getAngularVelocityForAlignmentFromRadiansOffset(double radiansOffset) {
+    //     double targetRotation = Robot.DRIVETRAIN_SUBSYSTEM.getOdometryRotation().getRadians() + radiansOffset;
 
-        return getAngularVelocityForAlignment(targetRotation);
-    }
+    //     return getAngularVelocityForAlignment(targetRotation);
+    // }
 
     @Override
     public void end(boolean interrupted) {
         Robot.DRIVETRAIN_SUBSYSTEM.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
+        _visionAligned = false;
         //SmartDashboard.putString("end method", "end");
     }
 
-    private double getDegreesToMovementDirection(double x, double y, double robotAngleDegrees) {
-        double desiredAngleRadians = Math.atan2(y, x);
-        return this.getShortestAngularDifference(robotAngleDegrees, Math.toDegrees(desiredAngleRadians));
+    public boolean isVisionAligned() {
+      return _visionAligned;
     }
+
+    // private double getDegreesToMovementDirection(double x, double y, double robotAngleDegrees) {
+    //     double desiredAngleRadians = Math.atan2(y, x);
+    //     return this.getShortestAngularDifference(robotAngleDegrees, Math.toDegrees(desiredAngleRadians));
+    // }
 
     /**
      * Gets the shortest angular difference between two points.
@@ -213,16 +219,16 @@ public class DrivetrainDefaultCommand extends Command {
      * @param target target angle in degrees
      * @return the shortest angle to get from current to target
      */
-    private double getShortestAngularDifference(double current, double target) {
-		current = current % 360.0;
-		target = target % 360.0;
-		double d = Math.abs(current - target) % 360.0; 
-		double r = d > 180 ? 360 - d : d;
+    // private double getShortestAngularDifference(double current, double target) {
+		// current = current % 360.0;
+		// target = target % 360.0;
+		// double d = Math.abs(current - target) % 360.0; 
+		// double r = d > 180 ? 360 - d : d;
 		
-		//calculate sign 
-		int sign = (current - target >= 0 && current - target <= 180) || (current - target <= -180 && current - target >= -360) ? 1 : -1; 
-		r *= sign;
+		// //calculate sign 
+		// int sign = (current - target >= 0 && current - target <= 180) || (current - target <= -180 && current - target >= -360) ? 1 : -1; 
+		// r *= sign;
 
-		return r;
-    }
+		// return r;
+    // }
 }
