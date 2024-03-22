@@ -49,5 +49,10 @@ public class ShooterConstants {
         {-1.310349, 24}, // 91 inches
     };
 
+    public static final double[][] SHOOTER_ANGLE_FROM_TY_UP = {
+        {50, 0},
+        {-50, 0},
+    };
+
     public static final double SHOOTER_STOP_DELAY = 1;
 }

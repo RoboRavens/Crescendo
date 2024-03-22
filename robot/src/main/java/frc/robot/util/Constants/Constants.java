@@ -17,6 +17,7 @@ public class Constants {
     public static final double DRIVE_HOLD_ANGLE_TIMEOUT_SECONDS = .33;
     public static final double DRIVETRAIN_HOLD_POSITION_TIMER_THRESHOLD = .5;
     public static final double MAXIMUM_OFFSET_FROM_CENTER_OF_SPEAKER_METERS = .5;
+    public static final double VISION_ALIGNED_TX_BUFFER_DEGREES = 4;
 
     // Move Elbow and Wrist
     public static final double MOVE_ELBOW_UP_MANUAL_POWER = -0.1; // Elbow up

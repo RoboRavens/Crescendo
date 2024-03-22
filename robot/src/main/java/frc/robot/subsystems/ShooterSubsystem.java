@@ -20,6 +20,8 @@ public class ShooterSubsystem extends SubsystemBase {
     private TalonFX _rightTalonFX = new TalonFX(RobotMap.SHOOTER_RIGHT_MOTOR_CAN_ID);
     private InterpolatingDoubleTreeMap shooterAngleMapUp = new InterpolatingDoubleTreeMap();
     private InterpolatingDoubleTreeMap shooterAngleMapDown = new InterpolatingDoubleTreeMap();
+    private InterpolatingDoubleTreeMap shooterAngleLLTyMapUp = new InterpolatingDoubleTreeMap();
+    private InterpolatingDoubleTreeMap shooterAngleLLTyMapDown = new InterpolatingDoubleTreeMap();
     final VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
 
 
@@ -50,6 +52,8 @@ public class ShooterSubsystem extends SubsystemBase {
         
         populateShooterAngleMapUp();
         populateShooterAngleMapDown();
+        populateShooterAngleLLTyMapUp();
+        populateShooterAngleLLTyMapDown();
     }
 
     public void runShooterAtTargetSpeed() {
@@ -76,15 +80,31 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     private void populateShooterAngleMapUp(){
-        for(int i=0; i<ShooterConstants.SHOOTER_ANGLE_PAIRS_UP.length; i++){
-            shooterAngleMapUp.put(ShooterConstants.SHOOTER_ANGLE_PAIRS_UP[i][0], ShooterConstants.SHOOTER_ANGLE_PAIRS_UP[i][1]);
-        }
+      var array = ShooterConstants.SHOOTER_ANGLE_PAIRS_UP;
+      for(int i = 0; i < array.length; i++){
+          shooterAngleMapUp.put(array[i][0], array[i][1]);
+      }
     }
 
     private void populateShooterAngleMapDown(){
-        for(int i=0; i<ShooterConstants.SHOOTER_ANGLE_PAIRS_DOWN.length; i++){
-            shooterAngleMapDown.put(ShooterConstants.SHOOTER_ANGLE_PAIRS_DOWN[i][0], ShooterConstants.SHOOTER_ANGLE_PAIRS_DOWN[i][1]);
-        }
+      var array = ShooterConstants.SHOOTER_ANGLE_PAIRS_DOWN;
+      for(int i = 0; i < array.length; i++){
+          shooterAngleMapDown.put(array[i][0], array[i][1]);
+      }
+    }
+
+    private void populateShooterAngleLLTyMapUp(){
+      var array = ShooterConstants.SHOOTER_ANGLE_FROM_TY_UP;
+      for(int i = 0; i < array.length; i++){
+          shooterAngleLLTyMapUp.put(array[i][0], array[i][1]);
+      }
+    }
+
+    private void populateShooterAngleLLTyMapDown(){
+      var array = ShooterConstants.SHOOTER_ANGLE_FROM_TY_DOWN;
+      for(int i = 0; i < array.length; i++){
+          shooterAngleLLTyMapDown.put(array[i][0], array[i][1]);
+      }
     }
 
     public double getShooterAngleMapUp(double distance){
@@ -94,6 +114,16 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public double getShooterAngleMapDown(double distance){
         double angle = shooterAngleMapDown.get(distance);
+        return angle;
+    }
+
+    public double getShooterAngleLLTyMapUp(double distance){
+        double angle = shooterAngleLLTyMapUp.get(distance);
+        return angle;
+    }
+
+    public double getShooterAngleLLTyMapDown(double distance){
+        double angle = shooterAngleLLTyMapDown.get(distance);
         return angle;
     }
 

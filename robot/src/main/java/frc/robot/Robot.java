@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -38,8 +37,8 @@ import frc.robot.commands.intake.IntakeReverseCommand;
 import frc.robot.commands.intake.IntakeWithSensorTeleopCommand;
 import frc.robot.commands.shooter.ShooterReverseCommand;
 import frc.robot.commands.shooter.StartShooterCommand;
+import frc.robot.commands.wrist.WristAngleFromLLTyCommand;
 import frc.robot.commands.wrist.WristDefaultCommand;
-import frc.robot.commands.wrist.WristGoToPositionCommand;
 import frc.robot.commands.wrist.WristGoToSpeakerAngleCommand;
 import frc.robot.commands.wrist.WristMoveManuallyCommand;
 import frc.robot.commands.wrist.WristOffsetCommand;
@@ -50,6 +49,7 @@ import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.ElbowSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LEDsSubsystem24;
+import frc.robot.subsystems.LEDsSubsystem24.LEDsPattern;
 import frc.robot.subsystems.LimelightPickupSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.PathPlannerConfigurator;
@@ -58,9 +58,7 @@ import frc.robot.subsystems.ReactDashSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TeleopDashboardSubsystem;
 import frc.robot.subsystems.WristSubsystem;
-import frc.robot.subsystems.LEDsSubsystem24.LEDsPattern;
 import frc.robot.util.Constants.Constants;
-import frc.robot.util.Constants.WristConstants;
 import frc.robot.util.arm.LimbSetpoint;
 import frc.util.StateManagement.ArmUpTargetState;
 import frc.util.StateManagement.ClimbPositionTargetState;
@@ -198,9 +196,15 @@ public class Robot extends TimedRobot {
   
   private void configureDriveControllerBindings() {
     // If the left trigger is held
-    new Trigger(() -> DRIVE_CONTROLLER.getLeftTriggerAxis() > 0)
-        .onTrue(new InstantCommand(() -> DRIVETRAIN_STATE = DrivetrainState.ROBOT_ALIGN))
-        .onFalse(new InstantCommand(() -> DRIVETRAIN_STATE = DrivetrainState.FREEHAND));
+    var leftTrigger = new Trigger(() -> DRIVE_CONTROLLER.getLeftTriggerAxis() > .1);
+    leftTrigger
+      .onTrue(new InstantCommand(() -> DRIVETRAIN_STATE = DrivetrainState.ROBOT_ALIGN))
+      .onFalse(new InstantCommand(() -> DRIVETRAIN_STATE = DrivetrainState.FREEHAND));
+
+    leftTrigger.and(() -> LIMELIGHT_OVERRIDE_STATE == LimelightOverrideState.OVERRIDE_OFF
+      && Robot.INTAKE_SUBSYSTEM.hasPieceAnywhere() == true)
+      .whileTrue(new WristAngleFromLLTyCommand());
+    
     
     // new Trigger(() -> DRIVE_CONTROLLER.getLeftBumper()
     //     && (DRIVE_CONTROLLER.getRightBumper())
@@ -350,7 +354,7 @@ public class Robot extends TimedRobot {
   private void runLedLogic() {
     boolean shooterAtSpeed = SHOOTER_SUBSYSTEM.shooterUpToSpeed();
     boolean hasPieceAnywhere = INTAKE_SUBSYSTEM.hasPieceAnywhere();
-    boolean aimedAtGoal = DRIVETRAIN_SUBSYSTEM.getIsRobotRotationInSpeakerRange();
+    boolean aimedAtGoal = DRIVETRAIN_DEFAULT_COMMAND.isVisionAligned();
     boolean posessesIndexedPiece = INTAKE_SUBSYSTEM.getPossesesIndexedPiece();
     boolean robotSeesNote = Robot.LIMELIGHT_PICKUP.hasVisionTargetBuffered()
       && INTAKE_TARGET_STATE == IntakeTargetState.GROUND
