@@ -3,50 +3,56 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.6,
-        "y": 6.2
+        "x": 0.75,
+        "y": 4.41
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0047478556495593,
-        "y": 6.512182255133741
+        "x": 3.30486184510172,
+        "y": 2.7169140786213095
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.6,
-        "y": 6.9
+        "x": 7.9,
+        "y": 0.78
       },
       "prevControl": {
-        "x": 2.2447900588108864,
-        "y": 6.712528086594634
+        "x": 4.46423466313409,
+        "y": 2.1079505782406716
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.65,
+      "rotationDegrees": -35.0,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 1.0,
-    "maxAcceleration": 2.0,
+    "maxVelocity": 2.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 28.2,
+    "rotation": 0.0,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "6 Note Optimized",
+  "folder": "Plowtown Source Side",
   "previewStartingState": {
-    "rotation": 25.0,
+    "rotation": -60.15999999999997,
     "velocity": 0
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }

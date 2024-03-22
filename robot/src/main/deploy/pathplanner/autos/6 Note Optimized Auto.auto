@@ -204,13 +204,26 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "LimbGoToPreloadNoteScorePositionCommand"
+                        "name": "LimbGoToGN3ScorePositionCommand"
                       }
                     },
                     {
-                      "type": "named",
+                      "type": "deadline",
                       "data": {
-                        "name": "FeedNoteCommand"
+                        "commands": [
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "FeedNoteCommand"
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "WristDefaultCommand"
+                            }
+                          }
+                        ]
                       }
                     },
                     {

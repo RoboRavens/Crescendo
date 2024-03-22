@@ -28,10 +28,11 @@ public class WristConstants {
     public static final double DEGREES_SPEAKER_SCORING = 0.0;
 
     // AUTO MODE ANGLES
-    public static final double DEGREES_SIX_NOTE_AUTO_GN_1_AND_2 = -19.7;
-    public static final double DEGREES_SIX_NOTE_AUTO_GN_3 = -31.4;
-    public static final double DEGREES_SIX_NOTE_AUTO_GN_4_AND_5 = -35;
-    public static final double DEGREES_SIX_NOTE_PRELOAD = -6;
+    public static final double DEGREES_SIX_NOTE_AUTO_GN_1_AND_2 = 0;
+    public static final double DEGREES_SIX_NOTE_AUTO_GN_3 = 31;
+    public static final double DEGREES_SIX_NOTE_AUTO_GN_4_AND_5 = 21;
+    public static final double DEGREES_SIX_NOTE_PRELOAD = 0;
+    public static final double DEGREES_SOURCE_SIDE_AUTO_WING_SHOT = 21; // TODO: find the correct number of degrees
 
     // distance in meters from speaker to back bumper
     public static final double DISTANCE_METERS_STARTING_LINE = 2.032;
@@ -45,8 +46,8 @@ public class WristConstants {
     public static Slot0Configs getSlot0Configs() {
         var slot0Config = new Slot0Configs();
         slot0Config.kP = 5;
-        slot0Config.kI = 1;
-        slot0Config.kD = 1.5;
+        slot0Config.kI = 0;
+        slot0Config.kD = .25;
         return slot0Config;
     }
 }

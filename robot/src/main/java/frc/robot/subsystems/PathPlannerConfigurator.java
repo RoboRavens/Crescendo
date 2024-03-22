@@ -20,6 +20,7 @@ import frc.robot.commands.intake.IntakeDefaultCommand;
 import frc.robot.commands.intake.IntakeWithSensorAutoCommand;
 import frc.robot.commands.intake.IntakeWithSensorCommand;
 import frc.robot.commands.shooter.StartShooterCommand;
+import frc.robot.commands.wrist.WristDefaultCommand;
 import frc.robot.commands.wrist.WristGoToPositionCommand;
 import frc.robot.util.arm.LimbSetpoint;
 import frc.robot.Robot;
@@ -39,6 +40,8 @@ public class PathPlannerConfigurator extends SubsystemBase {
     NamedCommands.registerCommand("LimbStartConfigUpCommand", new ElbowGoToPositionCommand(LimbSetpoint.START_CONFIG_UP.getElbowRotationPosition())); // not a LimbSetpoint to optimize for time
     NamedCommands.registerCommand("LimbGoToArmUpShotCommand", LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.DEFENDED_SPEAKER_SCORING));
     NamedCommands.registerCommand("SouthCenterLimbGoToPreloadSetpointCommand", LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SOUTH_CENTER_PRELOAD));
+    NamedCommands.registerCommand("LimbGoToSourceSideAutoWingShot", LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SOURCE_SIDE_AUTO_WING_SHOT));
+    NamedCommands.registerCommand("WristDefaultCommand", new WristDefaultCommand());
     
     // Configure AutoBuilder last
     AutoBuilder.configureHolonomic(

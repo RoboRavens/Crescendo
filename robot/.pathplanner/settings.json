@@ -3,18 +3,17 @@
   "robotLength": 0.9,
   "holonomicMode": true,
   "pathFolders": [
+    "5 Note Center Note First",
     "6 Note",
     "6 Note Optimized",
     "Amp Side",
     "Amp Side Optimized",
-    "5 Note Center Note First",
+    "Plowtown Source Side",
     "Sadville",
     "Source Side",
     "Source Side Optimized"
   ],
-  "autoFolders": [
-    "New Folder"
-  ],
+  "autoFolders": [],
   "defaultMaxVel": 2.0,
   "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 540.0,

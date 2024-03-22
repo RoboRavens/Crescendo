@@ -190,7 +190,7 @@ public class Robot extends TimedRobot {
     .onFalse(new InstantCommand(() -> autoRotationAlignEnabled = false));
 
     configureDriveControllerBindings();
-    // configureAutomatedBehaviorBindings();
+    configureAutomatedBehaviorBindings();
     configureButtonBindings();
     configureOverrideBindings();
     OperatorController.enable();
@@ -272,16 +272,16 @@ public class Robot extends TimedRobot {
     );
 
     new Trigger(() -> SELECTED_SHOT_TARGET_STATE == SelectedShotTargetState.SUBWOOFER_SHOT).and(moveToWristScoringSelectionPositionTrigger)
-      .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SPEAKER_SCORING));
+      .onTrue(new InstantCommand(() -> System.out.println("subwoofer shot")).andThen(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SPEAKER_SCORING)));
 
     new Trigger(() -> SELECTED_SHOT_TARGET_STATE == SelectedShotTargetState.STARTING_LINE_SHOT).and(moveToWristScoringSelectionPositionTrigger)
-      .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.STARTING_LINE_SCORING));
+      .onTrue(new InstantCommand(() -> System.out.println("starting line shot")).andThen(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.STARTING_LINE_SCORING)));
 
     new Trigger(() -> SELECTED_SHOT_TARGET_STATE == SelectedShotTargetState.PODIUM_SHOT).and(moveToWristScoringSelectionPositionTrigger)
-      .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.PODIUM_SCORING));
+      .onTrue(new InstantCommand(() -> System.out.println("podium shot")).andThen(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.PODIUM_SCORING)));
 
-    new Trigger(() -> ARM_UP_TARGET_STATE == ArmUpTargetState.FREE && Robot.INTAKE_SUBSYSTEM.hasPieceAnywhere() == false && DriverStation.isTeleop())
-      .onTrue(new WristGoToPositionCommand(WristConstants.DEGREES_FLOOR_PICKUP));
+    // new Trigger(() -> ARM_UP_TARGET_STATE == ArmUpTargetState.FREE && Robot.INTAKE_SUBSYSTEM.hasPieceAnywhere() == false && DriverStation.isTeleop())
+    //   .onTrue(new WristGoToPositionCommand(WristConstants.DEGREES_FLOOR_PICKUP));
   }
 
 	/** This function is run once each time the robot enters autonomous mode. */
