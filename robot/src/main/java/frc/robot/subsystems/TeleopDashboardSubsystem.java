@@ -40,6 +40,8 @@ public class TeleopDashboardSubsystem extends SubsystemBase {
   private BooleanEntry _startShooterPub;
   private StringEntry _shotSelectionPub;
   private BooleanEntry _limelightOverridePub;
+  private BooleanEntry _isDrivetrainAlignedPub;
+  private BooleanEntry _isWristAlignedPub;
 
   private double _armSubLastChange = 0;
   private double _intakeSubLastChange = 0;
@@ -68,6 +70,8 @@ public class TeleopDashboardSubsystem extends SubsystemBase {
     _startShooterPub = teleopTable.getBooleanTopic("rpub/startShooter").getEntry(false);
     _shotSelectionPub = teleopTable.getStringTopic("rpub/selectedShotType").getEntry("None");
     _limelightOverridePub = teleopTable.getBooleanTopic("rpub/limelightOverride").getEntry(false);
+    _isWristAlignedPub = teleopTable.getBooleanTopic("rpub/isWristAligned").getEntry(false);
+    _isDrivetrainAlignedPub = teleopTable.getBooleanTopic("rpub/isDrivetrainAligned").getEntry(false);
 
     _lockTimer.start();
   }
@@ -82,6 +86,9 @@ public class TeleopDashboardSubsystem extends SubsystemBase {
       _startShooterPub.set(Robot.SHOOTER_REV_TARGET_STATE.toString() == "ON");
       _shotSelectionPub.set(Robot.SELECTED_SHOT_TARGET_STATE.toString());
       _limelightOverridePub.set(Robot.LIMELIGHT_OVERRIDE_STATE == LimelightOverrideState.OVERRIDE_ON);
+      // TODO: replace the below values with the correct method calls
+      _isWristAlignedPub.set(false);
+      _isDrivetrainAlignedPub.set(false);
     }
 
     // Update the robot target states

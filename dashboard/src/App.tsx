@@ -29,7 +29,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
 import TextField from '@mui/material/TextField';
 import Stack from '@mui/material/Stack';
-import { VideoLabel, Link, VolumeUp, Highlight, Speaker, ToggleOn, Translate, ShowChart, TripOrigin, Timer, Handshake, KeyboardDoubleArrowUp, MusicNote, MusicOff, NoPhotography } from '@mui/icons-material';
+import { VideoLabel, Link, VolumeUp, Highlight, Speaker, ToggleOn, Translate, ShowChart, TripOrigin, Timer, Handshake, KeyboardDoubleArrowUp, MusicNote, MusicOff, NoPhotography, ThreeSixty, TrendingUp } from '@mui/icons-material';
 import { SvgIcon, Switch } from '@mui/material';
 import { Audio, Puff } from 'react-loader-spinner';
 
@@ -104,7 +104,9 @@ class App extends React.Component<{}, {
   selectedShotType: string,
   limelightOverride: boolean,
   autoDelay: number,
-  autoDelayFromRobot: number
+  autoDelayFromRobot: number,
+  isWristAligned: boolean,
+  isDrivetrainAligned: boolean
 }> {
   constructor(props: {}) {
     super(props);
@@ -129,7 +131,9 @@ class App extends React.Component<{}, {
       selectedShotType: "SUBWOOFER_SHOT",
       limelightOverride: false,
       autoDelay: 0,
-      autoDelayFromRobot: 0
+      autoDelayFromRobot: 0,
+      isWristAligned: false,
+      isDrivetrainAligned: false
     };
   }
 
@@ -323,7 +327,15 @@ class App extends React.Component<{}, {
     .subscribe((value: string | null) => this.handleShotSelectionFromRobot(value ?? this.state.selectedShotType), true);
     NT_CORE.createTopic<boolean>('/ReactDash/Teleop/rpub/limelightOverride', NetworkTablesTypeInfos.kString)
     .subscribe((value: boolean | null) => this.handleLLOverride(value ?? this.state.limelightOverride), true);
-    
+    NT_CORE.createTopic<boolean>('/ReactDash/Teleop/rpub/isDrivetrainAligned', NetworkTablesTypeInfos.kString)
+    .subscribe((value: boolean | null) => this.setState({
+      isDrivetrainAligned: value ?? this.state.isDrivetrainAligned
+    }), true);
+    NT_CORE.createTopic<boolean>('/ReactDash/Teleop/rpub/isWristAligned', NetworkTablesTypeInfos.kString)
+    .subscribe((value: boolean | null) => this.setState({
+      isWristAligned: value ?? this.state.isWristAligned
+    }), true);
+
     NT_CORE.createTopic<string>('/ReactDash/Autonomous/rpub/selectedAuto', NetworkTablesTypeInfos.kString, "No Auto")
       .subscribe((value: string | null) => { this.setSelectedAutoFromRobot(value); }, true);
 
@@ -518,27 +530,46 @@ class App extends React.Component<{}, {
                   <Grid container spacing={2} columns={4}>
                     <Grid item>
                       <Stack direction={'column'} marginTop={2} marginLeft={2} >
-                          <p style={{marginBottom: 0}}>Shooter Rev</p>
-                          <Stack direction={'row'} marginTop={2}>
-                            <Item style={{backgroundColor: this.state.startShooter ? "#43a5ff" : "#262b32"}} id="shooter-rev" onClick={(e) => this.handleStartShooterToggle(!this.state.startShooter)}><p>Shooter Rev</p>{this.state.startShooter ? <MusicNote style={{fontSize: 80}}/> : <MusicOff style={{fontSize: 80}}/>}</Item>
+                        <Stack direction={'row'} gap={2}>
+                          <Stack>
+                            <p style={{marginBottom: 0}}>Shooter Rev</p>
+                            <Stack marginTop={2}>
+                              <Item style={{backgroundColor: this.state.startShooter ? "#43a5ff" : "#262b32"}} id="shooter-rev" onClick={(e) => this.handleStartShooterToggle(!this.state.startShooter)}><p>Shooter Rev</p>{this.state.startShooter ? <MusicNote style={{fontSize: 80}}/> : <MusicOff style={{fontSize: 80}}/>}</Item>
+                            </Stack>
                           </Stack>
-                        </Stack>  
-                    </Grid>
-                    <Grid item>
-                      <Stack marginTop={2} marginLeft={2}>
-                        <p style={{marginBottom: 0}}>Shot Selection</p>    
-                      </Stack>            
-                      <Stack height={'100'} direction={'row'} spacing={2} marginTop={2} marginLeft={2} width={"100%"}>
-                        <Stack>
-                          <Item style={{backgroundColor: this.state.selectedShotType === "SUBWOOFER_SHOT" ? "#43a5ff" : "#262b32"}} onClick={() => this.handleShotSelection("SUBWOOFER_SHOT")}><p>Subwoofer</p></Item>
+                          <Stack>
+                            <p style={{marginBottom: 0}}>Wrist Pitch</p>
+                            <Stack direction={'row'} marginTop={2}>
+                              {this.state.isWristAligned ? <TrendingUp style={{fontSize: 80, color: COLOR_GREEN}}/> : <TrendingUp style={{fontSize: 80, color: COLOR_RED}}/>}
+                            </Stack>
+                          </Stack>
+                          <Stack>
+                            <p style={{marginBottom: 0}}>Drivetrain Yaw</p>
+                            <Stack direction={'row'} marginTop={2}>
+                              {this.state.isDrivetrainAligned ? <ThreeSixty style={{fontSize: 80, color: COLOR_GREEN}}/> : <ThreeSixty style={{fontSize: 80, color: COLOR_RED}}/>}
+                            </Stack>
+                          </Stack>
                         </Stack>
                         <Stack>
-                          <Item style={{backgroundColor: this.state.selectedShotType === "STARTING_LINE_SHOT" ? "#43a5ff" : "#262b32"}} onClick={() => this.handleShotSelection("STARTING_LINE_SHOT")}><p>Starting Line</p></Item>
-                        </Stack>
-                        <Stack>
-                          <Item style={{backgroundColor: this.state.selectedShotType === "PODIUM_SHOT" ? "#43a5ff" : "#262b32"}} onClick={() => this.handleShotSelection("PODIUM_SHOT")}><p>Podium</p></Item>
+                          <Stack marginTop={2} marginLeft={2}>
+                            <p style={{marginBottom: 0}}>Shot Selection</p>    
+                          </Stack>            
+                          <Stack height={'100'} direction={'row'} spacing={2} marginTop={2} marginLeft={2} width={"100%"}>
+                            <Stack>
+                              <Item style={{backgroundColor: this.state.selectedShotType === "SUBWOOFER_SHOT" ? "#43a5ff" : "#262b32"}} onClick={() => this.handleShotSelection("SUBWOOFER_SHOT")}><p>Subwoofer</p></Item>
+                            </Stack>
+                            <Stack>
+                              <Item style={{backgroundColor: this.state.selectedShotType === "STARTING_LINE_SHOT" ? "#43a5ff" : "#262b32"}} onClick={() => this.handleShotSelection("STARTING_LINE_SHOT")}><p>Starting Line</p></Item>
+                            </Stack>
+                            <Stack>
+                              <Item style={{backgroundColor: this.state.selectedShotType === "PODIUM_SHOT" ? "#43a5ff" : "#262b32"}} onClick={() => this.handleShotSelection("PODIUM_SHOT")}><p>Podium</p></Item>
+                            </Stack>
+                          </Stack>
                         </Stack>
                       </Stack>
+                    </Grid>
+                    <Grid item>
+                      
                     </Grid>
                     <Grid item width={400}>
                       <Stack marginTop={2} marginLeft={2}>
