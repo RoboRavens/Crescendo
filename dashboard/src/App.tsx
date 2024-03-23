@@ -80,8 +80,8 @@ const topics: Topics = {
   autoDelayPub: undefined
 };
 
-const NT_CORE = NetworkTables.getInstanceByTeam(1188);
-// const NT_CORE = NetworkTables.getInstanceByURI("localhost");
+// const NT_CORE = NetworkTables.getInstanceByTeam(1188);
+const NT_CORE = NetworkTables.getInstanceByURI("localhost");
 
 class App extends React.Component<{}, {
   connected: boolean,
@@ -564,6 +564,16 @@ class App extends React.Component<{}, {
                             <Stack>
                               <Item style={{backgroundColor: this.state.selectedShotType === "PODIUM_SHOT" ? "#43a5ff" : "#262b32"}} onClick={() => this.handleShotSelection("PODIUM_SHOT")}><p>Podium</p></Item>
                             </Stack>
+                          </Stack>
+                        </Stack>
+                        <Stack>
+                          <Stack marginTop={2} marginLeft={2}>
+                            <p style={{marginBottom: 0}}>Robot Visualization</p>
+                            <div style={{width: 350, height: 200}}>
+                              <img style={{width: 349.8, height: 205.8, transform: 'translate(0px, 100px)'}} alt="" src="./robot_chassis.png"/>
+                              <img style={{width: 334.6, height: 160.8, transform: 'translate(18px, -112px)'}} alt="" src="./robot_arm.png"/>
+                              <img style={{width: 334.6, height: 160.8, transform: 'translate(0px, 0px)'}} alt="" src="./robot_intake.png"/>
+                            </div>
                           </Stack>
                         </Stack>
                       </Stack>

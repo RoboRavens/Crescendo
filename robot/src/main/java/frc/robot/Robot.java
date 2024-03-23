@@ -191,7 +191,7 @@ public class Robot extends TimedRobot {
     configureAutomatedBehaviorBindings();
     configureButtonBindings();
     configureOverrideBindings();
-    OperatorController.enable();
+    //OperatorController.enable();
   }
   
   private void configureDriveControllerBindings() {
