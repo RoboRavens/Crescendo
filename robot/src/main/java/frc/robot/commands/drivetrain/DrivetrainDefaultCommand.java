@@ -20,7 +20,7 @@ public class DrivetrainDefaultCommand extends Command {
     private double _velocityXSlewRate = DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / Constants.SLEW_FRAMES_TO_MAX_X_VELOCITY;
     private double _velocityYSlewRate = DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / Constants.SLEW_FRAMES_TO_MAX_Y_VELOCITY;
     private double _angularSlewRate = DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND / Constants.SLEW_FRAMES_TO_MAX_ANGULAR_VELOCITY;
-    public PIDController _scoringRotationAlignPID = new PIDController(7, 0, 2);
+    public PIDController _scoringRotationAlignPID = new PIDController(7, 0, 4);
 
     private Timer _xingTimer = new Timer();
 

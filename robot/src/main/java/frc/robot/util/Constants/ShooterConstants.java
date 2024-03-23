@@ -41,17 +41,24 @@ public class ShooterConstants {
     };
 
     public static final double[][] SHOOTER_ANGLE_FROM_TY_DOWN = {
-        {22.175, 0}, // 11 inches
-        {15.1, 12}, // 24 inches
-        {10.8, 17}, // 36 inches
-        {5.693221, 20}, // 53 inches
-        {2.45, 22}, // 69 inches
-        {-1.310349, 24}, // 91 inches
+        {21.05, 18}, // 47 inches, 16.266845 wrist angle degrees
+        {14.75, 23.25}, // 60 inches, 20.38 wrist angle degrees
+        {10.53, 27.5}, // 72 inches, 23.74 wrist angle degrees
+        {5.34, 31.25}, // 89 inches, 27.608601 wrist angle degrees
+        {2.05, 33}, // 105 inches, 29.35 wrist angle degrees
+        {-0.27, 31.75}, // 120 inches, 30.07 wrist angle degrees
+        {-1.47, 33.75}, // 127 inches, 32.119363 wrist angle degrees
+        {-4.47, 35}, // 151 inches, 33.27 wrist angle degrees
     };
 
     public static final double[][] SHOOTER_ANGLE_FROM_TY_UP = {
-        {50, 0},
-        {-50, 0},
+        {22, -40}, // 47 inches, -41.659696 wrist angle degrees
+        {14.2, -32}, // 63 inches, -33.646969 wrist angle degrees
+        {7.57, -31}, // 81 inches, -32.3 wrist angle degrees
+        {3.7, -28}, // 98 inches, -29.47 wrist angle degrees
+        {0.58, -26}, // 115 inches, -27.378019 wrist angle degrees
+        {-1.91, -24.5}, // 133 inches, -25.951292 wrist angle degrees
+        {-4.3, -23.5}, // 151 inches, -24.856027 wrist angle degrees
     };
 
     public static final double SHOOTER_STOP_DELAY = 1;
