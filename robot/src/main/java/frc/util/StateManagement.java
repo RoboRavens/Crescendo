@@ -94,6 +94,7 @@ public class StateManagement {
         SUBWOOFER_SHOT,
         STARTING_LINE_SHOT,
         PODIUM_SHOT,
+        FEED_SHOT,
         NONE
     }
     public enum LimelightOverrideState {

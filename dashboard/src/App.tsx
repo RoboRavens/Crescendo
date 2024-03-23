@@ -564,6 +564,9 @@ class App extends React.Component<{}, {
                             <Stack>
                               <Item style={{backgroundColor: this.state.selectedShotType === "PODIUM_SHOT" ? "#43a5ff" : "#262b32"}} onClick={() => this.handleShotSelection("PODIUM_SHOT")}><p>Podium</p></Item>
                             </Stack>
+                            <Stack>
+                              <Item style={{backgroundColor: this.state.selectedShotType === "FEED_SHOT" ? "#43a5ff" : "#262b32"}} onClick={() => this.handleShotSelection("FEED_SHOT")}><p>Feed</p></Item>
+                            </Stack>
                           </Stack>
                         </Stack>
                       </Stack>

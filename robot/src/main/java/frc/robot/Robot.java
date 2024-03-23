@@ -37,6 +37,7 @@ import frc.robot.commands.intake.IntakeReverseCommand;
 import frc.robot.commands.intake.IntakeWithSensorTeleopCommand;
 import frc.robot.commands.shooter.ShooterReverseCommand;
 import frc.robot.commands.shooter.StartShooterCommand;
+import frc.robot.commands.wrist.WristAngleForFeederShotCommand;
 import frc.robot.commands.wrist.WristAngleFromLLTyCommand;
 import frc.robot.commands.wrist.WristDefaultCommand;
 import frc.robot.commands.wrist.WristGoToSpeakerAngleCommand;
@@ -205,6 +206,8 @@ public class Robot extends TimedRobot {
       && Robot.INTAKE_SUBSYSTEM.hasPieceAnywhere() == true)
       .whileTrue(new WristAngleFromLLTyCommand());
     
+    leftTrigger.and(() -> SELECTED_SHOT_TARGET_STATE == SelectedShotTargetState.FEED_SHOT)
+      .onTrue(new WristAngleForFeederShotCommand());
     
     // new Trigger(() -> DRIVE_CONTROLLER.getLeftBumper()
     //     && (DRIVE_CONTROLLER.getRightBumper())
