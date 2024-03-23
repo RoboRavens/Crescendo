@@ -21,16 +21,23 @@ public class ClimberSubsystem extends SubsystemBase {
     Timer _timer = new Timer();
     _timer.start();
     System.out.println("ClimberSubsystem ID " + deviceID + " starting motor config at time " + _timer.get());
+
     _climberMotor = new CANSparkMax(deviceID, MotorType.kBrushless);
     System.out.println("ClimberSubsystem ID " + deviceID + " created SparkMax object at time " + _timer.get());
+
     _climberMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
+    _climberMotor.setSoftLimit(SoftLimitDirection.kForward, ClimberConstants.FORWARD_SOFT_LIMIT);
     _climberMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
+    _climberMotor.setSoftLimit(SoftLimitDirection.kReverse, ClimberConstants.REVERSE_SOFT_LIMIT);
     _climberMotor.setSmartCurrentLimit(ClimberConstants.CURRENT_LIMIT);
     System.out.println("ClimberSubsystem ID " + deviceID + " enabled soft limits and current limit at time " + _timer.get());
+
     _climberMotor.restoreFactoryDefaults();
     System.out.println("ClimberSubsystem ID " + deviceID + " restored factory defaults at time " + _timer.get());
+
     _climberMotor.setIdleMode(IdleMode.kBrake);
     System.out.println("ClimberSubsystem ID " + deviceID + " set idle mode to brake at time " + _timer.get());
+    
     _climberMotor.setInverted(reverse);
   }
 
