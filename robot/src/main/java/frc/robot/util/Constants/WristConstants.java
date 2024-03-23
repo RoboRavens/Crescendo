@@ -20,7 +20,7 @@ public class WristConstants {
     // values from onshape need to have their sign inverted
     // as degrees get bigger (right d-pad), the shooting angle becomes less (note hits the speaker at lower height)
     public static final double DEGREES_FLOOR_PICKUP = 0.0;
-    public static final double DEGREES_AMP_SCORE = -16.2;
+    public static final double DEGREES_AMP_SCORE = -13.2;
     public static final double DEGREES_TRAP_LOAD_FROM_SOURCE = 20;
     public static final double DEGREES_SOURCE_LOAD = 50;
     public static final double DEGREES_TRAP_SCORE = 40;
