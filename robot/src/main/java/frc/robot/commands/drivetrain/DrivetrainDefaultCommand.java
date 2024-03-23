@@ -14,6 +14,8 @@ import frc.util.AngularPositionHolder;
 import frc.util.Deadband;
 import frc.util.Slew;
 import frc.util.StateManagement.DrivetrainState;
+import frc.util.StateManagement.LimelightOverrideState;
+import frc.util.StateManagement.SelectedShotTargetState;
 
 public class DrivetrainDefaultCommand extends Command {
     private ChassisSpeeds _chassisSpeeds = new ChassisSpeeds(0,0,0);
@@ -84,20 +86,33 @@ public class DrivetrainDefaultCommand extends Command {
             r = r * Constants.DRIVE_MAX_TURN_RADIANS_PER_SECOND * cutPowerRotation;
 
             if (Robot.DRIVETRAIN_STATE == DrivetrainState.ROBOT_ALIGN) {
-              // From the docs it sounds like this boolean will ONLY be true if it sees
-              // the priority tag, but we will have to double check to be certain.
-              if (Robot.LIMELIGHT_BACK.hasVisionTargetBoolean()) {
-                var txDegrees = Robot.LIMELIGHT_BACK.getTx();
-                var targetAngleDegrees = robotRotation.getDegrees() - txDegrees;
-                _bufferedTargetAngle = Math.toRadians(targetAngleDegrees);
-                _bufferedTargetAngleTimer.reset();
+              // If we intend to align for a feeder shot
+              if (Robot.SELECTED_SHOT_TARGET_STATE == SelectedShotTargetState.FEED_SHOT 
+                && Robot.LIMELIGHT_OVERRIDE_STATE == LimelightOverrideState.OVERRIDE_ON) {
+                  if (Robot.allianceColor == Alliance.Blue) {
+                    
+                  }
+                  else {
+                    
+                  }
               }
+              // If we intend to align for scoring
+              else {
+                // From the docs it sounds like this boolean will ONLY be true if it sees
+                // the priority tag, but we will have to double check to be certain.
+                if (Robot.LIMELIGHT_BACK.hasVisionTargetBoolean()) {
+                  var txDegrees = Robot.LIMELIGHT_BACK.getTx();
+                  var targetAngleDegrees = robotRotation.getDegrees() - txDegrees;
+                  _bufferedTargetAngle = Math.toRadians(targetAngleDegrees);
+                  _bufferedTargetAngleTimer.reset();
+                }
 
-              // track to the last known target rotation for .5 seconds after losing vision of the target
-              if (_bufferedTargetAngleTimer.get() < .5) {
-                var diff = Math.toDegrees(_bufferedTargetAngle) - robotRotation.getDegrees();
-                visionAligned = Math.abs(diff) < Constants.VISION_ALIGNED_TX_BUFFER_DEGREES;
-                r = getAngularVelocityForAlignment(_bufferedTargetAngle);
+                // track to the last known target rotation for .5 seconds after losing vision of the target
+                if (_bufferedTargetAngleTimer.get() < .5) {
+                  var diff = Math.toDegrees(_bufferedTargetAngle) - robotRotation.getDegrees();
+                  visionAligned = Math.abs(diff) < Constants.VISION_ALIGNED_TX_BUFFER_DEGREES;
+                  r = getAngularVelocityForAlignment(_bufferedTargetAngle);
+                }
               }
             }
 

@@ -206,7 +206,8 @@ public class Robot extends TimedRobot {
       && Robot.INTAKE_SUBSYSTEM.hasPieceAnywhere() == true)
       .whileTrue(new WristAngleFromLLTyCommand());
     
-    leftTrigger.and(() -> SELECTED_SHOT_TARGET_STATE == SelectedShotTargetState.FEED_SHOT)
+    leftTrigger.and(() -> LIMELIGHT_OVERRIDE_STATE == LimelightOverrideState.OVERRIDE_ON
+      && SELECTED_SHOT_TARGET_STATE == SelectedShotTargetState.FEED_SHOT)
       .onTrue(new WristAngleForFeederShotCommand());
     
     // new Trigger(() -> DRIVE_CONTROLLER.getLeftBumper()
