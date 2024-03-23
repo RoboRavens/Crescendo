@@ -71,6 +71,7 @@ public class DrivetrainDefaultCommand extends Command {
         SmartDashboard.putNumber("_bufferedTargetAngle", _bufferedTargetAngle);
         
         SmartDashboard.putBoolean("LL BACK Has Target", Robot.LIMELIGHT_BACK.hasVisionTargetBoolean());
+        SmartDashboard.putNumber("LL BACK Ty", Robot.LIMELIGHT_BACK.getTy());
         SmartDashboard.putNumber("_bufferedTargetAngleTimer", _bufferedTargetAngleTimer.get());
         boolean visionAligned = false;
         

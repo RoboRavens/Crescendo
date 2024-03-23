@@ -27,6 +27,7 @@ public class LimbSetpoint {
     public static final LimbSetpoint SOUTH_CENTER_PRELOAD = new LimbSetpoint("South Center Preload", ElbowConstants.DEGREES_SOUTH_CENTER_PRELOAD, WristConstants.DEGREES_DEFENDED_SCORING);  
     public static final LimbSetpoint PODIUM_SCORING = new LimbSetpoint("Podium Scoring", ElbowConstants.DEGREES_FLOOR_PICKUP, Robot.SHOOTER_SUBSYSTEM.getShooterAngleMapDown(WristConstants.DISTANCE_METERS_PODIUM));
     public static final LimbSetpoint STARTING_LINE_SCORING = new LimbSetpoint("Starting Line Scoring", ElbowConstants.DEGREES_FLOOR_PICKUP, Robot.SHOOTER_SUBSYSTEM.getShooterAngleMapDown(WristConstants.DISTANCE_METERS_STARTING_LINE));
+    public static final LimbSetpoint CLIMB = new LimbSetpoint("Climbing Setpoint", ElbowConstants.DEGREES_CLIMB, WristConstants.DEGREES_CLIMB);
 
     private String _name;
     private double _elbowRotationDegrees;

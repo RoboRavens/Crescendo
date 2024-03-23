@@ -4,6 +4,7 @@
 
 package frc.robot.commands.wrist;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
 import frc.robot.util.Constants.WristConstants;
@@ -33,7 +34,9 @@ public class WristAngleFromLLTyCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    Robot.WRIST_SUBSYSTEM.goToDegrees(WristConstants.DEGREES_FLOOR_PICKUP);
+    var up = Robot.ARM_UP_TARGET_STATE == ArmUpTargetState.UP;
+    var endDegees = up ? WristConstants.DEGREES_DEFENDED_SCORING : WristConstants.DEGREES_FLOOR_PICKUP;
+    Robot.WRIST_SUBSYSTEM.goToDegrees(endDegees);
   }
 
   // Returns true when the command should end.
