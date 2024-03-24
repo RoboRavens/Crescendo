@@ -10,14 +10,18 @@ import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotMap;
 import frc.robot.util.Constants.ClimberConstants;
 
 public class ClimberSubsystem extends SubsystemBase {
   private CANSparkMax _climberMotor;
+  private int _deviceId;
 
   /** Creates a new ClimberSubsystem. */
   public ClimberSubsystem(int deviceID, boolean reverse) {
+    _deviceId = deviceID;
     Timer _timer = new Timer();
     _timer.start();
     System.out.println("ClimberSubsystem ID " + deviceID + " starting motor config at time " + _timer.get());
@@ -52,5 +56,10 @@ public class ClimberSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    if (_deviceId == RobotMap.LEFT_CLIMBER_MOTOR) {
+      SmartDashboard.putNumber("Climber Left Position", _climberMotor.getEncoder().getPosition());
+    } else {
+      SmartDashboard.putNumber("Climber Right Position", _climberMotor.getEncoder().getPosition());
+    }
   }
 }
