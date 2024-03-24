@@ -106,7 +106,9 @@ class App extends React.Component<{}, {
   autoDelay: number,
   autoDelayFromRobot: number,
   isWristAligned: boolean,
-  isDrivetrainAligned: boolean
+  isDrivetrainAligned: boolean,
+  elbowAngle: number,
+  wristAngle: number
 }> {
   constructor(props: {}) {
     super(props);
@@ -133,7 +135,9 @@ class App extends React.Component<{}, {
       autoDelay: 0,
       autoDelayFromRobot: 0,
       isWristAligned: false,
-      isDrivetrainAligned: false
+      isDrivetrainAligned: false,
+      elbowAngle: 0,
+      wristAngle: 0
     };
   }
 
@@ -339,11 +343,27 @@ class App extends React.Component<{}, {
     NT_CORE.createTopic<string>('/ReactDash/Autonomous/rpub/selectedAuto', NetworkTablesTypeInfos.kString, "No Auto")
       .subscribe((value: string | null) => { this.setSelectedAutoFromRobot(value); }, true);
 
+    NT_CORE.createTopic<number>('/SmartDashboard/Elbow Angle Degrees', NetworkTablesTypeInfos.kDouble, 0)
+      .subscribe((value: number | null) => { this.handleElbowDegreeUpdateFromRobot(value); }, true);
+    NT_CORE.createTopic<number>('/SmartDashboard/Wrist Angle Degrees', NetworkTablesTypeInfos.kDouble, 0)
+      .subscribe((value: number | null) => { this.handleWristDegreeUpdateFromRobot(value); }, true);
   }
 
   componentWillUnmount() {
     NT_CORE.client.cleanup();
     console.log("componentWillUnmount");
+  }
+
+  handleElbowDegreeUpdateFromRobot(angle: number | null) {
+    this.setState({
+      elbowAngle: angle ?? 0
+    });
+  }
+
+  handleWristDegreeUpdateFromRobot(angle: number | null) {
+    this.setState({
+      wristAngle: angle ?? 0
+    });
   }
 
   handleSourceSelection(type: string) {
@@ -551,29 +571,16 @@ class App extends React.Component<{}, {
                           </Stack>
                         </Stack>
                         <Stack>
-                          <Stack marginTop={2} marginLeft={2}>
-                            <p style={{marginBottom: 0}}>Shot Selection</p>    
-                          </Stack>            
-                          <Stack height={'100'} direction={'row'} spacing={2} marginTop={2} marginLeft={2} width={"100%"}>
-                            <Stack>
-                              <Item style={{backgroundColor: this.state.selectedShotType === "SUBWOOFER_SHOT" ? "#43a5ff" : "#262b32"}} onClick={() => this.handleShotSelection("SUBWOOFER_SHOT")}><p>Subwoofer</p></Item>
-                            </Stack>
-                            <Stack>
-                              <Item style={{backgroundColor: this.state.selectedShotType === "STARTING_LINE_SHOT" ? "#43a5ff" : "#262b32"}} onClick={() => this.handleShotSelection("STARTING_LINE_SHOT")}><p>Starting Line</p></Item>
-                            </Stack>
-                            <Stack>
-                              <Item style={{backgroundColor: this.state.selectedShotType === "PODIUM_SHOT" ? "#43a5ff" : "#262b32"}} onClick={() => this.handleShotSelection("PODIUM_SHOT")}><p>Podium</p></Item>
-                            </Stack>
-                          </Stack>
-                        </Stack>
-                        <Stack>
-                          <Stack marginTop={2} marginLeft={2}>
+                          <Stack marginTop={2}>
                             <p style={{marginBottom: 0}}>Robot Visualization</p>
-                            <div style={{width: 350, height: 200}}>
-                              <img style={{width: 349.8, height: 205.8, transform: 'translate(0px, 100px)'}} alt="" src="./robot_chassis.png"/>
-                              <img style={{width: 334.6, height: 160.8, transform: 'translate(18px, -112px)'}} alt="" src="./robot_arm.png"/>
-                              <img style={{width: 334.6, height: 160.8, transform: 'translate(0px, 0px)'}} alt="" src="./robot_intake.png"/>
+                            <div style={{width: 350, height: 200, transform: 'translate(0px, 150px)'}}>
+                              <img style={{width: 349.8, height: 205.8, transform: 'translate(-40px, 100px)', opacity: .5}} alt="" src="./robot_chassis.png"/>
+                              <div style={{width: 669.2, height: 321.6, transform: 'translate(-308px, -186px) rotate(' + ((this.state.elbowAngle * -1) - 12.5) + 'deg)'}}>
+                                <img style={{width: 669.2, height: 321.6}} alt="" src="./robot_arm.png"/>
+                                <img style={{position: 'absolute', top: 0, right: 0, width: 424.8, height: 249.2, transform: 'translate(115px, 54px) rotate(' + ((this.state.wristAngle * -1) - 5.5) + 'deg)'}} alt="" src="./robot_intake.png"/>
+                              </div>
                             </div>
+                            <div style={{width: 380, height: 4, backgroundColor: 'grey',  transform: 'translate(0px, 250px)'}}></div>
                           </Stack>
                         </Stack>
                       </Stack>
@@ -591,6 +598,22 @@ class App extends React.Component<{}, {
                         </Stack>
                         <Stack>
                           <Item id="SOURCE" onClick={() => this.handleIntakeSelection("SOURCE")}><p>Source</p><ShowChart style={{fontSize: 80}}/></Item>
+                        </Stack>
+                      </Stack>
+                      <Stack marginLeft={2}>
+                        <Stack marginTop={2}>
+                          <p style={{marginBottom: 0}}>Shot Selection</p>
+                        </Stack>            
+                        <Stack height={'100'} direction={'row'} spacing={2} marginTop={2} width={"100%"}>
+                          <Stack>
+                            <Item style={{backgroundColor: this.state.selectedShotType === "SUBWOOFER_SHOT" ? "#43a5ff" : "#262b32"}} onClick={() => this.handleShotSelection("SUBWOOFER_SHOT")}><p>Subwoofer</p></Item>
+                          </Stack>
+                          <Stack>
+                            <Item style={{backgroundColor: this.state.selectedShotType === "STARTING_LINE_SHOT" ? "#43a5ff" : "#262b32"}} onClick={() => this.handleShotSelection("STARTING_LINE_SHOT")}><p>Starting Line</p></Item>
+                          </Stack>
+                          <Stack>
+                            <Item style={{backgroundColor: this.state.selectedShotType === "PODIUM_SHOT" ? "#43a5ff" : "#262b32"}} onClick={() => this.handleShotSelection("PODIUM_SHOT")}><p>Podium</p></Item>
+                          </Stack>
                         </Stack>
                       </Stack>
                       <Stack marginTop={2} marginLeft={2}>
