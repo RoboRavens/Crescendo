@@ -39,6 +39,7 @@ import frc.robot.commands.shooter.ShooterReverseCommand;
 import frc.robot.commands.shooter.StartShooterCommand;
 import frc.robot.commands.wrist.WristAngleFromLLTyCommand;
 import frc.robot.commands.wrist.WristDefaultCommand;
+import frc.robot.commands.wrist.WristGoToPositionCommand;
 import frc.robot.commands.wrist.WristGoToSpeakerAngleCommand;
 import frc.robot.commands.wrist.WristMoveManuallyCommand;
 import frc.robot.commands.wrist.WristOffsetCommand;
@@ -59,6 +60,7 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TeleopDashboardSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 import frc.robot.util.Constants.Constants;
+import frc.robot.util.Constants.WristConstants;
 import frc.robot.util.arm.LimbSetpoint;
 import frc.util.StateManagement.ArmUpTargetState;
 import frc.util.StateManagement.ClimbPositionTargetState;
@@ -249,7 +251,8 @@ public class Robot extends TimedRobot {
       .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.AMP_SCORING));
     
     new Trigger(() -> DRIVE_CONTROLLER.getBButton() && (SHOOTER_SUBSYSTEM.hasPiece() || INTAKE_TARGET_STATE == IntakeTargetState.GROUND))
-      .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.DEFENDED_SPEAKER_SCORING));
+      .onTrue(new InstantCommand(() -> ARM_UP_TARGET_STATE = ArmUpTargetState.UP))
+      .onFalse(new InstantCommand(() -> ARM_UP_TARGET_STATE = ArmUpTargetState.FREE));
 
     new Trigger(() -> DRIVE_CONTROLLER.getBButton() && (SHOOTER_SUBSYSTEM.hasPiece() == false && INTAKE_TARGET_STATE == IntakeTargetState.SOURCE))
       .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SOURCE_INTAKE));
@@ -284,8 +287,8 @@ public class Robot extends TimedRobot {
     new Trigger(() -> SELECTED_SHOT_TARGET_STATE == SelectedShotTargetState.PODIUM_SHOT).and(moveToWristScoringSelectionPositionTrigger)
       .onTrue(new InstantCommand(() -> System.out.println("podium shot")).andThen(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.PODIUM_SCORING)));
 
-    // new Trigger(() -> ARM_UP_TARGET_STATE == ArmUpTargetState.FREE && Robot.INTAKE_SUBSYSTEM.hasPieceAnywhere() == false && DriverStation.isTeleop())
-    //   .onTrue(new WristGoToPositionCommand(WristConstants.DEGREES_FLOOR_PICKUP));
+    new Trigger(() -> ARM_UP_TARGET_STATE == ArmUpTargetState.FREE && Robot.INTAKE_SUBSYSTEM.hasPieceAnywhere() == false && DriverStation.isTeleop())
+      .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.GROUND_PICKUP));
   }
 
 	/** This function is run once each time the robot enters autonomous mode. */

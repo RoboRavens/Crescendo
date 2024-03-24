@@ -50,7 +50,7 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
     _alliancePub = autoTable.getStringTopic("rpub/alliance").publish();
     
     // BLUE SIDE
-    this.addBlueDefault(
+    this.addOption(
       new AutoMode("B1: 6 Note PATH",
       () -> new PathPlannerAuto("6 Note Path"))
     );
@@ -82,7 +82,7 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
       new AutoMode("B8: 3 Note Source Side Center AUTO RED",
       () -> new PathPlannerAuto("Source Side Center Auto Red"))
     );
-    this.addOption(
+    this.addBlueDefault(
       new AutoMode("B9: 6 Note Optimized AUTO",
       () -> new PathPlannerAuto("6 Note Optimized Auto"))
     );
@@ -120,7 +120,7 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
     );
 
     // RED SIDE
-    this.addRedDefault(
+    this.addOption(
       new AutoMode("R1: 6 Note PATH",
       () -> new PathPlannerAuto("6 Note Path"))
     );
@@ -152,7 +152,7 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
       new AutoMode("R8: 3 Note Source Side Center AUTO RED",
       () -> new PathPlannerAuto("Source Side Center Auto Red"))
     );
-    this.addOption(
+    this.addRedDefault(
       new AutoMode("R9: 6 Note Optimized AUTO",
       () -> new PathPlannerAuto("6 Note Optimized Auto"))
     );

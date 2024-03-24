@@ -61,6 +61,9 @@ public class OperatorController {
         _operatorController.leftTrigger().and(_operatorController.rightBumper())
         .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.START_CONFIG_UP));
 
+        _operatorController.leftTrigger().negate().and(_operatorController.rightBumper())
+        .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.CLIMB));
+
         _operatorController.leftBumper().whileTrue(new StartShooterCommand());
         _operatorController.leftBumper().whileTrue(new InstantCommand(() -> Robot.SHOOTER_REV_TARGET_STATE = ShooterRevTargetState.ON)).onFalse(new InstantCommand(() -> Robot.SHOOTER_REV_TARGET_STATE = ShooterRevTargetState.OFF));
 

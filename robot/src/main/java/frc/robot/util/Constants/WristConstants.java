@@ -26,6 +26,7 @@ public class WristConstants {
     public static final double DEGREES_TRAP_SCORE = 40;
     public static final double DEGREES_DEFENDED_SCORING = -39;
     public static final double DEGREES_SPEAKER_SCORING = 0.0;
+    public static final double DEGREES_CLIMB = 35;
 
     // AUTO MODE ANGLES
     public static final double DEGREES_SIX_NOTE_AUTO_GN_1_AND_2 = 0;
