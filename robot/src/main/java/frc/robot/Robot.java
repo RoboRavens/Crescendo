@@ -6,10 +6,13 @@ package frc.robot;
 
 import java.util.function.BooleanSupplier;
 
+import com.pathplanner.lib.commands.PathfindingCommand;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
@@ -133,6 +136,8 @@ public class Robot extends TimedRobot {
   public static LimelightOverrideState LIMELIGHT_OVERRIDE_STATE = LimelightOverrideState.OVERRIDE_OFF;
   public static boolean autoRotationAlignEnabled = false;
 
+  public static Timer AUTO_START_TIMER = new Timer();
+
   @Override
   public void robotPeriodic() {
     SmartDashboard.putString("Alliance Color", allianceColor.name());
@@ -192,6 +197,8 @@ public class Robot extends TimedRobot {
     configureButtonBindings();
     configureOverrideBindings();
     OperatorController.enable();
+
+    PathfindingCommand.warmupCommand().schedule();
   }
   
   private void configureDriveControllerBindings() {
@@ -291,6 +298,8 @@ public class Robot extends TimedRobot {
 	/** This function is run once each time the robot enters autonomous mode. */
   @Override
   public void autonomousInit() {
+    AUTO_START_TIMER.reset();
+    AUTO_START_TIMER.start();
     LED_SUBSYSTEM.setPattern(LEDsPattern.Solid);
     LED_SUBSYSTEM.setColor(Color.kBlack);
     setDriverStationData();
