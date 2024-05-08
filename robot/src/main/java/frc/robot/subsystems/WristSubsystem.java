@@ -29,13 +29,14 @@ public class WristSubsystem extends SubsystemBase {
     this.setTargetPosition(WristConstants.ENCODER_POSITION_AT_STARTUP);
     _wristRotationMotor.getConfigurator().setPosition(WristConstants.ENCODER_POSITION_AT_STARTUP);
     _wristRotationMotor.getConfigurator().apply(talonFXConfiguration);
+    _wristRotationMotor.setInverted(true);
     this.updateStaticFeedfoward();
   }
 
   public TalonFXConfiguration getTalonFXConfigurationObject() {
     var talonFXConfiguration = new TalonFXConfiguration();
-    talonFXConfiguration.MotionMagic.MotionMagicAcceleration = 10;
-    talonFXConfiguration.MotionMagic.MotionMagicCruiseVelocity = 5;
+    talonFXConfiguration.MotionMagic.MotionMagicAcceleration = 40;
+    talonFXConfiguration.MotionMagic.MotionMagicCruiseVelocity = 20;
     talonFXConfiguration.Slot0 = _pidConfig;
     
     talonFXConfiguration.MotorOutput.DutyCycleNeutralDeadband = .01;
@@ -52,13 +53,13 @@ public class WristSubsystem extends SubsystemBase {
     // low supply limit will cap motor velocity
     talonFXConfiguration.CurrentLimits.SupplyCurrentLimit = 10;
     talonFXConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
-    talonFXConfiguration.CurrentLimits.SupplyCurrentThreshold = 10;
+    talonFXConfiguration.CurrentLimits.SupplyCurrentThreshold = 40;
     talonFXConfiguration.CurrentLimits.SupplyTimeThreshold = 0;
 
     talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 3.12;
-    talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -3.47;
+    talonFXConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 11;
+    talonFXConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -5;
 
     return talonFXConfiguration;
   }
