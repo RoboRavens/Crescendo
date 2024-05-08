@@ -9,9 +9,9 @@ public class WristConstants {
     public static final double MOTOR_POWER_DIRECTION_TO_GO_UP_FROM_HORIZONTAL = 0;
     
     public static final double ENCODER_POSITION_AT_FLOOR_PICKUP = 0;
-    public static final double ENCODER_POSITION_45_FROM_FLOOR_PICKUP = -3.049348;
-    public static final double ENCODER_POSITION_AT_STARTUP = 4.292480;
-
+    public static final double ENCODER_POSITION_45_FROM_FLOOR_PICKUP = -11.435055;
+    public static final double ENCODER_POSITION_AT_STARTUP = -5.872070;
+    
     public static final double IS_AT_SETPOINT_BUFFER = .2;
 
     public static final double WRIST_DEGREES_PER_INCREMENT = 2.5;
