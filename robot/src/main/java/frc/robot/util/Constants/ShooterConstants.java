@@ -1,21 +1,40 @@
 package frc.robot.util.Constants;
 
+import frc.robot.util.shooter.ShooterSpeed;
+import frc.robot.util.shooter.ShooterSpeedOneSide;
+
 public class ShooterConstants {
     // every 1 % power is roughly 150 RPM or 2.5 RPS
     public static final double lkP = 0.11;
     public static final double lkI = 0;
     public static final double lkD = 0;
-    public static final double FF_FOR_TARGET_LEFT = .37;
-    public static final double TARGET_RPS_LEFT = 96; // lmaxRPM * lShooterVelocityPercentage;
-    public static final double ACTUAL_PID_RPS_FOR_SOME_REASON_LEFT = 71;
-
-    // right shooter is slightly stronger, every 1 % power is roughly 150 RPM or 2.5 RPS
+    
     public static final double rkP = 0.11;
     public static final double rkI = 0;
     public static final double rkD = 0;
-    public static final double FF_FOR_TARGET_RIGHT = .56;
-    public static final double TARGET_RPS_RIGHT = 144; // rmaxRPM * rShooterVelocityPercentage;
-    public static final double ACTUAL_PID_RPS_FOR_SOME_REASON_RIGHT = 110;
+
+    // right shooter is slightly stronger, every 1 % power is roughly 150 RPM or 2.5 RPS
+    private static final ShooterSpeed SHOOTER_SPEED_DEFAULT = new ShooterSpeed(
+        "DEFAULT",
+        new ShooterSpeedOneSide(.37, 96, 71),
+        new ShooterSpeedOneSide(.56, 144, 110)
+    );
+
+    private static final ShooterSpeed SHOOTER_SPEED_SLOW = new ShooterSpeed(
+        "SLOW",
+        new ShooterSpeedOneSide(.15, 39, 28),
+        new ShooterSpeedOneSide(.25, 64, 47)
+    );
+
+    private static final ShooterSpeed SHOOTER_SPEED_FAST = new ShooterSpeed(
+        "FAST",
+        new ShooterSpeedOneSide(.75, 195, 145),
+        new ShooterSpeedOneSide(.95, 244, 185)
+    );
+
+    public static final ShooterSpeed[] SHOOTER_SPEEDS = new ShooterSpeed[]{
+        SHOOTER_SPEED_DEFAULT, SHOOTER_SPEED_SLOW, SHOOTER_SPEED_FAST
+    };
 
     public static final double IS_AT_TARGET_SPEED_BUFFER = 10;
 

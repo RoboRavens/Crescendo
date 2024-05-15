@@ -4,14 +4,10 @@
 
 package frc.controls;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
-import frc.robot.commands.climber.SetClimberToPowerCommand;
 import frc.robot.commands.climber.SetClimberToPowerCommand;
 import frc.robot.commands.compound.LimbGoToSetpointCommand;
 import frc.robot.commands.elbow.ElbowDecrementPositionCommand;
@@ -25,8 +21,6 @@ import frc.robot.commands.wrist.WristIncrementPositionCommand;
 import frc.robot.commands.wrist.WristMoveWithJoystickCommand;
 import frc.robot.commands.wrist.WristSuspendLimitsCommand;
 import frc.robot.util.arm.LimbSetpoint;
-import frc.util.StateManagement.ArmUpTargetState;
-import frc.util.StateManagement.LimelightOverrideState;
 import frc.util.StateManagement.SelectedShotTargetState;
 import frc.util.StateManagement.ShooterRevTargetState;
 
@@ -46,13 +40,14 @@ public class OperatorController {
 
         _operatorController.b()
         .onTrue(new InstantCommand(() -> Robot.SELECTED_SHOT_TARGET_STATE = SelectedShotTargetState.STARTING_LINE_SHOT));
-        _operatorController.x()
+        /*_operatorController.x()
         .onTrue(new InstantCommand(
             () -> Robot.LIMELIGHT_OVERRIDE_STATE = 
             Robot.LIMELIGHT_OVERRIDE_STATE == LimelightOverrideState.OVERRIDE_ON 
                 ? LimelightOverrideState.OVERRIDE_OFF
                 : LimelightOverrideState.OVERRIDE_ON
-        ));
+        ));*/
+        _operatorController.x().onTrue(new InstantCommand(() -> Robot.SHOOTER_SUBSYSTEM.toggleShooterSpeeds()));
         _operatorController.y()
         .onTrue(new InstantCommand(() -> Robot.SELECTED_SHOT_TARGET_STATE = SelectedShotTargetState.PODIUM_SHOT));
         _operatorController.a()
