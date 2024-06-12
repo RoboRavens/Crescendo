@@ -24,6 +24,7 @@ public class LEDsSubsystem24 extends SubsystemBase {
   Timer m_blinkTimer = new Timer();
   AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(LEDsConstants.TOTAL_LEDS_STRIP_LENGTH);
   double m_rainbowFirstPixelHue = 0;
+  int m_rainbow2FirstHue = 1;
   int m_rainbowValue = 0;
 
   private LEDsPattern m_pattern;
@@ -42,7 +43,8 @@ public class LEDsSubsystem24 extends SubsystemBase {
   public void periodic() {
     switch (m_pattern) {
       case Rainbow:
-        this.rainbowLeds();
+        //this.rainbowLeds();
+        this.rainbowLeds2();
         break;
       case Blinking:
         this.blinkLEDsColor(m_colorToBe, Color.kBlack);
@@ -113,6 +115,25 @@ public class LEDsSubsystem24 extends SubsystemBase {
     m_rainbowFirstPixelHue %= hueMax;
 
     m_led.setData(m_ledBuffer);
+  }
+
+  private void rainbowLeds2() {
+    int length = m_ledBuffer.getLength() - 1;
+    for (int i = 0; i <= length / 2; i++) {
+      m_ledBuffer.setHSV(i, (int)m_rainbow2FirstHue + ((45 * i) / (length / 2)), 255, 255);
+      m_ledBuffer.setHSV(length - i - 1, (int)m_rainbow2FirstHue + ((45 * i) / (length / 2)), 255, 255);
+    }
+    m_led.setData(m_ledBuffer);
+    m_rainbow2FirstHue = (m_rainbow2FirstHue+1)%180; 
+  }
+
+  private void rainbowLeds3() {
+    int length = m_ledBuffer.getLength() - 1;
+    for (int i = 0; i <= length; i++) {
+      m_ledBuffer.setHSV(i, (int)m_rainbow2FirstHue +(45 * i), 255, 255);
+    }
+    m_led.setData(m_ledBuffer);
+    m_rainbow2FirstHue = (m_rainbow2FirstHue+1)%180; 
   }
 
   /*
