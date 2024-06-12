@@ -127,15 +127,6 @@ public class LEDsSubsystem24 extends SubsystemBase {
     m_rainbow2FirstHue = (m_rainbow2FirstHue+1)%180; 
   }
 
-  private void rainbowLeds3() {
-    int length = m_ledBuffer.getLength() - 1;
-    for (int i = 0; i <= length; i++) {
-      m_ledBuffer.setHSV(i, (int)m_rainbow2FirstHue +(45 * i), 255, 255);
-    }
-    m_led.setData(m_ledBuffer);
-    m_rainbow2FirstHue = (m_rainbow2FirstHue+1)%180; 
-  }
-
   /*
   public void setInputAngle(double inputAngle) {
     for (var i = 0; i < m_ledBuffer.getLength(); i++) {
