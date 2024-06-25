@@ -39,6 +39,7 @@ import frc.robot.commands.shooter.ShooterReverseCommand;
 import frc.robot.commands.shooter.StartShooterCommand;
 import frc.robot.commands.wrist.WristAngleFromLLTyCommand;
 import frc.robot.commands.wrist.WristDefaultCommand;
+import frc.robot.commands.wrist.WristGoToPositionCommand;
 import frc.robot.commands.wrist.WristGoToSpeakerAngleCommand;
 import frc.robot.commands.wrist.WristMoveManuallyCommand;
 import frc.robot.commands.wrist.WristOffsetCommand;
@@ -59,6 +60,7 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TeleopDashboardSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 import frc.robot.util.Constants.Constants;
+import frc.robot.util.Constants.WristConstants;
 import frc.robot.util.arm.LimbSetpoint;
 import frc.util.StateManagement.ArmUpTargetState;
 import frc.util.StateManagement.ClimbPositionTargetState;
@@ -202,8 +204,12 @@ public class Robot extends TimedRobot {
       .onFalse(new InstantCommand(() -> DRIVETRAIN_STATE = DrivetrainState.FREEHAND));
 
     leftTrigger.and(() -> LIMELIGHT_OVERRIDE_STATE == LimelightOverrideState.OVERRIDE_OFF
-      && Robot.INTAKE_SUBSYSTEM.hasPieceAnywhere() == true)
+      && Robot.INTAKE_SUBSYSTEM.hasPieceAnywhere() == true && Robot.LIMELIGHT_BACK.hasVisionTargetBoolean())
       .whileTrue(new WristAngleFromLLTyCommand());
+    
+    leftTrigger.and(() -> LIMELIGHT_OVERRIDE_STATE == LimelightOverrideState.OVERRIDE_OFF
+      && Robot.INTAKE_SUBSYSTEM.hasPieceAnywhere() == true && !Robot.LIMELIGHT_BACK.hasVisionTargetBoolean())
+      .whileTrue(new WristGoToPositionCommand(WristConstants.WRIST_DEGREES_SUBWOOFER_POSITION));
     
     
     // new Trigger(() -> DRIVE_CONTROLLER.getLeftBumper()

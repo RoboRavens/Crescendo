@@ -16,6 +16,8 @@ public class WristConstants {
 
     public static final double WRIST_DEGREES_PER_INCREMENT = 2.5;
 
+    public static final double WRIST_DEGREES_SUBWOOFER_POSITION = -25;
+
     // these constants show degrees from floor pickup and are relative to the arm (not relative to the field)
     // values from onshape need to have their sign inverted
     // as degrees get bigger (right d-pad), the shooting angle becomes less (note hits the speaker at lower height)
