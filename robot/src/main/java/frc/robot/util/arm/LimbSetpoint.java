@@ -21,7 +21,7 @@ public class LimbSetpoint {
     public static final LimbSetpoint SIX_NOTE_AUTO_GN_1_AND_2_SCORING_SETPOINT = new LimbSetpoint("Six Note Auto GN 1 And 2 Scoring Setpoint", ElbowConstants.DEGREES_FLOOR_PICKUP, WristConstants.DEGREES_SIX_NOTE_AUTO_GN_1_AND_2);
     public static final LimbSetpoint SIX_NOTE_AUTO_GN_3_SCORING_SETPOINT = new LimbSetpoint("Six Note Auto GN 3 Scoring Setpoint", ElbowConstants.DEGREES_FLOOR_PICKUP, WristConstants.DEGREES_SIX_NOTE_AUTO_GN_3);
     public static final LimbSetpoint SIX_NOTE_AUTO_GN_4_and_5_SCORING_SETPOINT = new LimbSetpoint("Six Note Auto GN 4 and 5 Scoring Setpoint", ElbowConstants.DEGREES_FLOOR_PICKUP, WristConstants.DEGREES_SIX_NOTE_AUTO_GN_4_AND_5);
-    public static final LimbSetpoint SIX_NOTE_AUTO_PRELOAD_SCORING_SETPOINT = new LimbSetpoint("Six Note Auto Preload Scoring Setpoint", ElbowConstants.DEGREES_FLOOR_PICKUP, WristConstants.WRIST_DEGREES_SUBWOOFER_POSITION);
+    public static final LimbSetpoint SIX_NOTE_AUTO_PRELOAD_SCORING_SETPOINT = new LimbSetpoint("Six Note Auto Preload Scoring Setpoint", ElbowConstants.DEGREES_FLOOR_PICKUP, WristConstants.DEGREES_SIX_NOTE_PRELOAD);
     public static final LimbSetpoint SOURCE_SIDE_AUTO_WING_SHOT = new LimbSetpoint("Source Side Auto Wing Shot", ElbowConstants.DEGREES_FLOOR_PICKUP, WristConstants.DEGREES_SOURCE_SIDE_AUTO_WING_SHOT);
     public static final LimbSetpoint START_CONFIG_UP = new LimbSetpoint("Start Config Up", ElbowConstants.DEGREES_START_CONFIG_UP, WristConstants.DEGREES_DEFENDED_SCORING);    
     public static final LimbSetpoint SOUTH_CENTER_PRELOAD = new LimbSetpoint("South Center Preload", ElbowConstants.DEGREES_SOUTH_CENTER_PRELOAD, WristConstants.DEGREES_DEFENDED_SCORING);  
