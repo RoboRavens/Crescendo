@@ -41,13 +41,16 @@ public class ShooterConstants {
     };
 
     public static final double[][] SHOOTER_ANGLE_FROM_TY_DOWN = {
-        {0, -25},
         {22.5, -20}, // 47 inches, -19.619653 wrist angle degrees
         {18.9, -15}, // 53 inches, -14.810095 wrist angle degrees
         {16.2, 4}, // 59 inches, 3.769056 wrist angle degrees
         {13.3, 6}, // 65 inches, 5.794335 wrist angle degrees
         {10.8, 7}, // 72 inches, 6.781995 wrist angle degrees
-        {8.6, 9}, // 78 inches, 8.755394 wrist angle degrees
+        {8.6, 9},// 78 inches, 8.755394 wrist angle degrees
+        {7.5, 9.75}, // 84 inches, 9.529765 wrist angle degrees
+        {5.6, 11.75}, // 90 inches, 11.503163 wrist angle degrees
+        {4.4, 12.5}, // 96 inches, 12.246791 wrist angle degrees
+        {3, 14} // 102 inches, 13.766711 wrist angle degrees
         /*
         {22.5, -1}, // 47 inches, 16.266845 wrist angle degrees
         {21.00, -1}, // 47 inches, 16.266845 wrist angle degrees
@@ -62,13 +65,17 @@ public class ShooterConstants {
     };
 
     public static final double[][] SHOOTER_ANGLE_FROM_TY_UP = {
-        {22, -40}, // 47 inches, -41.659696 wrist angle degrees
-        {14.2, -32}, // 63 inches, -33.646969 wrist angle degrees
-        {7.57, -31}, // 81 inches, -32.3 wrist angle degrees
-        {3.7, -28}, // 98 inches, -29.47 wrist angle degrees
-        {0.58, -26}, // 115 inches, -27.378019 wrist angle degrees
-        {-1.91, -24.5}, // 133 inches, -25.951292 wrist angle degrees
-        {-4.3, -23.5}, // 151 inches, -24.856027 wrist angle degrees
+        {2.969733, -33.9}, // 102 inches, -33.892384 wrist angle degrees
+        {4.259582, -32}, // 96 inches, -32.236335 wrist angle degrees
+        {5.647132, -33.5}, // 90 inches, -33.715904 wrist angle degrees
+        {6.9, -35.25}, // 84 inches, -35.454877 wrist degree angles
+        {8.91, -37}, // 78 inches, -37.195772 wrist angle degrees
+        {10.908, -37}, // 72 inches, -37.23966 wrist angle degrees
+        {13.342574, -38}, // 66 inches, -38.218019 wrist angle degrees
+        {15.044, -39}, // 60 inches, -39.224894 wrist angle degrees
+        {18.107405, -40.5}, // 54 inches, -40.717913 wrist angle degrees
+        {21.912, -43}, // 47 inches, -43.240865 wrist angle degrees
+        
     };
 
     public static final double SHOOTER_STOP_DELAY = 1;
