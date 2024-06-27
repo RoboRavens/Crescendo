@@ -50,11 +50,11 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
     _alliancePub = autoTable.getStringTopic("rpub/alliance").publish();
     
     // BLUE SIDE
-    this.addBlueDefault(
+    this.addOption(
       new AutoMode("B1: 6 Note PATH",
       () -> new PathPlannerAuto("6 Note Path"))
     );
-    this.addOption(
+    this.addBlueDefault(
       new AutoMode("B2: 6 Note AUTO",
       () -> new PathPlannerAuto("6 Note Auto"))
     );
@@ -120,11 +120,11 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
     );
 
     // RED SIDE
-    this.addRedDefault(
+    this.addOption(
       new AutoMode("R1: 6 Note PATH",
       () -> new PathPlannerAuto("6 Note Path"))
     );
-    this.addOption(
+    this.addRedDefault(
       new AutoMode("R2: 6 Note AUTO",
       () -> new PathPlannerAuto("6 Note Auto"))
     );
