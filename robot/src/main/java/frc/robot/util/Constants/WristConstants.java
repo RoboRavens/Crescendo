@@ -16,7 +16,7 @@ public class WristConstants {
 
     public static final double WRIST_DEGREES_PER_INCREMENT = 2.5;
 
-    public static final double WRIST_DEGREES_SUBWOOFER_POSITION = -20;
+    public static final double WRIST_DEGREES_SUBWOOFER_SCORING = -25;
 
     // these constants show degrees from floor pickup and are relative to the arm (not relative to the field)
     // values from onshape need to have their sign inverted
@@ -30,10 +30,10 @@ public class WristConstants {
     public static final double DEGREES_SPEAKER_SCORING = 0.0;
 
     // AUTO MODE ANGLES
-    public static final double DEGREES_SIX_NOTE_AUTO_GN_1_AND_2 = -20;
+    public static final double DEGREES_SIX_NOTE_AUTO_GN_1_AND_2 = -25;
     public static final double DEGREES_SIX_NOTE_AUTO_GN_3 = 18.9;
     public static final double DEGREES_SIX_NOTE_AUTO_GN_4_AND_5 = 21;
-    public static final double DEGREES_SIX_NOTE_PRELOAD = -20;
+    public static final double DEGREES_SIX_NOTE_PRELOAD = -25;
     public static final double DEGREES_SOURCE_SIDE_AUTO_WING_SHOT = 21; // TODO: find the correct number of degrees
 
     // distance in meters from speaker to back bumper

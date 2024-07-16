@@ -39,6 +39,7 @@ import frc.robot.commands.shooter.ShooterReverseCommand;
 import frc.robot.commands.shooter.StartShooterCommand;
 import frc.robot.commands.wrist.WristAngleFromLLTyCommand;
 import frc.robot.commands.wrist.WristDefaultCommand;
+import frc.robot.commands.wrist.WristGoToDegreesCommand;
 import frc.robot.commands.wrist.WristGoToPositionCommand;
 import frc.robot.commands.wrist.WristGoToSpeakerAngleCommand;
 import frc.robot.commands.wrist.WristMoveManuallyCommand;
@@ -210,7 +211,8 @@ public class Robot extends TimedRobot {
     new Trigger(() -> SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON
       && Robot.INTAKE_SUBSYSTEM.hasPieceAnywhere() == true 
       && Robot.LIMELIGHT_BACK.hasVisionTargetBuffered() == false)
-      .whileTrue(new WristGoToPositionCommand(WristConstants.WRIST_DEGREES_SUBWOOFER_POSITION));
+      .whileTrue(new WristGoToDegreesCommand(WristConstants.WRIST_DEGREES_SUBWOOFER_SCORING))
+      .onFalse(new WaitCommand(1).andThen(new WristGoToDegreesCommand(WristConstants.DEGREES_FLOOR_PICKUP)));
     
     
     // new Trigger(() -> DRIVE_CONTROLLER.getLeftBumper()
