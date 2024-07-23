@@ -188,6 +188,12 @@ public class DrivetrainDefaultCommand extends Command {
         SmartDashboard.putNumber("APH Rotation Offset", rotationOffset);
         SmartDashboard.putNumber("APH Rotation Offset Degrees", Math.toDegrees(rotationOffset));
         double angularVelocity = _scoringRotationAlignPID.calculate(rotationOffset);
+        if (Math.abs(rotationOffset) > Constants.VISION_ALIGNED_TX_BUFFER_DEGREES) {
+          double sign = Math.copySign(1, angularVelocity);
+          angularVelocity += Constants.VALUE_TO_BREAK_ALIGNMENT_STATIC_FRICTION * sign;
+        } else {
+          angularVelocity = 0;
+        }
         return angularVelocity;
     }
 
