@@ -33,6 +33,7 @@ public class DrivetrainDefaultCommand extends Command {
     public DrivetrainDefaultCommand() {
         addRequirements(Robot.DRIVETRAIN_SUBSYSTEM);
         _bufferedTargetAngleTimer.start();
+        // SmartDashboard.setDefaultNumber("_rotational velocity", 0);
     }
 
     @Override
@@ -103,7 +104,7 @@ public class DrivetrainDefaultCommand extends Command {
 
             // angular position holder only acts if r == 0
             r = AngularPositionHolder.GetInstance().getAngularVelocity(r, robotRotation.getRadians());
-
+            // r = SmartDashboard.getNumber("_rotational velocity", 0);
             var targetChassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
                 x, // x translation
                 y, // y translation
@@ -188,13 +189,17 @@ public class DrivetrainDefaultCommand extends Command {
         SmartDashboard.putNumber("APH Rotation Offset", rotationOffset);
         SmartDashboard.putNumber("APH Rotation Offset Degrees", Math.toDegrees(rotationOffset));
         double angularVelocity = _scoringRotationAlignPID.calculate(rotationOffset);
-        if (Math.abs(rotationOffset) > Constants.VISION_ALIGNED_TX_BUFFER_DEGREES) {
+        SmartDashboard.putNumber("_rotational velocity before", angularVelocity);
+        SmartDashboard.putNumber("_rotational offset before", rotationOffset);
+         if (Math.toDegrees(Math.abs(rotationOffset)) > Constants.VISION_ALIGNED_TX_BUFFER_DEGREES) {
           double sign = Math.copySign(1, angularVelocity);
           angularVelocity += Constants.VALUE_TO_BREAK_ALIGNMENT_STATIC_FRICTION * sign;
         } else {
           angularVelocity = 0;
-        }
+        } 
+        SmartDashboard.putNumber("_rotational velocity after", angularVelocity);
         return angularVelocity;
+    
     }
 
     // private double getAngularVelocityForAlignmentFromRadiansOffset(double radiansOffset) {
