@@ -53,6 +53,7 @@ public class LimelightSubsystem extends SubsystemBase {
     _tagId = _baseNetworkTable.getEntry("priorityid");
 
     _tagId.setNumber(_currentTargetTag);
+    _bufferedTvTimer.start();
   }
 
   public void periodic() {
