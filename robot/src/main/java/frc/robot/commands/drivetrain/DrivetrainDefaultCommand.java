@@ -20,15 +20,17 @@ public class DrivetrainDefaultCommand extends Command {
     private double _velocityXSlewRate = DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / Constants.SLEW_FRAMES_TO_MAX_X_VELOCITY;
     private double _velocityYSlewRate = DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND / Constants.SLEW_FRAMES_TO_MAX_Y_VELOCITY;
     private double _angularSlewRate = DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND / Constants.SLEW_FRAMES_TO_MAX_ANGULAR_VELOCITY;
-    public PIDController _scoringRotationAlignPID = new PIDController(7, 0, 4);
+    public PIDController _scoringRotationAlignPID = new PIDController(2, 0, 4);
 
     private Timer _xingTimer = new Timer();
+
 
     private Timer _bufferedTargetAngleTimer = new Timer();
     private double _bufferedTargetAngle = 0;
     private boolean _visionAligned = false;
 
     public boolean CutPower = false;
+
 
     public DrivetrainDefaultCommand() {
         addRequirements(Robot.DRIVETRAIN_SUBSYSTEM);
@@ -191,6 +193,7 @@ public class DrivetrainDefaultCommand extends Command {
         double angularVelocity = _scoringRotationAlignPID.calculate(rotationOffset);
         SmartDashboard.putNumber("_rotational velocity before", angularVelocity);
         SmartDashboard.putNumber("_rotational offset before", rotationOffset);
+
          if (Math.toDegrees(Math.abs(rotationOffset)) > Constants.VISION_ALIGNED_TX_BUFFER_DEGREES) {
           double sign = Math.copySign(1, angularVelocity);
           angularVelocity += Constants.VALUE_TO_BREAK_ALIGNMENT_STATIC_FRICTION * sign;
