@@ -205,7 +205,8 @@ public class Robot extends TimedRobot {
       .onFalse(new InstantCommand(() -> DRIVETRAIN_STATE = DrivetrainState.FREEHAND));
 
     leftTrigger.and(() -> LIMELIGHT_OVERRIDE_STATE == LimelightOverrideState.OVERRIDE_OFF
-      && Robot.INTAKE_SUBSYSTEM.hasPieceAnywhere() == true)
+      && Robot.INTAKE_SUBSYSTEM.hasPieceAnywhere() == true
+      && Robot.LIMELIGHT_BACK.hasVisionTargetBuffered() == true)
       .whileTrue(new WristAngleFromLLTyCommand());
     
     new Trigger(() -> SHOOTER_REV_TARGET_STATE == ShooterRevTargetState.ON
