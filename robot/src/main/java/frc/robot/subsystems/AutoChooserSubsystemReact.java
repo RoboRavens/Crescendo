@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Robot;
@@ -36,6 +37,10 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
 
   private DoublePublisher _matchTimePub;
   private StringPublisher _alliancePub;
+
+  private AutoMode _cachedSelectedAuto;
+  private double _cachedDelay;
+  private Command _cachedSelectedAutoCommand;
 
   public AutoChooserSubsystemReact() {
     var autoTable = ReactDashSubsystem.ReactDash.getSubTable("Autonomous");
@@ -227,7 +232,7 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
   }
 
   public Command GetAutoCommand() {
-    return new WaitCommand(_autoDelaySub.get()).andThen(this.GetAuto().getCommandSupplier().getCommand());
+    return _cachedSelectedAutoCommand;
   }
 
   private AutoMode GetDefaultAuto() {
@@ -248,8 +253,19 @@ public class AutoChooserSubsystemReact extends SubsystemBase {
       this.UpdateAlliance(alliance);
     }
 
-    _selectedAutoRobotPub.set(this.GetAuto().getText());
-    _autoDelayRobotPub.set(_autoDelaySub.get());
+    var selectedAuto = this.GetAuto();
+    var delay = _autoDelaySub.get();
+    if (_cachedSelectedAuto != selectedAuto || _cachedDelay != delay) {
+      _cachedSelectedAuto = selectedAuto;
+      _cachedDelay = delay;
+      _cachedSelectedAutoCommand = new PrintCommand("Starting Auto '" + _cachedSelectedAuto.getText() + "' with delay '" + _cachedDelay + "'")
+        .andThen(new WaitCommand(_cachedDelay))
+        .andThen(selectedAuto.getCommandSupplier().getCommand());
+      System.out.println("Updated cached auto to '" + _cachedSelectedAuto.getText() + "' with delay '" + _cachedDelay + "'");
+    }
+
+    _selectedAutoRobotPub.set(_cachedSelectedAuto.getText());
+    _autoDelayRobotPub.set(_cachedDelay);
 
     _matchTimePub.set(Timer.getMatchTime());
     _alliancePub.set(alliance.name());
