@@ -45,7 +45,6 @@ import frc.robot.commands.wrist.WristGoToSpeakerAngleCommand;
 import frc.robot.commands.wrist.WristMoveManuallyCommand;
 import frc.robot.commands.wrist.WristOffsetCommand;
 import frc.robot.commands.wrist.WristSetPowerCommand;
-import frc.robot.subsystems.AutoChooserSubsystemReact;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.ElbowSubsystem;
@@ -54,7 +53,6 @@ import frc.robot.subsystems.LEDsSubsystem24;
 import frc.robot.subsystems.LEDsSubsystem24.LEDsPattern;
 import frc.robot.subsystems.LimelightPickupSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
-import frc.robot.subsystems.PathPlannerConfigurator;
 import frc.robot.subsystems.PoseEstimatorSubsystem;
 import frc.robot.subsystems.ReactDashSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -100,7 +98,6 @@ public class Robot extends TimedRobot {
   public static DriverStation.Alliance allianceColor = Alliance.Blue;
   public static final DrivetrainAutoAimNoteCommand DRIVETRAIN_AUTO_AIM_NOTE_COMMAND = new DrivetrainAutoAimNoteCommand();
   public static final ReactDashSubsystem REACT_DASH_SUBSYSTEM = new ReactDashSubsystem();
-  public static final AutoChooserSubsystemReact AUTO_CHOOSER = new AutoChooserSubsystemReact();
   public static final TeleopDashboardSubsystem TELEOP_DASHBOARD_SUBSYSTEM = new TeleopDashboardSubsystem();
   public static final ButtonCode BUTTON_CODE = new ButtonCode();
   public static final IntakeSubsystem INTAKE_SUBSYSTEM = new IntakeSubsystem();
@@ -108,7 +105,6 @@ public class Robot extends TimedRobot {
   public static final ElbowSubsystem ELBOW_SUBSYSTEM = new ElbowSubsystem();
   public static final WristSubsystem WRIST_SUBSYSTEM = new WristSubsystem();
   public static final LEDsSubsystem24 LED_SUBSYSTEM = new LEDsSubsystem24();
-  public static final PathPlannerConfigurator PATH_PLANNER_CONFIGURATOR = new PathPlannerConfigurator();
   public static final IntakeDefaultCommand INTAKE_DEFAULT_COMMAND = new IntakeDefaultCommand();
   public static final WristSetPowerCommand WRIST_SET_POWER_COMMAND = new WristSetPowerCommand();
   public static final ClimberSubsystem LEFT_CLIMBER_SUBSYSTEM = new ClimberSubsystem(RobotMap.LEFT_CLIMBER_MOTOR, true);
@@ -175,7 +171,6 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData(ELBOW_SUBSYSTEM);
     SmartDashboard.putData(WRIST_SUBSYSTEM);
 
-    AUTO_CHOOSER.ShowTab();
     
     new Trigger(() -> DRIVE_CONTROLLER.getLeftTriggerAxis() > .1
       && Robot.LIMELIGHT_PICKUP.hasVisionTargetBuffered()
@@ -313,7 +308,7 @@ public class Robot extends TimedRobot {
     // 0, 0), new Rotation2d(0, 0));
     // DRIVETRAIN_SUBSYSTEM.CreateSetOdometryToTrajectoryInitialPositionCommand(traj).andThen(AutoBuilder.followPath(sixNotePath)).schedule();
 
-    Command m_autonomousCommand = AUTO_CHOOSER.GetAutoCommand();
+    Command m_autonomousCommand = new DrivetrainDefaultCommand();
 
     // // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
@@ -360,7 +355,6 @@ public class Robot extends TimedRobot {
   private void setDriverStationData() {
     allianceColor = DriverStation.getAlliance().orElseGet(() -> Alliance.Blue);
     LIMELIGHT_BACK.setTargetTag(allianceColor);
-    AUTO_CHOOSER.BuildAutoChooser(allianceColor);
   }
 
   private void runLedLogic() {

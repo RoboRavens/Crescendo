@@ -5,11 +5,6 @@
 package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.path.PathPlannerTrajectory;
-import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
-import com.pathplanner.lib.util.PIDConstants;
-import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkMax;
 import com.swervedrivespecialties.swervelib.MechanicalConfiguration;
 import com.swervedrivespecialties.swervelib.MkModuleConfiguration;
@@ -566,16 +561,16 @@ public class DrivetrainSubsystem extends DrivetrainSubsystemBase {
   //   return config;
   // }
 
-  @Override
-  public Command CreateSetOdometryToTrajectoryInitialPositionCommand(PathPlannerTrajectory trajectory) {
-    SmartDashboard.putNumber("Auto Start Holonomic Pose X", trajectory.getInitialState().getTargetHolonomicPose().getX());
-    SmartDashboard.putNumber("Auto Start Holonomic Pose Y", trajectory.getInitialState().getTargetHolonomicPose().getY());
-    SmartDashboard.putNumber("Auto Start Holonomic Pose Rotation (Degrees)", trajectory.getInitialState().getTargetHolonomicPose().getRotation().getDegrees());
-    SmartDashboard.putNumber("Auto End Holonomic Pose X", trajectory.getEndState().getTargetHolonomicPose().getX());
-    SmartDashboard.putNumber("Auto End Holonomic Pose Y", trajectory.getEndState().getTargetHolonomicPose().getY());
-    SmartDashboard.putNumber("Auto End Holonomic Pose Rotation (Degrees)", trajectory.getEndState().getTargetHolonomicPose().getRotation().getDegrees());
-    return new InstantCommand(() -> this.resetOdometry(trajectory.getInitialState().getTargetHolonomicPose()));    
-  }
+  // @Override
+  // public Command CreateSetOdometryToTrajectoryInitialPositionCommand(PathPlannerTrajectory trajectory) {
+  //   SmartDashboard.putNumber("Auto Start Holonomic Pose X", trajectory.getInitialState().getTargetHolonomicPose().getX());
+  //   SmartDashboard.putNumber("Auto Start Holonomic Pose Y", trajectory.getInitialState().getTargetHolonomicPose().getY());
+  //   SmartDashboard.putNumber("Auto Start Holonomic Pose Rotation (Degrees)", trajectory.getInitialState().getTargetHolonomicPose().getRotation().getDegrees());
+  //   SmartDashboard.putNumber("Auto End Holonomic Pose X", trajectory.getEndState().getTargetHolonomicPose().getX());
+  //   SmartDashboard.putNumber("Auto End Holonomic Pose Y", trajectory.getEndState().getTargetHolonomicPose().getY());
+  //   SmartDashboard.putNumber("Auto End Holonomic Pose Rotation (Degrees)", trajectory.getEndState().getTargetHolonomicPose().getRotation().getDegrees());
+  //   return new InstantCommand(() -> this.resetOdometry(trajectory.getInitialState().getTargetHolonomicPose()));    
+  // }
 
   // public Command CreateFollowTrajectoryCommand(Trajectory trajectory) {
   //   return CreateFollowTrajectoryCommand(trajectory, false);
