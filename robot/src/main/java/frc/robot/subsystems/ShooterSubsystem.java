@@ -10,11 +10,13 @@ import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.ravenhardware.BufferedDigitalInput;
+import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.util.Constants.ShooterConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
-    private BufferedDigitalInput _shooterPieceSensor = new BufferedDigitalInput(RobotMap.SHOOTER_PIECE_SENSOR_DIO_PORT, 3, false,
+    private BufferedDigitalInput _shooterPieceSensor = new BufferedDigitalInput(RobotMap.SHOOTER_PIECE_SENSOR_DIO_PORT,
+            3, false,
             false);
     private TalonFX _leftTalonFX = new TalonFX(RobotMap.SHOOTER_LEFT_MOTOR_CAN_ID);
     private TalonFX _rightTalonFX = new TalonFX(RobotMap.SHOOTER_RIGHT_MOTOR_CAN_ID);
@@ -23,7 +25,6 @@ public class ShooterSubsystem extends SubsystemBase {
     private InterpolatingDoubleTreeMap shooterAngleLLTyMapUp = new InterpolatingDoubleTreeMap();
     private InterpolatingDoubleTreeMap shooterAngleLLTyMapDown = new InterpolatingDoubleTreeMap();
     final VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
-
 
     public ShooterSubsystem() {
         var leftSlot0Configs = new Slot0Configs();
@@ -49,7 +50,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         _leftTalonFX.getConfigurator().apply(leftSlot0Configs);
         _rightTalonFX.getConfigurator().apply(rightSlot0Configs);
-        
+
         populateShooterAngleMapUp();
         populateShooterAngleMapDown();
         populateShooterAngleLLTyMapUp();
@@ -57,12 +58,21 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void runShooterAtTargetSpeed() {
+        if (Robot.FULLPOWER) {
+            _leftTalonFX.setControl(m_request
+                    .withVelocity(ShooterConstants.TARGET_RPS_LEFT * 1.25)
+                    .withFeedForward(ShooterConstants.FF_FOR_TARGET_LEFT));
+            _rightTalonFX.setControl(m_request
+                    .withVelocity(ShooterConstants.TARGET_RPS_RIGHT * 1.25)
+                    .withFeedForward(ShooterConstants.FF_FOR_TARGET_RIGHT));
+            return;
+        }
         _leftTalonFX.setControl(m_request
-            .withVelocity(ShooterConstants.TARGET_RPS_LEFT)
-            .withFeedForward(ShooterConstants.FF_FOR_TARGET_LEFT));
+                .withVelocity(ShooterConstants.TARGET_RPS_LEFT * 0.5)
+                .withFeedForward(ShooterConstants.FF_FOR_TARGET_LEFT));
         _rightTalonFX.setControl(m_request
-            .withVelocity(ShooterConstants.TARGET_RPS_RIGHT)
-            .withFeedForward(ShooterConstants.FF_FOR_TARGET_RIGHT));
+                .withVelocity(ShooterConstants.TARGET_RPS_RIGHT * 0.5)
+                .withFeedForward(ShooterConstants.FF_FOR_TARGET_RIGHT));
     }
 
     public void setPowerManually(double speed) {
@@ -79,50 +89,50 @@ public class ShooterSubsystem extends SubsystemBase {
         return _shooterPieceSensor.get();
     }
 
-    private void populateShooterAngleMapUp(){
-      var array = ShooterConstants.SHOOTER_ANGLE_PAIRS_UP;
-      for(int i = 0; i < array.length; i++){
-          shooterAngleMapUp.put(array[i][0], array[i][1]);
-      }
+    private void populateShooterAngleMapUp() {
+        var array = ShooterConstants.SHOOTER_ANGLE_PAIRS_UP;
+        for (int i = 0; i < array.length; i++) {
+            shooterAngleMapUp.put(array[i][0], array[i][1]);
+        }
     }
 
-    private void populateShooterAngleMapDown(){
-      var array = ShooterConstants.SHOOTER_ANGLE_PAIRS_DOWN;
-      for(int i = 0; i < array.length; i++){
-          shooterAngleMapDown.put(array[i][0], array[i][1]);
-      }
+    private void populateShooterAngleMapDown() {
+        var array = ShooterConstants.SHOOTER_ANGLE_PAIRS_DOWN;
+        for (int i = 0; i < array.length; i++) {
+            shooterAngleMapDown.put(array[i][0], array[i][1]);
+        }
     }
 
-    private void populateShooterAngleLLTyMapUp(){
-      var array = ShooterConstants.SHOOTER_ANGLE_FROM_TY_UP;
-      for(int i = 0; i < array.length; i++){
-          shooterAngleLLTyMapUp.put(array[i][0], array[i][1]);
-      }
+    private void populateShooterAngleLLTyMapUp() {
+        var array = ShooterConstants.SHOOTER_ANGLE_FROM_TY_UP;
+        for (int i = 0; i < array.length; i++) {
+            shooterAngleLLTyMapUp.put(array[i][0], array[i][1]);
+        }
     }
 
-    private void populateShooterAngleLLTyMapDown(){
-      var array = ShooterConstants.SHOOTER_ANGLE_FROM_TY_DOWN;
-      for(int i = 0; i < array.length; i++){
-          shooterAngleLLTyMapDown.put(array[i][0], array[i][1]);
-      }
+    private void populateShooterAngleLLTyMapDown() {
+        var array = ShooterConstants.SHOOTER_ANGLE_FROM_TY_DOWN;
+        for (int i = 0; i < array.length; i++) {
+            shooterAngleLLTyMapDown.put(array[i][0], array[i][1]);
+        }
     }
 
-    public double getShooterAngleMapUp(double distance){
+    public double getShooterAngleMapUp(double distance) {
         double angle = shooterAngleMapUp.get(distance);
         return angle;
     }
 
-    public double getShooterAngleMapDown(double distance){
+    public double getShooterAngleMapDown(double distance) {
         double angle = shooterAngleMapDown.get(distance);
         return angle;
     }
 
-    public double getShooterAngleLLTyMapUp(double distance){
+    public double getShooterAngleLLTyMapUp(double distance) {
         double angle = shooterAngleLLTyMapUp.get(distance);
         return angle;
     }
 
-    public double getShooterAngleLLTyMapDown(double distance){
+    public double getShooterAngleLLTyMapDown(double distance) {
         double angle = shooterAngleLLTyMapDown.get(distance);
         return angle;
     }
@@ -158,36 +168,38 @@ public class ShooterSubsystem extends SubsystemBase {
         double numerator1 = 2 * Math.pow(ShooterConstants.INITIAL_NOTE_SPEED, 2) * distance;
         double numerator2 = Math.pow((2 * Math.pow(ShooterConstants.INITIAL_NOTE_SPEED, 2) * distance), 2);
         double numerator3 = -4 * ShooterConstants.GRAVITY_ACCELERATION * Math.pow(distance, 2);
-        double numerator4 = (ShooterConstants.GRAVITY_ACCELERATION * Math.pow(distance, 2) + 2* Math.pow(ShooterConstants.INITIAL_NOTE_SPEED, 2) * (ShooterConstants.SPEAKER_HEIGHT_METERS - shooterHeightMeters));
+        double numerator4 = (ShooterConstants.GRAVITY_ACCELERATION * Math.pow(distance, 2)
+                + 2 * Math.pow(ShooterConstants.INITIAL_NOTE_SPEED, 2)
+                        * (ShooterConstants.SPEAKER_HEIGHT_METERS - shooterHeightMeters));
         double numerator = numerator1 - Math.sqrt(numerator2 + numerator3 * numerator4);
         double shootingAngle = Math.toDegrees(Math.atan(numerator / denumerator));
         return shootingAngle;
     }
 
-  @Override
-  public void periodic(){
-    _shooterPieceSensor.maintainState();
-    SmartDashboard.putBoolean("Shooter Piece", this.hasPiece());
+    @Override
+    public void periodic() {
+        _shooterPieceSensor.maintainState();
+        SmartDashboard.putBoolean("Shooter Piece", this.hasPiece());
 
-    double leftMaxSpeed = SmartDashboard.getNumber("Shooter Max Left Speed", 0);
-    double rightMaxSpeed = SmartDashboard.getNumber("Shooter Max Right Speed", 0);
-    leftMaxSpeed = Math.max(leftMaxSpeed, Math.abs(_leftTalonFX.getVelocity().getValueAsDouble()));
-    rightMaxSpeed = Math.max(rightMaxSpeed, Math.abs(_rightTalonFX.getVelocity().getValueAsDouble()));
-    SmartDashboard.putNumber("Shooter Max Left Speed", leftMaxSpeed);
-    SmartDashboard.putNumber("Shooter Max Right Speed", rightMaxSpeed);
+        double leftMaxSpeed = SmartDashboard.getNumber("Shooter Max Left Speed", 0);
+        double rightMaxSpeed = SmartDashboard.getNumber("Shooter Max Right Speed", 0);
+        leftMaxSpeed = Math.max(leftMaxSpeed, Math.abs(_leftTalonFX.getVelocity().getValueAsDouble()));
+        rightMaxSpeed = Math.max(rightMaxSpeed, Math.abs(_rightTalonFX.getVelocity().getValueAsDouble()));
+        SmartDashboard.putNumber("Shooter Max Left Speed", leftMaxSpeed);
+        SmartDashboard.putNumber("Shooter Max Right Speed", rightMaxSpeed);
 
-    SmartDashboard.putNumber("Shooter Target Left Speed", ShooterConstants.TARGET_RPS_LEFT);
-    SmartDashboard.putNumber("Shooter Target Right Speed", ShooterConstants.TARGET_RPS_RIGHT);
+        SmartDashboard.putNumber("Shooter Target Left Speed", ShooterConstants.TARGET_RPS_LEFT);
+        SmartDashboard.putNumber("Shooter Target Right Speed", ShooterConstants.TARGET_RPS_RIGHT);
 
-    double currentLeftSpeed = this.getLeftRpm();
-    double currentRightSpeed = this.getRightRpm();
-    SmartDashboard.putNumber("Shooter Current Left Speed", currentLeftSpeed);
-    SmartDashboard.putNumber("Shooter Current Right Speed", currentRightSpeed);
-    
-    SmartDashboard.putNumber("Shooter Target Left Diff", ShooterConstants.TARGET_RPS_LEFT - currentLeftSpeed);
-    SmartDashboard.putNumber("Shooter Target Right Diff", ShooterConstants.TARGET_RPS_RIGHT - currentRightSpeed);
+        double currentLeftSpeed = this.getLeftRpm();
+        double currentRightSpeed = this.getRightRpm();
+        SmartDashboard.putNumber("Shooter Current Left Speed", currentLeftSpeed);
+        SmartDashboard.putNumber("Shooter Current Right Speed", currentRightSpeed);
 
-    SmartDashboard.putBoolean("Shooter Left At Speed", this.leftShooterAtSpeed());
-    SmartDashboard.putBoolean("Shooter Right At Speed", this.rightShooterAtSpeed());
-  }
+        SmartDashboard.putNumber("Shooter Target Left Diff", ShooterConstants.TARGET_RPS_LEFT - currentLeftSpeed);
+        SmartDashboard.putNumber("Shooter Target Right Diff", ShooterConstants.TARGET_RPS_RIGHT - currentRightSpeed);
+
+        SmartDashboard.putBoolean("Shooter Left At Speed", this.leftShooterAtSpeed());
+        SmartDashboard.putBoolean("Shooter Right At Speed", this.rightShooterAtSpeed());
+    }
 }

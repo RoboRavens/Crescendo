@@ -6,7 +6,7 @@ public class ShooterConstants {
     public static final double lkI = 0;
     public static final double lkD = 0;
     public static final double FF_FOR_TARGET_LEFT = .37;
-    public static final double TARGET_RPS_LEFT = 96 * .5; // lmaxRPM * lShooterVelocityPercentage;
+    public static final double TARGET_RPS_LEFT = 96; // lmaxRPM * lShooterVelocityPercentage;
     public static final double ACTUAL_PID_RPS_FOR_SOME_REASON_LEFT = 71;
 
     // right shooter is slightly stronger, every 1 % power is roughly 150 RPM or 2.5 RPS
@@ -14,7 +14,7 @@ public class ShooterConstants {
     public static final double rkI = 0;
     public static final double rkD = 0;
     public static final double FF_FOR_TARGET_RIGHT = .56;
-    public static final double TARGET_RPS_RIGHT = 144 * .5; // rmaxRPM * rShooterVelocityPercentage;
+    public static final double TARGET_RPS_RIGHT = 144; // rmaxRPM * rShooterVelocityPercentage;
     public static final double ACTUAL_PID_RPS_FOR_SOME_REASON_RIGHT = 110;
 
     public static final double IS_AT_TARGET_SPEED_BUFFER = 10;

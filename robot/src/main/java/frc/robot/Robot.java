@@ -122,6 +122,7 @@ public class Robot extends TimedRobot {
   public static TrapSourceLaneTargetState TRAP_SOURCE_LANE_TARGET_STATE = TrapSourceLaneTargetState.CENTER;
   public static ArmUpTargetState ARM_UP_TARGET_STATE = ArmUpTargetState.FREE;
   public static ShooterRevTargetState SHOOTER_REV_TARGET_STATE = ShooterRevTargetState.OFF;
+  public static boolean FULLPOWER = false;
   public static ClimbPositionTargetState CLIMB_POSITION_TARGET_STATE = ClimbPositionTargetState.LEFT_CLOSE;
   public static OverallState OVERALL_STATE = OverallState.EMPTY_TRANSIT;
   public static LoadState LOAD_STATE = LoadState.EMPTY;
