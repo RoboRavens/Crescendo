@@ -60,10 +60,10 @@ public class ShooterSubsystem extends SubsystemBase {
     public void runShooterAtTargetSpeed() {
         if (Robot.FULLPOWER) {
             _leftTalonFX.setControl(m_request
-                    .withVelocity(ShooterConstants.TARGET_RPS_LEFT * 1.25)
+                    .withVelocity(ShooterConstants.TARGET_RPS_LEFT * 1.75)
                     .withFeedForward(ShooterConstants.FF_FOR_TARGET_LEFT));
             _rightTalonFX.setControl(m_request
-                    .withVelocity(ShooterConstants.TARGET_RPS_RIGHT * 1.25)
+                    .withVelocity(ShooterConstants.TARGET_RPS_RIGHT * 1.75)
                     .withFeedForward(ShooterConstants.FF_FOR_TARGET_RIGHT));
             return;
         }
