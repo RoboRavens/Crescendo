@@ -23,17 +23,44 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
  * directory.
  */
 public class Robot extends TimedRobot {
-  public static final CommandXboxController COMMAND_DRIVE_CONTROLLER = new CommandXboxController(RobotMap.DRIVE_CONTROLLER_PORT);
+  public static final CommandXboxController COMMAND_DRIVE_CONTROLLER = new CommandXboxController(
+      RobotMap.DRIVE_CONTROLLER_PORT);
   public static final XboxController DRIVE_CONTROLLER = COMMAND_DRIVE_CONTROLLER.getHID();
 
-  private TalonFX _shooterMotorLeft = new TalonFX(RobotMap.SHOOTER_LEFT_MOTOR_CAN_ID);
-  private TalonFX _shooterMotorRight = new TalonFX(RobotMap.SHOOTER_RIGHT_MOTOR_CAN_ID);
-  private TalonFX _intakeMotorTop = new TalonFX(RobotMap.INTAKE_MOTOR_TOP_CAN_ID);
-  private TalonFX _intakeMotorBottom = new TalonFX(RobotMap.INTAKE_MOTOR_BOTTOM_CAN_ID);
+  private TalonFX _leftTalonFX = new TalonFX(RobotMap.SHOOTER_LEFT_MOTOR_CAN_ID);
+  private TalonFX _rightTalonFX = new TalonFX(RobotMap.SHOOTER_RIGHT_MOTOR_CAN_ID);
+  private TalonFX _intakemotorFx = new TalonFX(RobotMap.INTAKE_MOTOR_TOP_CAN_ID);
+  private TalonFX _intakemotorFx2 = new TalonFX(RobotMap.INTAKE_MOTOR_BOTTOM_CAN_ID);
 
 
   @Override
   public void robotPeriodic() {
+
+    boolean rightbumper = DRIVE_CONTROLLER.getRightBumper();
+    if (rightbumper) {
+      _leftTalonFX.set(.2);
+      _rightTalonFX.set(.3);
+    } else {
+      _leftTalonFX.set(0);
+      _rightTalonFX.set(0);
+    }
+
+    boolean leftbumper = DRIVE_CONTROLLER.getLeftBumper();
+
+    boolean a = DRIVE_CONTROLLER.getAButton();
+    if (a) {
+      _intakemotorFx.set(-.1);
+      _intakemotorFx2.set(-.1);
+    } else if (leftbumper) {
+      _intakemotorFx.set(.1);
+      _intakemotorFx2.set(.1);
+      
+    }
+    else {
+      _intakemotorFx.set(0);
+      _intakemotorFx2.set(0);
+    }
+
     CommandScheduler.getInstance().run();
   }
 
@@ -90,6 +117,7 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
+    System.out.println("disabled init");
   }
 
   @Override
