@@ -6,8 +6,10 @@ package frc.robot;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
@@ -31,7 +33,9 @@ public class Robot extends TimedRobot {
   private TalonFX _rightTalonFX = new TalonFX(RobotMap.SHOOTER_RIGHT_MOTOR_CAN_ID);
   private TalonFX _intakemotorFx = new TalonFX(RobotMap.INTAKE_MOTOR_TOP_CAN_ID);
   private TalonFX _intakemotorFx2 = new TalonFX(RobotMap.INTAKE_MOTOR_BOTTOM_CAN_ID);
-
+  private DigitalInput frontsensor = new DigitalInput(3);
+  private DigitalInput middlesensor = new DigitalInput(1);
+  private DigitalInput backsensor = new DigitalInput(2);
 
   @Override
   public void robotPeriodic() {
@@ -52,13 +56,37 @@ public class Robot extends TimedRobot {
       _intakemotorFx.set(-.1);
       _intakemotorFx2.set(-.1);
     } else if (leftbumper) {
-      _intakemotorFx.set(.1);
-      _intakemotorFx2.set(.1);
-      
-    }
-    else {
+      _intakemotorFx.set(.25);
+      _intakemotorFx2.set(.25);
+
+    } else {
       _intakemotorFx.set(0);
       _intakemotorFx2.set(0);
+    }
+
+    var frontsensorcsp = !frontsensor.get();
+    SmartDashboard.putBoolean("frontsensorcsp", frontsensorcsp);
+
+    var middlesensorcsp = !middlesensor.get();
+    SmartDashboard.putBoolean("middlesensorcsp", middlesensorcsp);
+
+    var backsensorcsp = !backsensor.get();
+    SmartDashboard.putBoolean("backsensorcsp", backsensorcsp);
+
+    boolean x = DRIVE_CONTROLLER.getXButton();
+    if (x) {
+      _intakemotorFx.set(.5);
+      _intakemotorFx2.set(.5);
+    }
+    if (!a && !x) {
+
+      if (frontsensorcsp) {
+        _intakemotorFx.set(.25);
+        _intakemotorFx2.set(.25);
+      } else if (backsensorcsp) {
+        _intakemotorFx.set(-.05);
+        _intakemotorFx2.set(-.05);
+      }
     }
 
     CommandScheduler.getInstance().run();
