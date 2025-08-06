@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.ShootCommand;
+import frc.robot.subsystems.shootersubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -28,25 +30,23 @@ public class Robot extends TimedRobot {
   public static final CommandXboxController COMMAND_DRIVE_CONTROLLER = new CommandXboxController(
       RobotMap.DRIVE_CONTROLLER_PORT);
   public static final XboxController DRIVE_CONTROLLER = COMMAND_DRIVE_CONTROLLER.getHID();
+public static final shootersubsystem SHOOTERSUBSYSTEM = new shootersubsystem();
 
-  private TalonFX _leftTalonFX = new TalonFX(RobotMap.SHOOTER_LEFT_MOTOR_CAN_ID);
-  private TalonFX _rightTalonFX = new TalonFX(RobotMap.SHOOTER_RIGHT_MOTOR_CAN_ID);
-  private TalonFX _intakemotorFx = new TalonFX(RobotMap.INTAKE_MOTOR_TOP_CAN_ID);
-  private TalonFX _intakemotorFx2 = new TalonFX(RobotMap.INTAKE_MOTOR_BOTTOM_CAN_ID);
+
   private DigitalInput frontsensor = new DigitalInput(3);
   private DigitalInput middlesensor = new DigitalInput(1);
   private DigitalInput backsensor = new DigitalInput(2);
 
   @Override
   public void robotPeriodic() {
-
+/* 
     boolean rightbumper = DRIVE_CONTROLLER.getRightBumper();
     if (rightbumper) {
-      _leftTalonFX.set(.2);
-      _rightTalonFX.set(.3);
+      _leftShooterMotor.set(.2);
+      _rightShooterMotor.set(.2);
     } else {
-      _leftTalonFX.set(0);
-      _rightTalonFX.set(0);
+      _leftShooterMotor.set(0);
+      _rightShooterMotor.set(0);
     }
 
     boolean leftbumper = DRIVE_CONTROLLER.getLeftBumper();
@@ -73,6 +73,12 @@ public class Robot extends TimedRobot {
     var backsensorcsp = !backsensor.get();
     SmartDashboard.putBoolean("backsensorcsp", backsensorcsp);
 
+    var _leftShooterMotorcsp = _leftShooterMotor.getVelocity().getValueAsDouble();
+    SmartDashboard.putNumber("_leftShooterMotorcsp", _leftShooterMotorcsp);
+
+    var _rightShooterMotorcsp = _rightShooterMotor.getVelocity().getValueAsDouble();
+    SmartDashboard.putNumber("_rightShooterMotorcsp", _rightShooterMotorcsp);
+
     boolean x = DRIVE_CONTROLLER.getXButton();
     if (x) {
       _intakemotorFx.set(.5);
@@ -87,7 +93,7 @@ public class Robot extends TimedRobot {
         _intakemotorFx.set(-.05);
         _intakemotorFx2.set(-.05);
       }
-    }
+    }*/
 
     CommandScheduler.getInstance().run();
   }
@@ -99,7 +105,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-
+    COMMAND_DRIVE_CONTROLLER.rightBumper().whileTrue(new ShootCommand());
   }
 
   /** This function is run once each time the robot enters autonomous mode. */
