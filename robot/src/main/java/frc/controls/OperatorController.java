@@ -63,19 +63,24 @@ public class OperatorController {
 
         _operatorController.leftBumper().whileTrue(new StartShooterCommand());
         _operatorController.leftBumper().whileTrue(new InstantCommand(() -> Robot.SHOOTER_REV_TARGET_STATE = ShooterRevTargetState.ON)).onFalse(new InstantCommand(() -> Robot.SHOOTER_REV_TARGET_STATE = ShooterRevTargetState.OFF));
+        
+        _operatorController.rightTrigger().whileTrue(new InstantCommand(()-> Robot.FULLPOWER = true)).onFalse(new InstantCommand(()-> Robot.FULLPOWER = false));
 
-        _operatorController.leftTrigger().and(() -> Math.abs(_operatorController.getLeftY()) > .1).whileTrue(new ElbowMoveWithJoystickCommand(_operatorController));
-        _operatorController.leftTrigger().and(() -> Math.abs(_operatorController.getRightY()) > .1).whileTrue(new WristMoveWithJoystickCommand(_operatorController));
+
+        //_operatorController.leftTrigger().and(() -> Math.abs(_operatorController.getLeftY()) > .1).whileTrue(new ElbowMoveWithJoystickCommand(_operatorController));
+        //_operatorController.leftTrigger().and(() -> Math.abs(_operatorController.getRightY()) > .1).whileTrue(new WristMoveWithJoystickCommand(_operatorController));
    
+       /* 
         _operatorController.leftTrigger().and(_operatorController.povUp()).onTrue(new ElbowIncrementPositionCommand());
         _operatorController.leftTrigger().and(_operatorController.povDown()).onTrue(new ElbowDecrementPositionCommand());
         _operatorController.leftTrigger().and(_operatorController.povRight()).onTrue(new WristIncrementPositionCommand());
         _operatorController.leftTrigger().and(_operatorController.povLeft()).onTrue(new WristDecrementPositionCommand());
         _operatorController.leftTrigger().negate().and(_operatorController.povDown()).onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SPEAKER_SCORING));
-        _operatorController.leftTrigger().negate().and(_operatorController.povUp()).whileTrue(new ShooterTestingCommand());
+        _operatorController.leftTrigger().negate().and(_operatorController.povUp()).whileTrue(new ShooterTestingCommand());  
 
         _operatorController.leftTrigger().and(_operatorController.rightTrigger()).and(_operatorController.start()).whileTrue(new ElbowSuspendLimitsCommand());
         _operatorController.leftTrigger().and(_operatorController.rightTrigger()).and(_operatorController.back()).whileTrue(new WristSuspendLimitsCommand());
+        */
 
         _operatorController.leftTrigger().negate().and(() -> Math.abs(_operatorController.getLeftY()) > .1)
         .whileTrue(new SetClimberToPowerCommand(() -> _operatorController.getLeftY() * -1, Robot.LEFT_CLIMBER_SUBSYSTEM));
