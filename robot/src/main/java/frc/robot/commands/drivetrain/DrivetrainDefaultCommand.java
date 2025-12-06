@@ -49,6 +49,8 @@ public class DrivetrainDefaultCommand extends Command {
 
     @Override
     public void execute() {
+
+      if (Robot.cutPower) {
         double controllerDirection = Robot.allianceColor == Alliance.Red ? 1 : -1;
         double x = Robot.DRIVE_CONTROLLER.getLeftY() * controllerDirection;
         double y = Robot.DRIVE_CONTROLLER.getLeftX() * controllerDirection;
@@ -82,9 +84,9 @@ public class DrivetrainDefaultCommand extends Command {
         } else {
             double cutPowerRotation = Robot.cutPower ? 0.5 : 1;
             double cutPowerTranslation = Robot.cutPower ? 0.25 : 1;
-            x = x * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND * cutPowerTranslation;
-            y = y * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND * cutPowerTranslation;
-            r = r * Constants.DRIVE_MAX_TURN_RADIANS_PER_SECOND * cutPowerRotation;
+            x = x * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND * cutPowerTranslation * .5;
+            y = y * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND * cutPowerTranslation * .5;
+            r = r * Constants.DRIVE_MAX_TURN_RADIANS_PER_SECOND * cutPowerRotation * .8;
 
             if (Robot.DRIVETRAIN_STATE == DrivetrainState.ROBOT_ALIGN) {
               // From the docs it sounds like this boolean will ONLY be true if it sees
@@ -120,9 +122,12 @@ public class DrivetrainDefaultCommand extends Command {
             _chassisSpeeds = targetChassisSpeeds;
 
             Robot.DRIVETRAIN_SUBSYSTEM.drive(targetChassisSpeeds);
-        }
+        } 
         
         _visionAligned = visionAligned;
+      } else {
+          Robot.DRIVETRAIN_SUBSYSTEM.drive(new ChassisSpeeds());
+        }
     }
 
     // public double getYVelocity(Translation2d target) {

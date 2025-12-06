@@ -246,24 +246,6 @@ public class Robot extends TimedRobot {
       && SHOOTER_SUBSYSTEM.getRightRpm() < 5)
       .whileTrue(new ShooterReverseCommand());
 
-    COMMAND_DRIVE_CONTROLLER.povRight().toggleOnTrue(new DriveTwoInchesCommand('R'));
-    COMMAND_DRIVE_CONTROLLER.povUp().toggleOnTrue(new DriveTwoInchesCommand('F'));
-    COMMAND_DRIVE_CONTROLLER.povDown().toggleOnTrue(new DriveTwoInchesCommand('B'));
-    COMMAND_DRIVE_CONTROLLER.povLeft().toggleOnTrue(new DriveTwoInchesCommand('L'));
-    
-    new Trigger(() -> DRIVE_CONTROLLER.getYButton())
-      .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.AMP_SCORING));
-    
-    new Trigger(() -> DRIVE_CONTROLLER.getBButton() && (SHOOTER_SUBSYSTEM.hasPiece() || INTAKE_TARGET_STATE == IntakeTargetState.GROUND))
-      .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.DEFENDED_SPEAKER_SCORING))
-      .onTrue(new InstantCommand(()-> Robot.ARM_UP_TARGET_STATE = ArmUpTargetState.UP))
-      .onFalse(new InstantCommand(()-> Robot.ARM_UP_TARGET_STATE = ArmUpTargetState.FREE));
-
-    new Trigger(() -> DRIVE_CONTROLLER.getBButton() && (SHOOTER_SUBSYSTEM.hasPiece() == false && INTAKE_TARGET_STATE == IntakeTargetState.SOURCE))
-      .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SOURCE_INTAKE));
-    
-    new Trigger(() -> DRIVE_CONTROLLER.getBButton() == false && ARM_UP_TARGET_STATE == ArmUpTargetState.FREE)
-      .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.GROUND_PICKUP));
 
     new Trigger(() -> DRIVE_CONTROLLER.getStartButton() && DRIVE_CONTROLLER.getBackButton())
         .onTrue(new InstantCommand(() -> DRIVETRAIN_SUBSYSTEM.zeroGyroscope()));
@@ -395,36 +377,11 @@ public class Robot extends TimedRobot {
     //     .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.GROUND_PICKUP));
     // BUTTON_CODE.getButton(Buttons.GROUND_PICKUP_AND_SPEAKER_SCORING).and(() -> LOAD_STATE == LoadState.LOADED)
     //     .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SPEAKER_SCORING));
-    BUTTON_CODE.getButton(Buttons.DEFENDED_SPEAKER_SCORING)
-      .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.DEFENDED_SPEAKER_SCORING));
-    BUTTON_CODE.getButton(Buttons.AMP_SCORING)
-      .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.AMP_SCORING));
     // BUTTON_CODE.getButton(Buttons.TRAP_SCORING)
     //     .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.TRAP_SCORING));
-    BUTTON_CODE.getButton(Buttons.SOURCE_INTAKE)
-      .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.SOURCE_INTAKE));
     // BUTTON_CODE.getButton(Buttons.TRAP_SOURCE_INTAKE)
     //     .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.TRAP_SOURCE_INTAKE));
-    BUTTON_CODE.getButton(Buttons.GROUND_PICKUP_AND_SPEAKER_SCORING)
-      .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.GROUND_PICKUP));
 
-    BUTTON_CODE.getButton(Buttons.ARM_RELEASE_SNAPPER)
-      .onTrue(LimbGoToSetpointCommand.GetMoveSafelyCommand(LimbSetpoint.START_CONFIG_UP));
-
-    BooleanSupplier manualOverride = () -> BUTTON_CODE.getSwitch(Toggle.MOVE_WITH_MANUAL_POWER).getAsBoolean() == false;
-    var elbowUpCommand = new ConditionalCommand(new ElbowMoveManuallyCommand(Constants.MOVE_ELBOW_UP_MANUAL_POWER), new ElbowOffsetCommand(0.5), manualOverride);
-    var elbowDownCommand = new ConditionalCommand(new ElbowMoveManuallyCommand(Constants.MOVE_ELBOW_DOWN_MANUAL_POWER), new ElbowOffsetCommand(-0.5), manualOverride);
-    var wristUpCommand = new ConditionalCommand(new WristMoveManuallyCommand(Constants.MOVE_WRIST_UP_MANUAL_POWER), new WristOffsetCommand(0.5), manualOverride);
-    var wristDownCommand = new ConditionalCommand(new WristMoveManuallyCommand(Constants.MOVE_WRIST_DOWN_MANUAL_POWER), new WristOffsetCommand(-0.5), manualOverride);
-
-    BUTTON_CODE.getButton(Buttons.MOVE_ELBOW_UP).and(BUTTON_CODE.getSwitch(Toggle.MOVE_WITH_MANUAL_POWER))
-        .whileTrue(elbowUpCommand);
-    BUTTON_CODE.getButton(Buttons.MOVE_ELBOW_DOWN)
-        .whileTrue(elbowDownCommand);
-    BUTTON_CODE.getButton(Buttons.MOVE_WRIST_UP)
-        .whileTrue(wristUpCommand);
-    BUTTON_CODE.getButton(Buttons.MOVE_WRIST_DOWN)
-        .whileTrue(wristDownCommand);
 
     BUTTON_CODE.getButton(Buttons.SHOOTER_REV)
       .whileTrue(new InstantCommand(() -> SHOOTER_REV_TARGET_STATE = ShooterRevTargetState.ON))
@@ -438,13 +395,6 @@ public class Robot extends TimedRobot {
 
     BUTTON_CODE.getSwitch(Toggle.SHOOTER_ANGLE_FROM_DISTANCE)
       .whileTrue(new WristGoToSpeakerAngleCommand());
-
-    BUTTON_CODE.getButton(Buttons.SPEAKER_CLOSE_SHOT)
-      .whileTrue(new InstantCommand(() -> 
-      {
-        double shooterAngleRadians = Math.toRadians(Robot.SHOOTER_SUBSYSTEM.getShooterAngleMapDown(0.9144));
-        WRIST_SUBSYSTEM.setTargetPosition(WristSubsystem.getPositionFromRadians(shooterAngleRadians));
-      }));
 
     // BUTTON_CODE.getButton(Buttons.SPEAKER_MID_SHOT)
     //   .whileTrue(new InstantCommand(() -> 
